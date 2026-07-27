@@ -4,7 +4,10 @@
 
 <svelte:head>
 	<title>{pageTitle('algorithms')}</title>
-	<meta name="description" content="Every case worth knowing, searchable, with diagrams generated from the moves." />
+	<meta
+		name="description"
+		content="Every case worth knowing, searchable, with diagrams generated from the moves."
+	/>
 </svelte:head>
 
 <div class="page">

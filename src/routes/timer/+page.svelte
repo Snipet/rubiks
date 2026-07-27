@@ -4,7 +4,10 @@
 
 <svelte:head>
 	<title>{pageTitle('timer')}</title>
-	<meta name="description" content="Scrambles, inspection, and the averages competitions actually use." />
+	<meta
+		name="description"
+		content="Scrambles, inspection, and the averages competitions actually use."
+	/>
 </svelte:head>
 
 <div class="page">

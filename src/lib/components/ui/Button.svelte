@@ -14,6 +14,8 @@
 		onclick?: (event: MouseEvent) => void;
 		'aria-label'?: string;
 		'aria-pressed'?: boolean;
+		'aria-expanded'?: boolean;
+		'aria-controls'?: string;
 		class?: string;
 		children: Snippet;
 	}

@@ -4,7 +4,10 @@
 
 <svelte:head>
 	<title>{pageTitle('trainer')}</title>
-	<meta name="description" content="Drill the cases you keep fumbling, on a schedule that remembers which ones." />
+	<meta
+		name="description"
+		content="Drill the cases you keep fumbling, on a schedule that remembers which ones."
+	/>
 </svelte:head>
 
 <div class="page">

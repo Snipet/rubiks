@@ -4,7 +4,10 @@
 
 <svelte:head>
 	<title>{pageTitle('learn')}</title>
-	<meta name="description" content="Four tracks, from your very first solve to full CFOP and beyond." />
+	<meta
+		name="description"
+		content="Four tracks, from your very first solve to full CFOP and beyond."
+	/>
 </svelte:head>
 
 <div class="page">
