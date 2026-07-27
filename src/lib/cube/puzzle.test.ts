@@ -52,7 +52,8 @@ function randomMoves(p: Puzzle, count: number, seed: number): string[] {
 	const rng = lcg(seed);
 	const out: string[] = [];
 	for (let i = 0; i < count; i++) {
-		out.push(p.scrambleMoves[Math.floor(rng.next().value * p.scrambleMoves.length)]);
+		const draw = rng.next().value ?? 0;
+		out.push(p.scrambleMoves[Math.floor(draw * p.scrambleMoves.length)]);
 	}
 	return out;
 }

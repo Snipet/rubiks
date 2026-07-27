@@ -12,6 +12,7 @@
 	import { NAV, sectionFor } from '$lib/nav';
 	import Wordmark from './Wordmark.svelte';
 	import SkillPicker from './SkillPicker.svelte';
+	import PuzzlePicker from './PuzzlePicker.svelte';
 	import AppearanceMenu from './AppearanceMenu.svelte';
 
 	let open = $state(false);
@@ -67,6 +68,7 @@
 		</nav>
 
 		<div class="header__tools">
+			<PuzzlePicker compact />
 			<SkillPicker compact />
 			<AppearanceMenu />
 			<button

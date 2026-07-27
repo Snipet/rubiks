@@ -31,11 +31,17 @@ export const PUZZLE_SIZES: readonly PuzzleSize[] = [2, 3, 4, 5];
 /** A sticker permutation in source-index form: `next[i] = prev[perm[i]]`. */
 export type Perm = Readonly<Uint8Array>;
 
-interface Vec {
+/**
+ * A point in the puzzle's lattice, in centred model coordinates: the outer
+ * layers sit at ±(n−1)/2, so a 3×3 runs −1…1 and a 4×4 runs −1.5…1.5.
+ */
+export interface Cell {
 	x: number;
 	y: number;
 	z: number;
 }
+
+type Vec = Cell;
 
 /** Outward normal of each face, in model coordinates. */
 const FACE_NORMAL: Record<Face, Vec> = {
@@ -101,6 +107,19 @@ export interface Puzzle {
 	locate(index: number): { face: Face; row: number; col: number };
 	/** True when the puzzle has a fixed centre on each face — odd sizes only. */
 	readonly hasFixedCentres: boolean;
+
+	// --- geometry, for the 3D view ----------------------------------------
+	/**
+	 * The little cubes with at least one sticker showing, in centred coordinates.
+	 * The core of a 3×3 or larger is not included; there is nothing to draw.
+	 */
+	readonly cubies: readonly Cell[];
+	/** The sticker a cubie shows on a face, or `-1` if that side is interior. */
+	stickerFacing(cell: Cell, face: Face): number;
+	/** Whether a cubie is carried by a turn. */
+	inLayer(turn: LayerTurn, cell: Cell): boolean;
+	/** The faces a cubie actually shows, given where it sits. */
+	facesOf(cell: Cell): Face[];
 }
 
 const CACHE = new Map<number, Puzzle>();
@@ -339,11 +358,56 @@ function build(size: PuzzleSize): Puzzle {
 		return acc;
 	}
 
+	// --- geometry ---------------------------------------------------------
+	// Derived from the same tables the permutations came from, so the 3D view and
+	// the turn engine cannot drift apart.
+
+	const cubies: Cell[] = (() => {
+		const out: Cell[] = [];
+		for (let ix = 0; ix < size; ix++) {
+			for (let iy = 0; iy < size; iy++) {
+				for (let iz = 0; iz < size; iz++) {
+					const onSurface =
+						ix === 0 ||
+						ix === size - 1 ||
+						iy === 0 ||
+						iy === size - 1 ||
+						iz === 0 ||
+						iz === size - 1;
+					if (!onSurface) continue;
+					out.push({ x: ix - centre, y: iy - centre, z: iz - centre });
+				}
+			}
+		}
+		return out;
+	})();
+
+	function stickerFacing(cell: Cell, face: Face): number {
+		return lookup.get(key(cell, FACE_NORMAL[face])) ?? -1;
+	}
+
+	function facesOf(cell: Cell): Face[] {
+		const out: Face[] = [];
+		for (let face = 0 as Face; face < 6; face = (face + 1) as Face) {
+			if (stickerFacing(cell, face) >= 0) out.push(face);
+		}
+		return out;
+	}
+
+	function inLayer(turn: LayerTurn, cell: Cell): boolean {
+		const depth = depthOf(turn.face, cell);
+		return depth >= turn.from && depth <= turn.to;
+	}
+
 	return {
 		size,
 		stickers,
 		faceStride,
 		hasFixedCentres: size % 2 === 1,
+		cubies,
+		stickerFacing,
+		facesOf,
+		inLayer,
 		moveNames,
 		scrambleMoves,
 		parse,

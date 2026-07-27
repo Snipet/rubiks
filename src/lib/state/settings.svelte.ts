@@ -9,6 +9,7 @@
 
 import { browser } from '$app/environment';
 import type { SkillTier } from '$data/types';
+import { PUZZLE_SIZES, type PuzzleSize } from '$cube/puzzle';
 
 export type Theme = 'dark' | 'light' | 'system';
 export type Palette = 'classic' | 'deuteranopia' | 'protanopia' | 'tritanopia' | 'high-contrast';
@@ -22,6 +23,12 @@ export interface SettingsShape {
 	palette: Palette;
 	density: Density;
 	motion: MotionPref;
+	/**
+	 * Which puzzle the site is about. This is the widest-reaching setting there
+	 * is: it changes what the cube shows, what the algorithm library lists, what
+	 * the scrambles look like and which lessons apply.
+	 */
+	puzzle: PuzzleSize;
 	/** Which recommendation tier to lead with. */
 	skill: SkillTier;
 	/** Show a letter on each sticker as well as its colour. */
@@ -47,6 +54,7 @@ const DEFAULTS: SettingsShape = {
 	palette: 'classic',
 	density: 'comfortable',
 	motion: 'system',
+	puzzle: 3,
 	skill: 'beginner',
 	stickerLetters: false,
 	cubeView: 'iso',
@@ -74,6 +82,10 @@ function load(): SettingsShape {
 				merged[key] = parsed[key];
 			}
 		}
+		// A matching type is not enough for the puzzle size: a stored 7, from a
+		// future build or a hand-edited value, would ask for an engine that does
+		// not exist. Anything unrecognised falls back to the 3×3.
+		if (!PUZZLE_SIZES.includes(merged.puzzle)) merged.puzzle = DEFAULTS.puzzle;
 		return merged;
 	} catch {
 		return { ...DEFAULTS };
@@ -128,7 +140,8 @@ class Settings {
 		const s = this.#value;
 		const attrs: Record<string, string> = {
 			'data-palette': s.palette,
-			'data-density': s.density
+			'data-density': s.density,
+			'data-puzzle': String(s.puzzle)
 		};
 		if (s.theme !== 'system') attrs['data-theme'] = s.theme;
 		if (s.motion !== 'system') attrs['data-motion'] = s.motion;
@@ -152,3 +165,28 @@ export const SETTING_LABELS = {
 	cubeView: { iso: '3D', flat: 'Last layer', net: 'Unfolded net' },
 	hand: { right: 'Right-handed', left: 'Left-handed' }
 } as const;
+
+/** How each size is named, and what changing to it actually means. */
+export const PUZZLE_LABELS: Record<PuzzleSize, string> = {
+	2: '2×2',
+	3: '3×3',
+	4: '4×4',
+	5: '5×5'
+};
+
+export const PUZZLE_FULL_NAMES: Record<PuzzleSize, string> = {
+	2: '2×2×2 · Pocket Cube',
+	3: '3×3×3 · the standard cube',
+	4: '4×4×4 · Revenge',
+	5: '5×5×5 · Professor'
+};
+
+export const PUZZLE_BLURBS: Record<PuzzleSize, string> = {
+	2: 'Corners only. The same last-layer thinking as a 3×3, over in a dozen moves.',
+	3: 'The full site: every method, every algorithm set, the solver and the trainer.',
+	4: 'Loose centres and pieces that come in pairs, which lets it reach states a 3×3 never can.',
+	5: 'Coming later.'
+};
+
+/** The sizes the site is finished for. 5×5 parses and turns, but has no content. */
+export const AVAILABLE_PUZZLES: readonly PuzzleSize[] = [2, 3, 4];
