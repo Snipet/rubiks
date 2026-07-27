@@ -266,6 +266,17 @@
 		flex-shrink: 0;
 	}
 
+	/* The classic scheme's tokens live on :root, so a nested element cannot
+	   inherit them while another palette is in force. Spell them out. */
+	.swatches[data-palette='classic'] {
+		--sticker-u: #f4f6f8;
+		--sticker-r: #d92d3a;
+		--sticker-f: #21a04a;
+		--sticker-d: #f5c518;
+		--sticker-l: #f07a1c;
+		--sticker-b: #1668d4;
+	}
+
 	.swatches i {
 		width: 8px;
 		height: 16px;
