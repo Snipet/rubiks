@@ -21,7 +21,7 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		aliases: ['move notation', 'Singmaster notation'],
 		category: 'notation',
 		definition:
-			'The shared language for writing turns: `U R F D L B` for the six faces, `\'` for anticlockwise, `2` for a half turn, `M E S` for the slices and `x y z` for whole-cube rotations. It names positions rather than colours, which is why the same algorithm works whichever way round you are holding the cube. Devised by David Singmaster in 1979 and essentially unchanged since.',
+			"The shared language for writing turns: `U R F D L B` for the six faces, `'` for anticlockwise, `2` for a half turn, `M E S` for the slices and `x y z` for whole-cube rotations. It names positions rather than colours, which is why the same algorithm works whichever way round you are holding the cube. Devised by David Singmaster in 1979 and essentially unchanged since.",
 		see: ['Prime', 'Wide turn', 'Slice turn', 'Cube rotation']
 	},
 	{
@@ -37,7 +37,7 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		aliases: ['double-layer turn', 'Rw', 'r'],
 		category: 'notation',
 		definition:
-			'A turn of a face together with the slice behind it — two of the three layers at once, going the way the outer face goes. Written `Rw` or as a lowercase `r`; the two spellings mean the same thing and this site lets you choose which one you see. A wide turn is exactly its face plus the parallel slice: `Rw` is `R M\'`.',
+			"A turn of a face together with the slice behind it — two of the three layers at once, going the way the outer face goes. Written `Rw` or as a lowercase `r`; the two spellings mean the same thing and this site lets you choose which one you see. A wide turn is exactly its face plus the parallel slice: `Rw` is `R M'`.",
 		see: ['Slice turn', 'Cube rotation', 'Notation']
 	},
 	{
@@ -168,14 +168,14 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		term: 'Trigger',
 		category: 'technique',
 		definition:
-			'A short run of moves your hands perform as one unit rather than as separate turns — `R U R\'`, `R U\' R\'`, `F R U`. Long algorithms are far easier to hold in your head as three or four triggers than as fourteen letters, and quick turning is mostly a matter of owning plenty of them.',
+			"A short run of moves your hands perform as one unit rather than as separate turns — `R U R'`, `R U' R'`, `F R U`. Long algorithms are far easier to hold in your head as three or four triggers than as fourteen letters, and quick turning is mostly a matter of owning plenty of them.",
 		see: ['Sexy move', 'Sledgehammer', 'Finger trick', 'Algorithm']
 	},
 	{
 		term: 'Sexy move',
 		category: 'technique',
 		definition:
-			'The trigger `R U R\' U\'`. It is the first sequence most people learn, it hides inside a remarkable number of algorithms, and six repetitions of it bring the cube back to where it started.',
+			"The trigger `R U R' U'`. It is the first sequence most people learn, it hides inside a remarkable number of algorithms, and six repetitions of it bring the cube back to where it started.",
 		see: ['Trigger', 'Sledgehammer', 'Sune']
 	},
 	{
@@ -183,14 +183,14 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		aliases: ['hedgeslammer'],
 		category: 'technique',
 		definition:
-			'The trigger `R\' F R F\'`. Its inverse, `F R\' F\' R`, is called the hedgeslammer, and cubers are quite pleased with themselves about that. Both appear all over F2L and OLL, and knowing them by feel saves reading four letters every time.',
+			"The trigger `R' F R F'`. Its inverse, `F R' F' R`, is called the hedgeslammer, and cubers are quite pleased with themselves about that. Both appear all over F2L and OLL, and knowing them by feel saves reading four letters every time.",
 		see: ['Trigger', 'Sexy move', 'F2L']
 	},
 	{
 		term: 'Sune',
 		category: 'technique',
 		definition:
-			'The last-layer case solved by `R U R\' U R U2 R\'`, and the algorithm itself. It twists three corners one way and leaves the fourth alone, and repeating it is how the beginner method orients corners without a second algorithm. Named by Lars Petrus, who called several of his cases after Swedish first names.',
+			"The last-layer case solved by `R U R' U R U2 R'`, and the algorithm itself. It twists three corners one way and leaves the fourth alone, and repeating it is how the beginner method orients corners without a second algorithm. Named by Lars Petrus, who called several of his cases after Swedish first names.",
 		see: ['Anti-sune', 'OLL', 'Trigger', 'Headlights']
 	},
 	{
@@ -263,7 +263,7 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		term: 'Cancellation',
 		category: 'technique',
 		definition:
-			'When the end of one algorithm and the start of the next undo part of each other, so the pair costs fewer moves than the two of them written out. An algorithm ending in `U\'` followed by one beginning `U2` needs a single `U` between them instead of two turns. Fewest-moves solvers hunt for cancellations on purpose; speedsolvers get them by luck and take them gratefully.',
+			"When the end of one algorithm and the start of the next undo part of each other, so the pair costs fewer moves than the two of them written out. An algorithm ending in `U'` followed by one beginning `U2` needs a single `U` between them instead of two turns. Fewest-moves solvers hunt for cancellations on purpose; speedsolvers get them by luck and take them gratefully.",
 		see: ['Algorithm', 'AUF', 'FMC']
 	},
 
@@ -293,14 +293,14 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		term: 'Commutator',
 		category: 'theory',
 		definition:
-			'A sequence of the shape `A B A\' B\'`: do one thing, do another, undo the first, undo the second. When A and B overlap in only a couple of pieces, everything else cancels and the result disturbs almost nothing — which is how three-piece cycles are built, and why the sexy move looks the way it does.',
+			"A sequence of the shape `A B A' B'`: do one thing, do another, undo the first, undo the second. When A and B overlap in only a couple of pieces, everything else cancels and the result disturbs almost nothing — which is how three-piece cycles are built, and why the sexy move looks the way it does.",
 		see: ['Conjugate', 'Algorithm', 'Sexy move']
 	},
 	{
 		term: 'Conjugate',
 		category: 'theory',
 		definition:
-			'A sequence of the shape `A B A\'`: set something up, do the work, put the setup back. Most algorithms are a conjugate wrapped round a commutator, and reading a long one that way makes it far easier to hold on to.',
+			"A sequence of the shape `A B A'`: set something up, do the work, put the setup back. Most algorithms are a conjugate wrapped round a commutator, and reading a long one that way makes it far easier to hold on to.",
 		see: ['Commutator', 'Algorithm']
 	},
 	{
@@ -360,7 +360,7 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		term: 'Corner cutting',
 		category: 'hardware',
 		definition:
-			"How far out of line a layer can be and still let the next turn go through. Quoted in degrees in every review, and it matters because turning fast means starting each turn before the last one has quite finished.",
+			'How far out of line a layer can be and still let the next turn go through. Quoted in degrees in every review, and it matters because turning fast means starting each turn before the last one has quite finished.',
 		see: ['Speedcube', 'Magnetic cube', 'Pop']
 	},
 	{
