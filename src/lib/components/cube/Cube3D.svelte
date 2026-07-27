@@ -12,6 +12,7 @@
 	import { untrack } from 'svelte';
 	import { parseAlg, type Move } from '$cube/moves';
 	import { FACE_NAMES, type Face, type Facelets } from '$cube/types';
+	import { CUBIES, faceletAt, FACE_TRANSFORM, inLayer, TURN, visibleFaces } from '$cube/geometry';
 	import { settings } from '$state/settings.svelte';
 
 	interface Props {
@@ -102,135 +103,15 @@
 		[pitch, yaw] = views[at];
 	}
 
-	// --- geometry -----------------------------------------------------------
-	/** Model coordinates: x right, y up, z towards the viewer. */
-	const CUBIES = (() => {
-		const out: { x: number; y: number; z: number }[] = [];
-		for (let x = -1; x <= 1; x++)
-			for (let y = -1; y <= 1; y++)
-				for (let z = -1; z <= 1; z++) if (x || y || z) out.push({ x, y, z });
-		return out;
-	})();
-
-	/**
-	 * Which facelet a cubie shows on a given face, worked out from the facelet
-	 * numbering rather than tabulated. `U1` is the up-back-left sticker, `F1` the
-	 * front-top-left, and so on round the cube.
-	 */
-	function faceletAt(face: Face, x: number, y: number, z: number): number {
-		switch (face) {
-			case 0:
-				return 0 + (z + 1) * 3 + (x + 1); // U: rows back→front
-			case 3:
-				return 27 + (1 - z) * 3 + (x + 1); // D: rows front→back
-			case 2:
-				return 18 + (1 - y) * 3 + (x + 1); // F
-			case 5:
-				return 45 + (1 - y) * 3 + (1 - x); // B: seen from behind
-			case 1:
-				return 9 + (1 - y) * 3 + (1 - z); // R: columns front→back
-			case 4:
-				return 36 + (1 - y) * 3 + (z + 1); // L: columns back→front
-		}
-	}
-
-	/** The faces a cubie actually shows, given where it sits. */
-	function visibleFaces(x: number, y: number, z: number): Face[] {
-		const faces: Face[] = [];
-		if (y === 1) faces.push(0);
-		if (x === 1) faces.push(1);
-		if (z === 1) faces.push(2);
-		if (y === -1) faces.push(3);
-		if (x === -1) faces.push(4);
-		if (z === -1) faces.push(5);
-		return faces;
-	}
-
-	/**
-	 * How each face of a cubie is positioned. These are the canonical CSS cube
-	 * placements: `rotateY(90deg) translateZ(h)` puts a face on the right, and so on.
-	 */
-	const FACE_TRANSFORM: Record<Face, string> = {
-		0: 'rotateX(90deg)',
-		1: 'rotateY(90deg)',
-		2: '',
-		3: 'rotateX(-90deg)',
-		4: 'rotateY(-90deg)',
-		5: 'rotateY(180deg)'
-	};
+	// Cubie positions, sticker mapping and face placement all live in
+	// `$cube/geometry`, where they are covered by tests — a wrong entry there shows
+	// up as stickers in the wrong places, which is hard to spot by eye.
 
 	const CUBIE = $derived(size / 3.35);
 	const HALF = $derived(CUBIE / 2);
 	const GAP = $derived(CUBIE * 0.035);
 
 	// --- turning ------------------------------------------------------------
-	/**
-	 * Axis and signed angle for every turn, in CSS's y-down coordinate system.
-	 *
-	 * Derived from the right-hand rule on CSS axes: `rotateX` sends y→z, `rotateY`
-	 * sends z→x, `rotateZ` sends x→y. A U turn takes the front face to the left,
-	 * which is `rotateY(-90deg)`; an R turn takes the front face to the top, which
-	 * is `rotateX(90deg)`; an F turn takes the top face to the right, which is
-	 * `rotateZ(90deg)`. Everything else follows from those three.
-	 */
-	const TURN: Record<string, { axis: 'X' | 'Y' | 'Z'; sign: 1 | -1 }> = {
-		U: { axis: 'Y', sign: -1 },
-		D: { axis: 'Y', sign: 1 },
-		E: { axis: 'Y', sign: 1 },
-		Uw: { axis: 'Y', sign: -1 },
-		Dw: { axis: 'Y', sign: 1 },
-		y: { axis: 'Y', sign: -1 },
-		R: { axis: 'X', sign: 1 },
-		L: { axis: 'X', sign: -1 },
-		M: { axis: 'X', sign: -1 },
-		Rw: { axis: 'X', sign: 1 },
-		Lw: { axis: 'X', sign: -1 },
-		x: { axis: 'X', sign: 1 },
-		F: { axis: 'Z', sign: 1 },
-		B: { axis: 'Z', sign: -1 },
-		S: { axis: 'Z', sign: 1 },
-		Fw: { axis: 'Z', sign: 1 },
-		Bw: { axis: 'Z', sign: -1 },
-		z: { axis: 'Z', sign: 1 }
-	};
-
-	/** Whether a cubie is part of the layer a move turns. */
-	function inLayer(base: string, c: { x: number; y: number; z: number }): boolean {
-		switch (base) {
-			case 'U':
-				return c.y === 1;
-			case 'D':
-				return c.y === -1;
-			case 'R':
-				return c.x === 1;
-			case 'L':
-				return c.x === -1;
-			case 'F':
-				return c.z === 1;
-			case 'B':
-				return c.z === -1;
-			case 'M':
-				return c.x === 0;
-			case 'E':
-				return c.y === 0;
-			case 'S':
-				return c.z === 0;
-			case 'Uw':
-				return c.y >= 0;
-			case 'Dw':
-				return c.y <= 0;
-			case 'Rw':
-				return c.x >= 0;
-			case 'Lw':
-				return c.x <= 0;
-			case 'Fw':
-				return c.z >= 0;
-			case 'Bw':
-				return c.z <= 0;
-			default:
-				return true; // x, y, z rotate everything
-		}
-	}
 
 	let cubieEls: (HTMLElement | null)[] = $state(Array(26).fill(null));
 	let busy = $state(false);
