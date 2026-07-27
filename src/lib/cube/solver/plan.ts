@@ -25,7 +25,6 @@ import {
 	analyze,
 	f2lKey,
 	F2L_SLOTS,
-	findAuf,
 	isLastLayerOriented,
 	LL_CORNERS,
 	LL_EDGES,
@@ -371,6 +370,11 @@ function planF2l(state: Facelets, analysis: StateAnalysis): SolvePlan {
 		key: string;
 		fit: ReturnType<typeof bestFit>;
 	};
+	// Pairs that are already finished must still be finished afterwards. The
+	// library's algorithms guarantee this by construction, but the advice engine
+	// should not depend on that being true of every entry.
+	const alreadySolved = analysis.slots.filter((x) => x.solved).map((x) => x.id);
+
 	const options: SlotOption[] = unsolved.map((s) => {
 		const slot = s.id as F2lSlotId;
 		const rotation = SLOT_ROTATION[slot];
@@ -388,14 +392,15 @@ function planF2l(state: Facelets, analysis: StateAnalysis): SolvePlan {
 			// up filled, with the cube left the way up it started.
 			fit: bestFit(state, f2lCandidates(key, slot), (after) => {
 				const a = analyze(after);
-				return a.crossSolved && a.slots.find((x) => x.id === slot)!.solved;
+				if (!a.crossSolved) return false;
+				if (!a.slots.find((x) => x.id === slot)!.solved) return false;
+				return alreadySolved.every((id) => a.slots.find((x) => x.id === id)!.solved);
 			})
 		};
 	});
 
 	const workable = options.filter((o) => o.fit !== null);
 	const cheapest = workable.sort((a, b) => a.fit!.length - b.fit!.length)[0];
-	const stuck = options.filter((o) => o.key === 'elsewhere');
 
 	if (cheapest) {
 		const prose = SLOT_PROSE[cheapest.slot];
@@ -452,14 +457,13 @@ function planF2l(state: Facelets, analysis: StateAnalysis): SolvePlan {
 		// move genuinely reduces the number of stranded pairs — so this can never
 		// become a move that simply shuffles the problem sideways.
 		const strandedBefore = strandedPieces(state);
-		const solvedAlready = analysis.slots.filter((x) => x.solved).map((x) => x.id);
 		let rescue: { slot: F2lSlotId; moves: string; length: number } | null = null;
 
 		for (const option of options) {
 			const fit = bestFit(state, extractions(option.slot), (after) => {
 				const a = analyze(after);
 				if (!a.crossSolved) return false;
-				if (!solvedAlready.every((id) => a.slots.find((x) => x.id === id)!.solved)) return false;
+				if (!alreadySolved.every((id) => a.slots.find((x) => x.id === id)!.solved)) return false;
 				return strandedPieces(after) < strandedBefore;
 			});
 			if (fit && (!rescue || fit.length < rescue.length)) {
