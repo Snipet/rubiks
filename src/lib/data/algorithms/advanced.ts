@@ -179,7 +179,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'Sune with the solved corner at the front-right; the two front corners swap.',
 		notes:
-			'Seven moves and no regrip — this is a Niklas, the same shape blindfolded solvers use to cycle three corners. One of the two cheapest algorithms in the whole set.',
+			'Seven moves and no regrip. It is the Niklas commutator with its closing U turn dropped, which is exactly what turns a plain corner cycle into a cycle that also twists. One of the two cheapest algorithms in the set.',
 		tags: ['fast', 'niklas', 'one-handed']
 	},
 	{
@@ -268,7 +268,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'Anti-sune with the solved corner at the front-right; the front-right and back-right corners swap.',
 		notes:
-			'The anti-sune family answer to S5, and just as cheap: a seven-move Niklas with no regrip. If you only learn two cases outside the free ones, learn this and S5.',
+			'The anti-sune family answer to S5, and just as cheap: seven moves, no regrip, a Niklas shape with its closing turn dropped. If you learn only two cases outside the free ones, learn this and S5.',
 		tags: ['fast', 'niklas', 'one-handed']
 	},
 	{
@@ -301,7 +301,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'Anti-sune with the solved corner at the front-right; the pair that swaps is diagonal.',
 		notes:
-			'A Niklas followed by an anti-sune finish. Break it there and it is two things you know rather than eleven moves.',
+			'A Niklas shape followed by an anti-sune finish. Break it there and it is two things you know rather than eleven moves.',
 		triggers: ['Aa insert'],
 		tags: ['long', 'niklas']
 	},
@@ -374,7 +374,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'Pi with the clockwise pair at the front; the two right-hand corners swap.',
 		notes:
-			'A Niklas, then a four-move tail. The Niklas is the same one that solves S5, so this is a good case to learn straight after it.',
+			'A Niklas shape, then a four-move tail. The opening is the same seven moves that solve S5, so learn this case straight after that one.',
 		tags: ['niklas', 'two-handed']
 	},
 	{
@@ -447,7 +447,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'H shape held with a clockwise corner at the front-right; the back pair swaps.',
 		notes:
-			'The middle of this is the Pi1 algorithm with an F and F prime around it. Recognising that saves you a good deal of memorising.',
+			'The two F turns bracket a short block of U and R2 turns — a conjugate with a setup on each side. Learn the bracket and the filling separately and it stops feeling like twelve moves.',
 		tags: ['long']
 	},
 	{
@@ -605,7 +605,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'T shape — two solved corners side by side. Hold them at the front, and check that the back-left corner is the one twisted clockwise. The corners are then already in order.',
 		notes:
-			'Thirteen moves but entirely R and U, so it runs much faster than the count suggests. It is an anti-sune, a sune and a tail stitched together.',
+			'Thirteen moves but entirely R and U, so it runs much faster than the count suggests. It is the two-generator Sune joined to an anti-sune, and the R2 in the middle is where they meet.',
 		triggers: ['Aa insert'],
 		tags: ['2-gen', 'long', 'one-handed']
 	},
@@ -639,8 +639,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'T shape in the T2 hold; the left-hand pair of corners swaps.',
 		notes:
-			'The D-move version is a corner commutator with the pieces already lined up, which is why it is so short.',
-		tags: ['d-move', 'commutator', 'fast']
+			'The D turn does the swapping while the R and U turns shuttle a corner in and out of the slot. Keep the grip loose and the D costs almost nothing.',
+		tags: ['d-move', 'fast']
 	},
 	{
 		id: 'coll-t-4',
@@ -704,7 +704,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'U shape — two solved corners side by side, like the T but with the twists the other way round. Hold the solved pair at the front and check that the back-right corner is twisted clockwise. The corners are then in order already.',
 		notes:
-			'Thirteen moves of pure R and U. The easy way in is to read it as a sune, then a sune and a half backwards.',
+			'Thirteen moves of pure R and U. It opens with a plain Sune; the R2 in the middle is where the second half begins.',
 		triggers: ['Aa insert'],
 		tags: ['2-gen', 'long', 'one-handed']
 	},
@@ -879,7 +879,7 @@ export const WINTER_VARIATION_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [{ moves: "U L' U R U' L U2 R'" }, { moves: "U R2 D R' U2 R D' R2", label: 'D move' }],
 		recognition: 'Inserting normally would leave a Sune with its solved corner at the back-right.',
-		notes: 'A Niklas doing the corner work while the pair goes in behind it.',
+		notes: 'A Niklas shape doing the corner work while the pair goes in behind it.',
 		tags: ['niklas', 'two-handed']
 	},
 
@@ -959,7 +959,7 @@ export const WINTER_VARIATION_CASES: readonly AlgCase[] = [
 		recognition:
 			'Inserting normally would leave a Pi, with the two corners twisted clockwise sitting along the front.',
 		notes:
-			'Built out of two Niklas halves sharing a middle. Watch the R2 — it is easy to turn only once under pressure.',
+			'Two Niklas halves sharing a middle. Watch the R2 — under pressure it is easy to turn it only once.',
 		tags: ['niklas', 'two-handed']
 	},
 	{
@@ -1119,8 +1119,8 @@ export const WINTER_VARIATION_CASES: readonly AlgCase[] = [
 		recognition:
 			'A plain insertion would leave a T shape with its two solved corners along the front.',
 		notes:
-			'Seven moves, and it is a corner commutator with a setup: R2 sets up, then R prime U prime R against D. Knowing that is quicker than memorising it.',
-		tags: ['d-move', 'commutator', 'fast']
+			'Seven moves, and two nested conjugates: R2 sets the pair up, then D and D prime bracket a three-move insertion. Reading it that way is quicker than memorising the string.',
+		tags: ['d-move', 'conjugate', 'fast']
 	},
 	{
 		id: 'wv-t-2',
@@ -1206,7 +1206,8 @@ export const WINTER_VARIATION_CASES: readonly AlgCase[] = [
 		algs: [{ moves: "R' D' R U R' D R2 U2 R'" }],
 		recognition:
 			'A plain insertion would leave headlights with the solved corners down the left-hand side.',
-		notes: 'A corner commutator again, with the last two moves doing the insertion.',
+		notes:
+			'This one is the corner commutator R prime D prime R against U, followed by the four-move WV S2 insertion. The two run into each other and a U turn cancels, which is why the written form has an R2 in it.',
 		tags: ['d-move', 'commutator']
 	},
 	{
@@ -1294,7 +1295,7 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'Pi with the clockwise pair at the front; the left-hand pair swaps.',
 		notes:
-			'Almost all half turns between an R prime and an R. Nine moves that come out much faster than they read.',
+			'Bracketed by R prime and R, with alternating U2 turns doing most of the work. Nine moves that come out much faster than they read.',
 		tags: ['half-turns', 'fast']
 	},
 	{
@@ -1376,7 +1377,7 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'H shape held with a clockwise corner at the front-right; the back pair swaps.',
 		notes:
-			'One turn different from the Pi3 algorithm. Worth learning the two side by side so the difference sticks.',
+			'Exactly one turn different from the Pi3 algorithm — the fifth move. Worth learning the two side by side so the difference sticks.',
 		tags: ['half-turns', 'fast']
 	},
 	{
@@ -1486,7 +1487,7 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'Sune with the solved corner at the front-right; the two front corners swap.',
 		notes:
-			'The COLL answer here is a seven-move Niklas, but a Niklas needs L turns, so Roux has to work harder. This is the price of keeping the M slice free.',
+			'The COLL answer to this case is seven moves, but it needs L turns, which Roux cannot spend here. Nine moves is the price of keeping the M slice free.',
 		tags: ['awkward']
 	},
 	{
@@ -1654,7 +1655,7 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [{ moves: "F U F' U' R' F' R" }, { moves: "R' F R U2 F U2 F'", label: 'alternative' }],
 		recognition: 'T shape in the T1 hold; the front-right and back-right corners swap.',
-		notes: 'Seven moves, the shortest case in the set apart from the six-move U6.',
+		notes: 'Seven moves; only the six-move U6 is shorter.',
 		tags: ['fast']
 	},
 	{
@@ -1727,7 +1728,7 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		algs: [{ moves: "R2 U' R F2 R' U R F2 R" }],
 		recognition: 'Headlights in the U1 hold; the left-hand pair of corners swaps.',
 		notes:
-			'A neat sandwich: R2, then a five-move filling, then F2 R. The two F2 turns cost nothing if the cube is flat on the table.',
+			'Two F2 turns hold the shape together. With the cube flat on the table they cost almost nothing, which makes this one of the quicker nine-move cases.',
 		tags: ['half-turns', 'fast']
 	},
 	{
@@ -1743,7 +1744,7 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'Headlights in the U1 hold; the front-right and back-right corners swap.',
 		notes:
-			'Two Aa inserts either side of an F, U2, F prime. Chunk it that way and eleven moves become three thoughts.',
+			'Two Aa inserts either side of F prime, U2, F. Chunk it that way and eleven moves become three thoughts.',
 		triggers: ['Aa insert'],
 		tags: ['long']
 	},
@@ -1796,8 +1797,9 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		],
 		recognition:
 			'Two corners show the top colour and they sit diagonally — the bowtie. Hold them at the front-right and back-left with the front-left corner twisted clockwise; the corners are already in order.',
-		notes: 'The longest case in the set. It is also rare, so most people leave it until last.',
-		tags: ['long', 'rare']
+		notes:
+			'Twelve moves with no obvious structure to hang them on, which is why most people leave this one until last.',
+		tags: ['long', 'awkward']
 	},
 	{
 		id: 'cmll-l-2',
@@ -1825,7 +1827,7 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		algs: [{ moves: "R' F2 R' U' R F2 R' U R2" }],
 		recognition: 'Bowtie in the L1 hold; the left-hand pair swaps.',
 		notes:
-			'Nine moves with two F2 turns doing the heavy lifting. The pattern is the same as U3 with the roles swapped.',
+			'Nine moves with two F2 turns doing the heavy lifting. It is the U3 algorithm run backwards, which is a pleasing accident and one less thing to memorise.',
 		tags: ['half-turns', 'fast']
 	},
 	{
@@ -1947,7 +1949,7 @@ export const COMMUTATOR_CASES: readonly AlgCase[] = [
 		recognition:
 			'Four moves you have done thousands of times. A is R, B is U: turn R, turn U, undo the R, undo the U.',
 		notes:
-			'R and U overlap in one place — the top-right edge of the cube — so that is the only region the two halves can disagree about. Everything R touches and U does not is put back by R prime; everything U touches and R does not is put back by U prime. Four corners and three edges move, which is more than we want, but the principle is here: a commutator only disturbs the overlap between its two halves.',
+			'A piece that neither turn touches never moves at all — that is what makes a commutator surgical. Everything that does change here, four corners and three edges, lives where R and U interfere with each other: the top layer and the right-hand face. Seven pieces is more than we want. The craft of building commutators is choosing two halves that interfere over as little as possible, and the next few entries show what happens when they interfere over exactly one piece.',
 		triggers: ['sexy move'],
 		tags: ['sexy', 'foundational']
 	},
@@ -2077,7 +2079,7 @@ export const COMMUTATOR_CASES: readonly AlgCase[] = [
 		recognition:
 			'Eight moves again, and again three corners. Compare with the D-interchange version and see which corners moved.',
 		notes:
-			'Same insertion shape, different interchange, different three corners. Once that clicks you are no longer learning algorithms: you are choosing an insertion for the piece you want to move and an interchange for the pair you want to swap, and the algorithm writes itself.',
+			'A three-move insertion again, but the interchange is a half turn this time, and a different three corners move. Once that clicks you are no longer learning algorithms: you choose an insertion for the piece you want to move and an interchange for the pair you want to swap, and the algorithm writes itself.',
 		tags: ['3-cycle', 'blind', 'theory']
 	}
 ];

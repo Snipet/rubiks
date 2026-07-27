@@ -39,7 +39,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		],
 		probability: '1/108',
 		recognition:
-			'A bare yellow cross with all four loose corner stickers on the front and back faces, two at each end. Nothing at all shows on the left or the right.',
+			'A bare yellow cross with a loose corner sticker at each end of the front face and each end of the back face. Nothing at all shows on the left or the right.',
 		notes:
 			'Two Sunes in a row solve it, which is where the name comes from; the listed algorithm is that pair with the join cancelled out. The case is symmetric, so two of the four possible starting turns work equally well — there is no recognition to do beyond spotting the bare cross.',
 		triggers: ['sexy move', 'Aa insert'],
@@ -98,8 +98,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'A fat bar down the right of the top face — the cross plus both right-hand corners. One lone yellow sticker sits at the left end of the back row and another at the left end of the front row.',
 		notes:
-			"Almost exactly OLL 33. Take `R U R' U' R' F R F'`, make the first and fifth moves wide, and you have this. Learning the two together costs very little.",
-		triggers: ['sexy move'],
+			"Almost exactly OLL 33. Take `R U R' U' R' F R F'` and make the first and fifth moves wide — the opening becomes a wide sexy move — and you have this. Learning the two together costs very little.",
 		tags: ['wide-turn', 'ocll', 't-case', 'short']
 	},
 	{
@@ -112,8 +111,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		algs: [
 			{ moves: "F' r U R' U' r' F R" },
 			{ moves: "R' F R B' R' F' R B", label: 'no wide turns' },
-			{ moves: "x' R U' R' D R U R' D'", label: 'rotation' },
-			{ moves: "x R' U R D' R' U' R D", label: 'rotation, other grip' }
+			{ moves: "x' R U' R' D R U R' D'", label: 'rotation' }
 		],
 		probability: '1/54',
 		recognition:
@@ -213,7 +211,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 	{
 		id: 'oll-05',
 		set: 'oll',
-		name: 'Left Square',
+		name: 'Square (front-right)',
 		shortName: 'OLL 5',
 		group: 'Squares',
 		tier: 'advanced',
@@ -224,16 +222,16 @@ export const OLL_CASES: readonly AlgCase[] = [
 		],
 		probability: '1/54',
 		recognition:
-			'A 2×2 block of yellow filling one corner of the top face — the front right as drawn — with the loose stickers wrapping round the left face and along the back.',
+			'A 2×2 block of yellow filling one corner of the top face — the front right as drawn — with the loose stickers wrapping round the left face and along the back. The front face stays bare.',
 		notes:
 			"The mirror of OLL 6. Both are a single wide turn either side of a short body, which makes them two of the cheapest cases in the set to pick up: r' opens this one, r opens its mirror.",
 		mirrorOf: 'oll-06',
-		tags: ['wide-turn', 'short', 'mirror', 'square', 'lefty']
+		tags: ['wide-turn', 'short', 'mirror', 'square']
 	},
 	{
 		id: 'oll-06',
 		set: 'oll',
-		name: 'Right Square',
+		name: 'Square (back-right)',
 		shortName: 'OLL 6',
 		group: 'Squares',
 		tier: 'advanced',
@@ -242,7 +240,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'The mirror of OLL 5: a 2×2 block of yellow, drawn here at the back right, with the loose stickers running down the left face and along the front.',
 		notes:
-			'Seven moves in one grip and comfortable one-handed. If you keep confusing it with OLL 5, look at which side face carries two of the loose stickers and which carries one.',
+			'Seven moves in one grip and comfortable one-handed. If you keep confusing it with OLL 5, look at the front and the back: OLL 5 shows a pair on the back and nothing on the front, and this one is the other way round.',
 		mirrorOf: 'oll-05',
 		tags: ['wide-turn', 'short', 'mirror', 'square', 'one-handed']
 	},
@@ -281,7 +279,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'A C opening to the right: both left-hand corners with the front and back edges, but not the left edge. The whole right face shows yellow, three stickers in a column.',
 		notes:
-			"Eight moves and nearly all right hand — R' then a sledgehammer then U R. One of the friendliest algorithms in the set, and a good early one to learn.",
+			"Eight moves and nearly all right hand — R' U', then a sledgehammer, then U R. One of the friendliest algorithms in the set, and a good early one to learn.",
 		triggers: ['sledgehammer'],
 		tags: ['c-shape', 'short', 'one-handed', 'fast']
 	},
@@ -305,7 +303,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'A staircase of yellow running from the back-left corner across to the front-right: corner, edge, centre, edge, corner. The left face shows two stickers and the back one.',
 		notes:
-			'The mirror of OLL 38, and the pair are easy to swap by accident. Trace the staircase and see which diagonal it runs along before you start.',
+			'The mirror of OLL 38, and the two get swapped by accident more often than most. Trace the staircase and see which diagonal it runs along before you start.',
 		mirrorOf: 'oll-38',
 		tags: ['w-shape', 'mirror', 'lefty']
 	},
@@ -324,7 +322,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'The mirror staircase: yellow runs from the back-right corner down to the front-left. The right face shows two stickers and the back one.',
 		notes:
-			'Sexy move, then its reverse, then a sledgehammer — three familiar pieces in a row, which is why most people find this the easier half of the pair.',
+			"R U R' U, then R U' R' U', then a sledgehammer — three familiar chunks end to end, which is why most people find this the more comfortable half of the pair.",
 		triggers: ['Aa insert', 'sledgehammer'],
 		mirrorOf: 'oll-36',
 		tags: ['w-shape', 'mirror', 'trigger-pair']
@@ -347,11 +345,11 @@ export const OLL_CASES: readonly AlgCase[] = [
 		],
 		probability: '1/54',
 		recognition:
-			'Every corner is already yellow. Two adjacent edges are flipped — the right and the front as drawn — leaving a square of seven stickers with a bite out of one side.',
+			'Every corner is already yellow. Two adjacent edges are flipped — the right and the front as drawn — so seven of the nine top stickers show yellow, with a notch either side of the front-right corner.',
 		notes:
-			'Only two edges to fix, so it should be fast. The pure slice version is lovely once M turns feel natural, and it is the same seven moves whichever way round you hold the case.',
+			'Only two edges to fix, so it should be quick. The pure slice version is worth having once M turns feel natural: seven moves against ten. Note that it wants the case half a turn round from the picture — the two flipped edges at the left and the back rather than the right and the front.',
 		triggers: ['Aa insert'],
-		tags: ['corners-done', 'slice', 'short', 'fast']
+		tags: ['corners-done', 'slice', 'fast']
 	},
 	{
 		id: 'oll-57',
@@ -363,8 +361,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		algs: [
 			{ moves: "R U R' U' M' U R U' r'" },
 			{ moves: "M' U M' U M' U2 M U M U M U2", label: 'slice' },
-			{ moves: "R U R' U' r R' U R U' r'", label: 'wide-turn' },
-			{ moves: "M U M U M U2 M' U M' U M' U2", label: 'slice, other direction' }
+			{ moves: "R U R' U' r R' U R U' r'", label: 'wide-turn' }
 		],
 		probability: '1/108',
 		recognition:
@@ -428,7 +425,6 @@ export const OLL_CASES: readonly AlgCase[] = [
 		tier: 'advanced',
 		algs: [
 			{ moves: "f' L' U' L U f" },
-			{ moves: "B' U' R' U R B", label: 'B-move' },
 			{ moves: "R' U' F' U F R", label: 'right-hand' },
 			{ moves: "F' U' L' U L F", label: 'F-move' }
 		],
@@ -436,7 +432,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'The left-hand column of the top face plus the front edge — a P facing left. The whole right face shows yellow.',
 		notes:
-			'Six moves, and the mirror of OLL 44. Both are the L-shape of two-look edge orientation arriving with the corners already sorted, so the fingers should be familiar.',
+			'Six moves, and the mirror of OLL 44. Both are the L-shape algorithm of two-look edge orientation arriving with the corners happening to fall right, so the fingers should already be familiar.',
 		mirrorOf: 'oll-44',
 		tags: ['p-shape', 'short', 'mirror', 'wide-turn', 'lefty', 'fast']
 	},
@@ -514,14 +510,13 @@ export const OLL_CASES: readonly AlgCase[] = [
 		tier: 'advanced',
 		algs: [
 			{ moves: "R U2 R2 U' R U' R' U2 F R F'" },
-			{ moves: "R' F R U R U' R2 F' R2 U' R' U R U R'", label: 'longer, easier' },
 			{ moves: "r U2 R2 F R F' U2 r' F R F'", label: 'wide-turn' }
 		],
 		probability: '1/108',
 		recognition:
 			'A bare line front to back with the left and right faces each showing a full column of yellow, and nothing at all on the front or the back.',
 		notes:
-			'One of the six rarest cases. The short version needs a confident R U2 R2; the longer alternative is friendlier to learn even though it costs five more moves.',
+			'One of the six rarest cases, and one of the least loved. The listed algorithm needs a confident R U2 R2 to get going; the wide-turn version swaps that for an r U2 R2 opening and finishes with two sledgehammers instead of one.',
 		triggers: ['Aa insert'],
 		tags: ['i-shape', 'line', 'rare', 'no-corners']
 	},
@@ -541,7 +536,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'A bare line left to right, with a yellow corner sticker at each end of the left face and each end of the right face.',
 		notes:
-			'Rare and genuinely awkward: three wide turns wrapped round a double sexy. Take it slowly the first few dozen times — rushing it is how you drop the cube.',
+			"Rare and genuinely awkward: four wide turns wrapped round a pair of U R U' R'. Take it slowly the first few dozen times — rushing it is how you drop the cube.",
 		triggers: ['Aa insert'],
 		tags: ['i-shape', 'line', 'rare', 'wide-turn', 'awkward', 'no-corners']
 	},
@@ -703,7 +698,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		probability: '1/54',
 		recognition: 'The middle bar with its extra corner at the back right.',
 		notes:
-			'A wide sexy move wrapped round a plain one. Mirror of OLL 15 and the friendlier of the two for most right-handers.',
+			"A plain sexy move with r U r' in front of it and r U' r' behind. Mirror of OLL 15 and the friendlier of the two for most right-handers.",
 		triggers: ['sexy move'],
 		mirrorOf: 'oll-15',
 		tags: ['knight', 'mirror', 'wide-turn']
@@ -763,8 +758,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		tier: 'advanced',
 		algs: [
 			{ moves: "R U R' U R U2 R' F R U R' U' F'" },
-			{ moves: "L U L' U L U2 L' F' L' U' L U F", label: 'left-hand' },
-			{ moves: "f R U R' U' f' U' R U R' U R U2 R'", label: 'T shape first' }
+			{ moves: "L U L' U L U2 L' F' L' U' L U F", label: 'left-hand' }
 		],
 		probability: '1/54',
 		recognition:
@@ -814,7 +808,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		probability: '1/54',
 		recognition:
 			'No corners at all: the back and right edges with the centre, making an L. The front face shows two yellow stickers at its left end.',
-		notes: "Two sledgehammers back to back with an R' in front and a U R behind. Mirror of OLL 48.",
+		notes: "Two sledgehammers back to back, with R' U' in front and U R behind. Mirror of OLL 48.",
 		triggers: ['sledgehammer'],
 		mirrorOf: 'oll-48',
 		tags: ['l-shape', 'mirror', 'no-corners', 'trigger-pair']
@@ -853,9 +847,9 @@ export const OLL_CASES: readonly AlgCase[] = [
 		],
 		probability: '1/54',
 		recognition:
-			'The same L as OLL 47 — the back and right edges with the centre — but here the whole left face shows yellow.',
+			'The same L as OLL 47 — the back and right edges with the centre — but here the whole left face shows yellow and the right face is bare.',
 		notes:
-			'Nine moves of nothing but r and U. Once the r2 is comfortable this is among the fastest cases in the set. Mirror of OLL 50.',
+			'Nine moves of nothing but r and U. Once the r2 is comfortable this is among the fastest cases in the set. Mirror of OLL 50. Do not confuse it with OLL 54, which has the same L and the same full left column but shows a sticker at each end of the right face.',
 		mirrorOf: 'oll-50',
 		tags: ['l-shape', 'mirror', 'wide-turn', 'no-corners', 'fast']
 	},
@@ -869,14 +863,13 @@ export const OLL_CASES: readonly AlgCase[] = [
 		algs: [
 			{ moves: "r' U r2 U' r2 U' r2 U r'" },
 			{ moves: "R' F R2 B' R2 F' R2 B R'", label: 'no wide turns' },
-			{ moves: "l' U l2 U' l2 U' l2 U l'", label: 'left-hand' },
-			{ moves: "R U2 R' U' R U' R' F R U R' U' F'", label: 'Anti-Sune first' }
+			{ moves: "l' U l2 U' l2 U' l2 U l'", label: 'left-hand' }
 		],
 		probability: '1/54',
 		recognition:
-			'An L made of the right and front edges with the centre, and the whole left face showing yellow.',
+			'An L made of the right and front edges with the centre, the whole left face showing yellow and the right face bare.',
 		notes:
-			"Mirror of OLL 49, done with r' instead of r. Same shape of algorithm, opposite direction.",
+			"Mirror of OLL 49, done with r' instead of r. Same shape of algorithm, opposite direction. OLL 53 shares this top face and left column; the bare right face is what separates them.",
 		mirrorOf: 'oll-49',
 		tags: ['l-shape', 'mirror', 'wide-turn', 'no-corners']
 	},
@@ -896,10 +889,10 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'The right and front edges with the centre. The left face is a full column of yellow and the right face shows a sticker at each end.',
 		notes:
-			'Ten moves but all in one grip, which makes it much easier than the count suggests. Mirror of OLL 54.',
+			'Eleven moves but all in one grip, which makes it less work than the count suggests. Mirror of OLL 54.',
 		triggers: ['Aa insert'],
 		mirrorOf: 'oll-54',
-		tags: ['l-shape', 'mirror', 'wide-turn', 'no-corners', 'lefty']
+		tags: ['l-shape', 'mirror', 'wide-turn', 'no-corners']
 	},
 	{
 		id: 'oll-54',
@@ -941,7 +934,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'A lightning bolt: the back and left edges with the centre, and the front-left corner hanging off the end.',
 		notes:
-			'Seven moves. The wide turns at either end do all the awkward work and the middle is a plain Sune, so it is really the Sune you already know. Mirror of OLL 8.',
+			'Seven moves — a Sune with its first and last turns made wide, so the rhythm is one your hands already have. Mirror of OLL 8.',
 		mirrorOf: 'oll-08',
 		tags: ['lightning', 'mirror', 'wide-turn', 'short', 'fast']
 	},
@@ -958,7 +951,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 			'The mirror bolt: the left and front edges with the centre and the back-left corner.',
 		notes: 'An Anti-Sune between two wide turns. Mirror of OLL 7 and equally short.',
 		mirrorOf: 'oll-07',
-		tags: ['lightning', 'mirror', 'wide-turn', 'short', 'fast', 'lefty']
+		tags: ['lightning', 'mirror', 'wide-turn', 'short', 'fast']
 	},
 	{
 		id: 'oll-11',
@@ -976,7 +969,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'A bolt running from the back-right corner along the back edge, through the centre and out to the left edge.',
 		notes:
-			'The sledgehammer sits in the middle of a wide-turn shell. Mirror of OLL 12 and the easier of the pair for most right-handers.',
+			'The sledgehammer sits in the middle of a wide-turn shell. Mirror of OLL 12 and the more comfortable of the pair for most right-handers.',
 		triggers: ['sledgehammer'],
 		mirrorOf: 'oll-12',
 		tags: ['lightning', 'mirror', 'wide-turn']
@@ -1033,7 +1026,9 @@ export const OLL_CASES: readonly AlgCase[] = [
 		],
 		probability: '1/54',
 		recognition: 'The mirror big bolt: the middle row with the back-left and front-right corners.',
-		notes: 'Mirror of OLL 39, in the right-hand grip, and one move shorter to reach for.',
+		notes:
+			'Mirror of OLL 39 — the same nine moves in the right-hand grip, with a sexy move in the middle. Most right-handers find this the more comfortable half of the pair.',
+		triggers: ['sexy move'],
 		mirrorOf: 'oll-39',
 		tags: ['lightning', 'big-lightning', 'mirror']
 	},
@@ -1094,7 +1089,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		],
 		probability: '1/54',
 		recognition:
-			'A dot with exactly one corner already yellow — the front right as drawn. Both the left and the right faces carry two stickers.',
+			'A dot with exactly one corner already yellow — the front right as drawn. The back face carries a pair of stickers at its left end while the front shows only its middle one.',
 		notes:
 			'The three twisted corners sit as they do in a Sune, so with the edges fixed you would be at OLL 27. Mirror of OLL 4.',
 		triggers: ['sexy move'],
@@ -1115,7 +1110,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		],
 		probability: '1/54',
 		recognition:
-			'The mirror of OLL 3: a dot with a single finished corner, at the back right as drawn.',
+			'The mirror of OLL 3: a dot with a single finished corner, at the back right as drawn. Here it is the front face that carries the pair at its left end, with only a middle sticker on the back.',
 		notes:
 			'The corners match an Anti-Sune. The only thing separating this from OLL 3 is the middle turn of the algorithm — U here, U prime there — so read the corner twists carefully.',
 		triggers: ['sexy move'],
@@ -1157,7 +1152,7 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'A dot with the two back corners already yellow and a solid bar of three yellow stickers right across the front face.',
 		notes:
-			'The bar on the front is the giveaway — no other dot shows three in a row on a single side face. Compare with OLL 19, whose top face looks identical.',
+			'OLL 19 has an identical top face, so go by the sides: this is the only dot with two finished corners that shows three in a row across one of them.',
 		triggers: ['Aa insert'],
 		tags: ['dot', 'long', 'no-edges', 'wide-turn']
 	},
@@ -1177,9 +1172,9 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'A dot with the two back corners done, like OLL 18, but here the loose stickers split between the left and right faces instead of forming a bar on the front.',
 		notes:
-			'The slice opening makes this much shorter than the other two-corner dots — sexy move, put the slice back, sledgehammer. Check the side faces before you start, because the top face is the same as OLL 18.',
+			'The slice opening makes this shorter than the other two-corner dots — M U, sexy move, put the slice back, sledgehammer. Check the side faces before you start, because the top face is the same as OLL 18.',
 		triggers: ['sexy move', 'sledgehammer'],
-		tags: ['dot', 'slice', 'short', 'no-edges']
+		tags: ['dot', 'slice', 'no-edges']
 	},
 	{
 		id: 'oll-20',
@@ -1197,8 +1192,8 @@ export const OLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'The checkerboard: all four corners already yellow and all four edges flipped, so the top face alternates. Every side face shows a single sticker in its middle.',
 		notes:
-			'The rarest case on the cube — roughly one solve in two hundred and sixteen. It is all slice work, and the pure M version is worth learning for the pattern alone.',
-		triggers: ['sexy move', 'Aa insert'],
+			'The rarest case on the cube — roughly one solve in two hundred and sixteen. It opens with a wide sexy move and is otherwise all slice work; the pure M version is worth learning for the pattern alone.',
+		triggers: ['Aa insert'],
 		tags: ['dot', 'rare', 'slice', 'symmetric', 'no-edges']
 	}
 ];
@@ -1222,7 +1217,7 @@ export const TWO_LOOK_OLL_EDGE_CASES: readonly AlgCase[] = [
 		algs: [{ moves: "F R U R' U' F' f R U R' U' f'" }],
 		probability: '1/8',
 		recognition:
-			'No yellow edges at all on the top face — just the centre. All four edges are flipped.',
+			'No yellow edges at all on the top face — only the centre. All four edges are flipped. Whatever the corners are doing in the picture is incidental; this step ignores them.',
 		notes:
 			'Run the line algorithm and then the L-shape algorithm and the dot is gone. Either order orients the edges; the order only changes which corner case you land in, and you have an algorithm for all seven of those.',
 		triggers: ['sexy move'],
@@ -1238,7 +1233,7 @@ export const TWO_LOOK_OLL_EDGE_CASES: readonly AlgCase[] = [
 		algs: [{ moves: "F R U R' U' F'" }],
 		probability: '1/4',
 		recognition:
-			'A horizontal line of three yellow stickers across the middle of the top face: the left and right edges are already oriented.',
+			'A horizontal line of three yellow stickers across the middle of the top face: the left and right edges are already oriented. Read the edges only — the corners can be anything.',
 		notes:
 			'Hold the line so it runs left to right, as drawn. Held front to back the same six moves leave you worse off, so check before you turn. This is also OLL 45, so nothing here is wasted.',
 		triggers: ['sexy move'],
@@ -1254,7 +1249,7 @@ export const TWO_LOOK_OLL_EDGE_CASES: readonly AlgCase[] = [
 		algs: [{ moves: "f R U R' U' f'" }],
 		probability: '1/2',
 		recognition:
-			'Two adjacent yellow edges with the centre, making a small L. As drawn the arms point to the right and towards you.',
+			'Two adjacent yellow edges with the centre, making a small L. As drawn the arms point to the right and towards you. As with the other two, only the edges matter here.',
 		notes:
 			'The most common of the three — it turns up half the time. It is the line algorithm with the two F turns made wide, so learn the line first and this arrives nearly free. This is also OLL 44.',
 		triggers: ['sexy move'],

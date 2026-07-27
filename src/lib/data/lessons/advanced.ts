@@ -182,7 +182,7 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'prose',
-				text: 'They cover one solve in eight. So does an important-looking fact: the entire dot family, eight algorithms, also covers one solve in eight. Hold on to that comparison, because it decides the order everything else goes in.'
+				text: 'Those seven cover one solve in eight. Hold that figure next to another one: the eight dot cases, the longest algorithms in the set, also cover one solve in eight between them. Seven cases you already have against eight you have not started, for exactly the same share of your solving. That comparison decides the order everything else goes in.'
 			},
 			{ kind: 'heading', text: 'The order' },
 			{
@@ -207,7 +207,12 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 						'4 (9, 10, 35, 37)',
 						'Sune-shaped, and the recognition is distinctive'
 					],
-					['8', 'Lightning bolts', '6 (7, 8, 11, 12, 39, 40)', 'Three mirror pairs, all short'],
+					[
+						'8',
+						'Lightning bolts',
+						'6 (7, 8, 11, 12, 39, 40)',
+						'Three mirror pairs, two of them seven turns each'
+					],
 					[
 						'9',
 						'Knight move shapes',
@@ -220,7 +225,7 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 					['13', 'Dots', '8 (1, 2, 3, 4, 17, 18, 19, 20)', 'Rarest per case, longest to execute']
 				],
 				caption:
-					'Seven plus fifty gives fifty-seven. The first six lines are twenty-one cases and take about three months at two a week — and at the end of them the eight commonest shapes on the cube are one-look.'
+					'Seven plus fifty gives fifty-seven. Groups one to six are fourteen algorithms, seven weeks at two a week — and at the end of them you are one-look on more than a third of your solves.'
 			},
 			{
 				kind: 'note',
@@ -297,7 +302,7 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'prose',
-				text: 'And they are the longest. Most dot algorithms run to eleven, twelve or thirteen turns, against seven or eight for the fish and the squares. Eight long algorithms, learnt last, for the least frequent eighth of your solves.'
+				text: 'And they are the longest. Every dot algorithm in the library runs to eleven, twelve or thirteen turns, against six or seven for the squares and the shorter P shapes. Eight long algorithms, learnt last, for the least frequent eighth of your solves.'
 			},
 			{
 				kind: 'note',
@@ -383,7 +388,7 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'prose',
-				text: '**Then count the corners showing yellow on top.** Never one and never three of the edges, but corners come as none, one, two or four — three is impossible, for the same reason it was impossible in the beginner method.'
+				text: '**Then count the corners showing yellow on top.** The answer is none, one, two or four. Three is impossible, for the reason the beginner method gave: the twists of the four corners have to balance out, and three corners already facing up leave the fourth with nothing to balance against.'
 			},
 			{
 				kind: 'table',
@@ -545,7 +550,7 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'prose',
-				text: 'There is no other possibility. Two or three faces with headlights cannot happen, which makes this the cheapest glance in the whole of CFOP: one look round the cube and twenty-one cases become four, twelve or five.'
+				text: 'There is no other possibility. Two faces with headlights cannot happen, and neither can three, which makes this the cheapest question in the whole of CFOP: ask it of each face and twenty-one cases become four, twelve or five.'
 			},
 			{ kind: 'heading', text: 'Then the blocks' },
 			{
@@ -607,9 +612,9 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'alg',
-				moves: "R2 U R' U R' U' R U' R2 U' D R' U R D'",
+				moves: "R2 Uw R' U R' U' R Uw' R2 F' U F",
 				caption:
-					'**Ga.** Fifteen turns with a `D` turn in the middle that most people find strange for a day and then stop noticing. The other three G permutations share its shape closely enough that the fourth takes an afternoon once you have the first three.'
+					'**Ga.** Twelve turns, held together by a pair of wide `Uw` turns that let the whole thing run without a regrip. There is a version with `D` turns instead if wide turns of the top layer feel wrong; it costs three more moves. The other three G permutations are close enough in shape that the fourth takes an afternoon once you have the first three.'
 			},
 			{ kind: 'heading', text: 'An order for the twenty-one' },
 			{
@@ -638,9 +643,9 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'alg',
-				moves: "R U R' F' R U R' U' R' F R2 U' R'",
+				moves: "R U R' F' R U R' U' R' F R2 U' R' U'",
 				caption:
-					'**The Jb permutation.** Thirteen turns. One face is completely solved — the bar — and the other three faces each show a block at the same end. Ja is its mirror, with the blocks at the other end.'
+					"**The Jb permutation.** One face is completely solved — the bar — and the other three faces each show a block at the same end. Ja is its mirror, with the blocks at the other end. Written here with the final `U'` included, because that turn is part of the solve whether or not the list you copied it from says so."
 			},
 			{ kind: 'heading', text: 'Two-sided recognition' },
 			{
@@ -663,7 +668,7 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 				items: [
 					'**The time attack.** All twenty-one in a row, timed, from a list. Under a minute is a reasonable first target; solvers with a fast last layer manage half that. It is the single most informative minute of practice in cubing, because the slow ones announce themselves.',
 					'**Four angles.** Take one case and drill it from all four positions of the top layer, so that recognising it never depends on which face you happened to be looking at.',
-					'**Mirror pairs together.** Ja against Jb, Ga against Gb, Ua against Ub. Drilling a case against the one it is confused with is worth more than drilling it alone.',
+					'**Mirror pairs together.** Ja against Jb, Ra against Rb, Ua against Ub, and — once you meet them — Ga against Gc and Gb against Gd. Drilling a case against the one it is confused with is worth more than drilling it alone.',
 					'**Recognition only.** Set up a case, name it, do not solve it. Twenty cases a minute, and it is the drill that moves your times most in the week before a competition.'
 				]
 			},
@@ -842,7 +847,7 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 		prerequisites: ['cross-to-first-pair'],
 		outcomes: [
 			'Break your solve into four splits and say which one is costing you',
-			'Recognise a lookahead problem, a recognition problem and a turning problem apart',
+			'Tell a lookahead problem, a recognition problem and a turning problem apart',
 			'Build a practice week that works on one thing at a time',
 			'Say honestly which algorithms sub-20 requires and which it does not'
 		],
