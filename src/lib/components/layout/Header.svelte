@@ -8,7 +8,7 @@
 -->
 <script lang="ts">
 	import { page } from '$app/state';
-	import { base } from '$app/paths';
+	import { base, resolve } from '$app/paths';
 	import { NAV, sectionFor } from '$lib/nav';
 	import Wordmark from './Wordmark.svelte';
 	import SkillPicker from './SkillPicker.svelte';
@@ -34,7 +34,7 @@
 
 <header class="header">
 	<div class="header__inner page page--wide">
-		<a class="brand" href="{base}/" aria-label="Home">
+		<a class="brand" href={resolve('/')} aria-label="Home">
 			<span class="brand__mark" aria-hidden="true">
 				<svg viewBox="0 0 64 64" width="26" height="26">
 					<path d="M32 4 60 18 32 32 4 18Z" fill="var(--sticker-u)" />
@@ -58,7 +58,7 @@
 					class="nav__link"
 					class:nav__link--on={current === item.id}
 					data-section={item.id}
-					href="{base}{item.href}"
+					href={resolve(item.href)}
 					aria-current={current === item.id ? 'page' : undefined}
 				>
 					{item.label}
@@ -107,7 +107,7 @@
 					class="drawer__link"
 					class:drawer__link--on={current === item.id}
 					data-section={item.id}
-					href="{base}{item.href}"
+					href={resolve(item.href)}
 				>
 					<span class="drawer__label">{item.label}</span>
 					<span class="drawer__blurb">{item.blurb}</span>

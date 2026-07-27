@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import CubeDiagram from '$components/cube/CubeDiagram.svelte';
 	import AlgCase from '$components/cube/AlgCase.svelte';
 	import Chip from '$components/ui/Chip.svelte';
@@ -146,7 +146,7 @@
 		<div class="sets__grid">
 			{#each ALG_SETS as set (set.id)}
 				{@const sample = thumbnail(set.id)}
-				<a class="set" href="{base}/algorithms/{set.id}">
+				<a class="set" href={resolve('/algorithms/[set]', { set: set.id })}>
 					<div class="set__thumb">
 						{#if sample}
 							<CubeDiagram

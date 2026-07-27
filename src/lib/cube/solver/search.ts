@@ -136,7 +136,13 @@ export function ida<S>(problem: IdaProblem<S>): number[] | null {
 
 	const path: number[] = [];
 
-	const search = (state: S, depth: number, bound: number, lastFace: number, lastAxis: number): boolean => {
+	const search = (
+		state: S,
+		depth: number,
+		bound: number,
+		lastFace: number,
+		lastAxis: number
+	): boolean => {
 		const h = heuristic(state);
 		if (depth + h > bound) return false;
 		if (isGoal(state)) return true;

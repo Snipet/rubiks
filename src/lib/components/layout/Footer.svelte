@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { NAV } from '$lib/nav';
 	import Wordmark from './Wordmark.svelte';
 	import { algorithmCount, ALL_CASES } from '$data/algorithms';
@@ -20,9 +20,9 @@
 
 		<nav class="footer__nav" aria-label="Footer">
 			{#each NAV as item (item.id)}
-				<a href="{base}{item.href}" data-section={item.id}>{item.label}</a>
+				<a href={resolve(item.href)} data-section={item.id}>{item.label}</a>
 			{/each}
-			<a href="{base}/about">About</a>
+			<a href={resolve('/about')}>About</a>
 		</nav>
 
 		<p class="footer__legal">

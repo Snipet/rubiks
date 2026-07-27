@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import AlgCase from '$components/cube/AlgCase.svelte';
 	import Chip from '$components/ui/Chip.svelte';
 	import Button from '$components/ui/Button.svelte';
 	import Segmented from '$components/ui/Segmented.svelte';
 	import { pageTitle } from '$lib/brand';
-	import { settings } from '$state/settings.svelte';
 	import { progress } from '$state/progress.svelte';
 	import { SKILL_LABELS, SKILL_TIERS, type SkillTier } from '$data/types';
 
@@ -59,7 +58,7 @@
 
 <div class="page page--wide">
 	<nav class="crumbs" aria-label="Breadcrumb">
-		<a href="{base}/algorithms">All algorithms</a>
+		<a href={resolve('/algorithms')}>All algorithms</a>
 		<span aria-hidden="true">/</span>
 		<span>{data.set.shortName}</span>
 	</nav>
@@ -78,8 +77,8 @@
 			</div>
 		</div>
 		<aside class="head__aside">
-			<Button variant="secondary" href="{base}/trainer">Drill this set</Button>
-			<Button variant="ghost" href="{base}/solve">Find my case</Button>
+			<Button variant="secondary" href={resolve('/trainer')}>Drill this set</Button>
+			<Button variant="ghost" href={resolve('/solve')}>Find my case</Button>
 		</aside>
 	</header>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import Wordmark from '$components/layout/Wordmark.svelte';
 	import SkillPicker from '$components/layout/SkillPicker.svelte';
@@ -65,8 +65,8 @@
 			<p class="hero__lede">{TAGLINE}</p>
 
 			<div class="hero__actions">
-				<Button variant="primary" size="lg" href="{base}/learn">Start learning</Button>
-				<Button variant="secondary" size="lg" href="{base}/solve">
+				<Button variant="primary" size="lg" href={resolve('/learn')}>Start learning</Button>
+				<Button variant="secondary" size="lg" href={resolve('/solve')}>
 					I have a cube in front of me
 				</Button>
 			</div>
@@ -110,7 +110,7 @@
 
 	<section class="showcase" aria-label="Example cases">
 		{#each showcase as item (item.alg)}
-			<a class="showcase__item" href="{base}/algorithms">
+			<a class="showcase__item" href={resolve('/algorithms')}>
 				<CubeDiagram facelets={item.state} view={item.view} size={92} />
 				<span class="showcase__label">
 					<Chip tone="section">{item.label}</Chip>
@@ -135,7 +135,7 @@
 
 	<section class="sections" aria-label="Sections">
 		{#each NAV as item (item.id)}
-			<a class="section-card" data-section={item.id} href="{base}{item.href}">
+			<a class="section-card" data-section={item.id} href={resolve(item.href)}>
 				<span class="section-card__swatch" aria-hidden="true"></span>
 				<span class="section-card__label">{item.label}</span>
 				<span class="section-card__blurb">{item.blurb}</span>
@@ -160,7 +160,7 @@
 				Case diagrams are computed from the algorithm rather than drawn alongside it, so a picture
 				cannot disagree with its moves.
 			</p>
-			<Button variant="secondary" href="{base}/about">How the checking works</Button>
+			<Button variant="secondary" href={resolve('/about')}>How the checking works</Button>
 		</div>
 
 		{#if featured.length > 0}

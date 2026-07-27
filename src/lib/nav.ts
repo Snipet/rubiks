@@ -7,11 +7,14 @@
  * before you have read a word.
  */
 
+import type { Pathname } from '$app/types';
+
 export type SectionId = 'learn' | 'algorithms' | 'solve' | 'trainer' | 'timer' | 'reference';
 
 export interface NavItem {
 	id: SectionId;
-	href: string;
+	/** A concrete path, so it can be handed straight to `resolve()`. */
+	href: Pathname;
 	label: string;
 	/** One line for the menu and the landing-page cards. */
 	blurb: string;
@@ -22,42 +25,42 @@ export interface NavItem {
 export const NAV: readonly NavItem[] = [
 	{
 		id: 'learn',
-		href: '/learn',
+		href: '/learn/',
 		label: 'Learn',
 		blurb: 'Four tracks, from your very first solve to full CFOP and beyond.',
 		match: ['/learn']
 	},
 	{
 		id: 'algorithms',
-		href: '/algorithms',
+		href: '/algorithms/',
 		label: 'Algorithms',
 		blurb: 'Every case worth knowing, searchable, with diagrams generated from the moves.',
 		match: ['/algorithms']
 	},
 	{
 		id: 'solve',
-		href: '/solve',
+		href: '/solve/',
 		label: 'Solve',
 		blurb: 'Type in the cube in your hands and get advice pitched at your level.',
 		match: ['/solve']
 	},
 	{
 		id: 'trainer',
-		href: '/trainer',
+		href: '/trainer/',
 		label: 'Trainer',
 		blurb: 'Drill the cases you keep fumbling, on a schedule that remembers which ones.',
 		match: ['/trainer']
 	},
 	{
 		id: 'timer',
-		href: '/timer',
+		href: '/timer/',
 		label: 'Timer',
 		blurb: 'Scrambles, inspection, and the averages competitions actually use.',
 		match: ['/timer']
 	},
 	{
 		id: 'reference',
-		href: '/notation',
+		href: '/notation/',
 		label: 'Reference',
 		blurb: 'Notation, glossary, method comparison, finger tricks and hardware notes.',
 		match: ['/notation', '/glossary', '/methods', '/tips', '/about']

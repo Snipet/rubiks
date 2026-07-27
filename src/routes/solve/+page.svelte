@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import Cube3D from '$components/cube/Cube3D.svelte';
 	import CubeNet from '$components/cube/CubeNet.svelte';
 	import Button from '$components/ui/Button.svelte';
@@ -335,7 +335,7 @@
 				{#if plan.analysis.solved}
 					<p class="solved-note">
 						Nothing left to do. Scramble it and go again — or take a look at the
-						<a href="{base}/trainer">trainer</a> if there is a case you keep fumbling.
+						<a href={resolve('/trainer')}>trainer</a> if there is a case you keep fumbling.
 					</p>
 				{:else}
 					<h3 class="advice-heading">
@@ -381,7 +381,7 @@
 											{playing ? 'Turning…' : 'Do it on this cube'}
 										</Button>
 										{#if rec.setId}
-											<Button size="sm" variant="ghost" href="{base}/algorithms">
+											<Button size="sm" variant="ghost" href={resolve('/algorithms')}>
 												See the algorithms
 											</Button>
 										{/if}

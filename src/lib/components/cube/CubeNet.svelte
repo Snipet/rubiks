@@ -99,7 +99,6 @@
 	The analyser cannot follow the conditional: `tabindex` is only set on stickers
 	that also carry `role="button"`, and centres get neither.
 -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <svg
 	class="net {className}"
