@@ -185,8 +185,8 @@ function f2lCandidates(key: string, slot: F2lSlotId) {
  */
 function strandedPieces(state: Facelets): number {
 	const { cp, ep } = faceletsToCubie(state);
-	const cornerHomes = F2L_SLOTS.map((s) => s.corner);
-	const edgeHomes = F2L_SLOTS.map((s) => s.edge);
+	const cornerHomes: number[] = F2L_SLOTS.map((s) => s.corner);
+	const edgeHomes: number[] = F2L_SLOTS.map((s) => s.edge);
 	let n = 0;
 	for (const spec of F2L_SLOTS) {
 		// Only pieces that belong to *some* slot count. A last-layer piece sitting
