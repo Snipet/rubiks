@@ -61,6 +61,12 @@
 		{:else if token.kind === 'strong'}<strong>{token.value}</strong>
 		{:else if token.kind === 'em'}<em>{token.value}</em>
 		{:else if token.kind === 'code'}<code>{token.value}</code>
-		{:else}<a href={href(token.href)}>{token.value}</a>{/if}
+		{:else}<!--
+			The link target comes from lesson text at runtime, so it cannot be a
+			literal route id. `href()` puts internal paths through `resolve()` and
+			leaves anything with a scheme alone; the rule cannot see through the call.
+		-->
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+			<a href={href(token.href)}>{token.value}</a>{/if}
 	{/each}
 </svelte:element>
