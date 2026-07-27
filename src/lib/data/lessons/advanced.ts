@@ -173,7 +173,7 @@ export const ADVANCED_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'prose',
-				text: 'The order below fixes that. It starts with the groups you can finish in a sitting, keeps mirror pairs together, and leaves the two big awkward families until you have momentum.'
+				text: 'The order below fixes that. It starts with the groups you can finish in a sitting, keeps every mirror pair together, and leaves the six L shapes and the eight dots until you have months of momentum behind you.'
 			},
 			{ kind: 'heading', text: 'The seven you already have' },
 			{
