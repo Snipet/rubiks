@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import CubeDiagram from '$components/cube/CubeDiagram.svelte';
 	import AlgString from '$components/ui/AlgString.svelte';
@@ -14,9 +15,12 @@
 
 	type Stage = 'question' | 'answer';
 
+	// Seeded synchronously rather than in an effect, so the prerendered page shows
+	// a real case instead of an empty state that only fills in once JavaScript has
+	// run. The reader's own level and a random pick are applied on mount.
 	let setId = $state<AlgSetId>('pll');
 	let stage = $state<Stage>('question');
-	let current = $state<ResolvedAlgCase | null>(null);
+	let current = $state<ResolvedAlgCase | null>(casesOfSet('pll')[0] ?? null);
 	let setup = $state('');
 	let startedAt = $state(0);
 	let lastResult = $state<{ correct: boolean; ms: number } | null>(null);
@@ -70,11 +74,9 @@
 
 	const stats = $derived(current ? progress.caseProgress(current.id) : undefined);
 
-	// Start on whatever set the reader's level suggests, once only.
-	let started = $state(false);
-	$effect(() => {
-		if (started) return;
-		started = true;
+	// Once in the browser, switch to whatever set the reader's level suggests and
+	// pick a case at random.
+	onMount(() => {
 		const tier = settings.current.skill;
 		setId = tier === 'beginner' ? 'beginner-ll' : tier === 'intermediate' ? 'pll' : 'oll';
 		next();
