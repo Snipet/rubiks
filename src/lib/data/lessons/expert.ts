@@ -150,7 +150,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 			{
 				kind: 'note',
 				tone: 'history',
-				text: 'ZB is named for Zbigniew Zborowski and Ron van Bruchem, who worked out the last-layer set in the early 2000s as part of a whole method built around guaranteed edge orientation. Winter Variation carries Michael Winter\'s name. The habit of naming sets after the person who first wrote them down is why cubing vocabulary reads like a list of strangers.'
+				text: "ZB is named for Zbigniew Zborowski and Ron van Bruchem, who worked out the last-layer set in the early 2000s as part of a whole method built around guaranteed edge orientation. Winter Variation carries Michael Winter's name. The habit of naming sets after the person who first wrote them down is why cubing vocabulary reads like a list of strangers."
 			},
 			{
 				kind: 'jump',
@@ -317,7 +317,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 			{
 				kind: 'note',
 				tone: 'history',
-				text: 'The same forty-two cases turn up in the Roux method as **CMLL**, where the rules are looser — a CMLL algorithm has to leave two blocks intact but may do what it likes to the edges. A good third of the algorithms are shared outright, which means learning COLL quietly hands you most of a different method\'s third step.'
+				text: "The same forty-two cases turn up in the Roux method as **CMLL**, where the rules are looser — a CMLL algorithm has to leave two blocks intact but may do what it likes to the edges. A good third of the algorithms are shared outright, which means learning COLL quietly hands you most of a different method's third step."
 			},
 			{
 				kind: 'jump',
@@ -329,7 +329,8 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 				kind: 'jump',
 				href: '/trainer/',
 				label: 'Drill a family until it names itself',
-				blurb: 'The trainer shows a case, times your answer, and returns to the slow ones more often.'
+				blurb:
+					'The trainer shows a case, times your answer, and returns to the slow ones more often.'
 			}
 		]
 	},
@@ -449,16 +450,24 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 			{ kind: 'heading', text: 'Move counts, honestly' },
 			{
 				kind: 'prose',
-				text: 'Roux is usually quoted at forty-five to fifty moves against CFOP\'s fifty-five to sixty, and the gap is real but smaller than it looks. Roux counts are given in **slice-turn metric**, where an `M` counts as one move. Count the slices as two, which is what the half-turn metric does, and most of the advantage disappears.'
+				text: "Roux is usually quoted at forty-five to fifty moves against CFOP's fifty-five to sixty, and the gap is real but smaller than it looks. Roux counts are given in **slice-turn metric**, where an `M` counts as one move. Count the slices as two, which is what the half-turn metric does, and most of the advantage disappears."
 			},
 			{
 				kind: 'table',
 				headers: ['', 'CFOP', 'Roux'],
 				rows: [
-					['Algorithms for the full method', '78, plus F2L worked out', '42, plus everything else worked out'],
+					[
+						'Algorithms for the full method',
+						'78, plus F2L worked out',
+						'42, plus everything else worked out'
+					],
 					['Typical solve', 'About 55 turns', 'About 48, counting a slice as one'],
 					['Cube rotations', 'Several per solve', 'Usually one'],
-					['What it demands of you', 'Recognition and memory', 'Block building and planning, under time'],
+					[
+						'What it demands of you',
+						'Recognition and memory',
+						'Block building and planning, under time'
+					],
 					['Where it hurts', 'The pause before OLL', 'The pause after the first block']
 				],
 				caption:
@@ -488,7 +497,8 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 				kind: 'jump',
 				href: '/algorithms/cmll/',
 				label: 'The CMLL set',
-				blurb: 'Forty-two corner cases with the blocks left standing, grouped by how many corners face up.'
+				blurb:
+					'Forty-two corner cases with the blocks left standing, grouped by how many corners face up.'
 			},
 			{
 				kind: 'jump',
@@ -537,7 +547,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'prose',
-				text: 'This is where ZZ feels different rather than faster. The move count is much like CFOP\'s. What changes is that the turning is continuous, the pieces stay where your eyes left them, and lookahead comes more readily because nothing you are tracking ever swings out of sight.'
+				text: "This is where ZZ feels different rather than faster. The move count is much like CFOP's. What changes is that the turning is continuous, the pieces stay where your eyes left them, and lookahead comes more readily because nothing you are tracking ever swings out of sight."
 			},
 			{ kind: 'heading', text: 'The last layer, guaranteed' },
 			{
@@ -587,13 +597,13 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 					[
 						'ZZ',
 						'Orient every edge before you build',
-						'Anything from 21 to 493',
+						'28 to 493, depending how far you take the last layer',
 						'People who hate rotating, and anyone tempted by ZBLL.'
 					],
 					[
 						'Petrus',
 						'Grow one block into the whole cube',
-						'Around 20',
+						'About 16, with a two-look last layer',
 						'People who would rather think than memorise.'
 					],
 					[
@@ -658,7 +668,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 			{ kind: 'heading', text: 'The pattern' },
 			{
 				kind: 'prose',
-				text: 'A **commutator** is written `[A, B]` and means: do `A`, do `B`, undo `A`, undo `B`. If `A` is `R U R\'` then undoing it is `R U\' R\'`, so `[R U R\', D]` written out in full is `R U R\' D R U\' R\' D\'`.'
+				text: "A **commutator** is written `[A, B]` and means: do `A`, do `B`, undo `A`, undo `B`. If `A` is `R U R'` then undoing it is `R U' R'`, so `[R U R', D]` written out in full is `R U R' D R U' R' D'`."
 			},
 			{
 				kind: 'prose',
@@ -668,7 +678,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 				kind: 'note',
 				tone: 'insight',
 				title: 'Why so little survives',
-				text: 'Take the pieces `A` moves and the pieces `B` moves. Anything `A` touches that `B` leaves alone gets moved by `A` and put back by the `A\'` — because nothing happened to it in between. The same argument runs for `B`. What cannot cancel is the handful of pieces both of them touch. Arrange for `A` and `B` to have exactly **one** piece in common and the survivors are exactly three pieces, cycled.'
+				text: "Take the pieces `A` moves and the pieces `B` moves. Anything `A` touches that `B` leaves alone gets moved by `A` and put back by the `A'` — because nothing happened to it in between. The same argument runs for `B`. What cannot cancel is the handful of pieces both of them touch. Arrange for `A` and `B` to have exactly **one** piece in common and the survivors are exactly three pieces, cycled."
 			},
 			{ kind: 'heading', text: 'Three is the smallest number' },
 			{
@@ -717,7 +727,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 				kind: 'alg',
 				moves: "M' U2 M U2",
 				caption:
-					'`[M\', U2]`. The up-front edge drops to the down-front, the down-front goes round to the up-back, and the up-back comes to the up-front. No corner moves, no edge is flipped, and it costs four turns. This one is worth doing slowly and watching.'
+					"`[M', U2]`. The up-front edge drops to the down-front, the down-front goes round to the up-back, and the up-back comes to the up-front. No corner moves, no edge is flipped, and it costs four turns. This one is worth doing slowly and watching."
 			},
 			{
 				kind: 'prose',
@@ -732,7 +742,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 				kind: 'alg',
 				moves: "U M' U2 M U2 U'",
 				caption:
-					'`[U: [M\', U2]]`. The setup turn brings a different edge into the slice\'s reach, the commutator cycles, and the setup is undone. Now it is the up-right, up-left and down-front edges that move. The last two turns collapse into one when you actually do it.'
+					"`[U: [M', U2]]`. The setup turn brings a different edge into the slice's reach, the commutator cycles, and the setup is undone. Now it is the up-right, up-left and down-front edges that move. The last two turns collapse into one when you actually do it."
 			},
 			{
 				kind: 'note',
@@ -793,7 +803,8 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 				kind: 'jump',
 				href: '/algorithms/commutators/',
 				label: 'The commutator set',
-				blurb: 'A teaching sequence rather than a list to drill: interchanges, insertions and worked cycles.'
+				blurb:
+					'A teaching sequence rather than a list to drill: interchanges, insertions and worked cycles.'
 			},
 			{
 				kind: 'jump',
