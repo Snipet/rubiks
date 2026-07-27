@@ -235,7 +235,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-13',
 		algs: [
 			{ moves: "U' R U R' U' R U2 R'" },
-			{ moves: "F U F' R' F R U' F'", label: 'front-face' }
+			{ moves: "F U F' R' F R U' F'", label: 'front-face start' }
 		],
 		recognition:
 			'Corner above the slot with the cross colour facing you, edge at the back of the top layer with its front colour on top.',
@@ -392,7 +392,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-20',
 		algs: [
 			{ moves: "R U' R' U2 R U R'" },
-			{ moves: "U2 F' U' F R U R'", label: 'front-face' },
+			{ moves: "U2 F' U' F R U R'", label: 'front-face start' },
 			{
 				moves: "U2 R U R' U R U' R'",
 				label: 'via case 3',
@@ -672,7 +672,11 @@ export const F2L_CASES: readonly AlgCase[] = [
 				label: 'shorter',
 				note: 'Six moves, if you do not mind changing hands.'
 			},
-			{ moves: "R U' R2 F R F'", label: 'alternative' }
+			{
+				moves: "R U' R2 F R F'",
+				label: 'right-hand start',
+				note: 'The other six-move route; it opens on the right instead of the left.'
+			}
 		],
 		recognition:
 			'The corner is already down in its slot but twisted, with the cross colour showing on the front face; the edge is in the top layer on the right with its front colour on top.',
@@ -697,7 +701,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 				label: 'double hedgeslammer',
 				note: 'The same trigger twice — satisfying, one move longer.'
 			},
-			{ moves: "U2 F' U F R U R'", label: 'front-face' }
+			{ moves: "U2 F' U F R U R'", label: 'front-face start' }
 		],
 		recognition:
 			'The corner is in its slot but twisted, cross colour showing on the right-hand face; the edge is in the top layer on the right with its front colour on top.',
@@ -718,7 +722,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		algs: [
 			{ moves: "R U2 R' U2 F' U' F" },
 			{ moves: "U2 R U' R' F R' F' R", label: 'hedgeslammer finish' },
-			{ moves: "U2 F R' F' R F' U' F", label: 'front-face' }
+			{ moves: "U2 F R' F' R F' U' F", label: 'hedgeslammer start' }
 		],
 		recognition:
 			'The corner is already solved in its slot; the edge is in the top layer on the right with its side colour on top.',

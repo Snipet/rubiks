@@ -34,13 +34,6 @@ export const TIPS: readonly Tip[] = [
 		tier: 'intermediate'
 	},
 	{
-		id: 'slow-solve-drill',
-		title: 'Do a sixty-second solve on purpose',
-		body: 'Set yourself a target of sixty seconds and use every one of them. The rule is that the cube never stops moving and you never look for a piece you have not already found. If you have to break the rule, you were going too fast. Two or three of these at the start of a session are worth more than the twenty timed solves that follow.',
-		category: 'lookahead',
-		tier: 'intermediate'
-	},
-	{
 		id: 'cross-on-the-bottom',
 		title: 'Keep the cross on the bottom, even though you cannot see it',
 		body: 'Building the cross on the bottom and leaving it there means you never rotate the cube to check it, and it forces you to track the edges rather than watch them. It is worse for about a week and better for ever afterwards. If you learnt with the cross on top, this is the change worth making before any algorithm learning.',
@@ -134,20 +127,6 @@ export const TIPS: readonly Tip[] = [
 		alg: "L' U' L U"
 	},
 	{
-		id: 'learn-algs-slowly-first',
-		title: 'The first fifty repetitions of a new algorithm should be slow and deliberate',
-		body: 'Speed comes from the fingering, and the fingering is decided in the first few dozen attempts. If you drill a new case fast before you have chosen where each finger goes, you memorise the mess and then have to unlearn it. Do it slowly enough to notice every regrip, then remove the regrips, then go faster.',
-		category: 'fingertricks',
-		tier: 'intermediate'
-	},
-	{
-		id: 'count-your-regrips',
-		title: 'Count the regrips in your worst algorithm',
-		body: 'Film one algorithm and count how many times you let go of the cube to reposition your hand. Every regrip is roughly the cost of two turns. Most people have one or two algorithms carrying three unnecessary regrips, and replacing those with a better-fingered version of the same case is the cheapest time you will ever buy.',
-		category: 'fingertricks',
-		tier: 'advanced'
-	},
-	{
 		id: 'cancellations',
 		title: 'Look at the join between two algorithms',
 		body: 'When an algorithm ends in U prime and the next begins with U, those two moves cancel and you should never do either. The last-slot-into-OLL and OLL-into-PLL joins are where this pays: two or three moves a solve, taken by noticing rather than by turning faster. Once you have full OLL and PLL this is one of the few gains left that costs no memorisation.',
@@ -185,16 +164,9 @@ export const TIPS: readonly Tip[] = [
 		tier: 'advanced'
 	},
 	{
-		id: 'review-before-new',
-		title: 'Spend the first five minutes reviewing before you learn anything new',
-		body: "Yesterday's cases are the ones about to be lost, and they are cheap to keep. Five minutes of review at the start of a session preserves more than twenty minutes of new learning adds. The trainer on this site schedules this for you, but the habit matters more than the tool.",
-		category: 'practice',
-		tier: 'intermediate'
-	},
-	{
 		id: 'film-yourself',
 		title: 'Film thirty seconds of your own solving',
-		body: 'Almost everyone is wrong about what their own hands do. A phone propped against a mug for one solve will show you a regrip you did not know about, a pause you thought was instant, and a rotation you swore you had stopped making. It tells you more in half a minute than an hour of reading, this page included.',
+		body: 'Almost everyone is wrong about what their own hands do. A phone propped against a mug for one solve will show you a regrip you did not know about, a pause you thought was instant, and a rotation you swore you had stopped making. Count the regrips in your worst algorithm while you are at it — each one costs about what two turns cost, and most people are carrying three unnecessary ones somewhere. It tells you more in half a minute than an hour of reading, this page included.',
 		category: 'practice',
 		tier: 'intermediate'
 	},
@@ -206,13 +178,6 @@ export const TIPS: readonly Tip[] = [
 		tier: 'intermediate'
 	},
 	{
-		id: 'short-focused-sessions',
-		title: 'Twenty attentive minutes beats two distracted hours',
-		body: 'Solving while half-watching something else builds speed at the things you can already do and changes nothing else. If you are not thinking about the solve, you are practising your existing habits rather than replacing them. Two short sessions with a purpose will move you further in a week than a long one without.',
-		category: 'practice',
-		tier: 'beginner'
-	},
-	{
 		id: 'name-your-plateau',
 		title: 'Every plateau has a different cause, so name yours before treating it',
 		body: 'Stuck around forty seconds is usually still using the beginner last layer. Stuck around twenty-five is usually F2L done well but planned badly. Stuck around eighteen is usually lookahead, not algorithms. Stuck around fourteen is usually the cross and the first pair. Learning more algorithms is the answer to exactly one of those, and it is the one people always reach for.',
@@ -220,18 +185,11 @@ export const TIPS: readonly Tip[] = [
 		tier: 'intermediate'
 	},
 	{
-		id: 'intuitive-f2l-properly',
-		title: 'Work F2L out rather than looking it up',
-		body: 'All forty-one cases come from three ideas: get the pair joined in the top layer, get it separated so it can be joined, or get the pieces out of the slot so you can start. Reading the list is quicker on the day and much slower over a year, because a memorised case is only that case while an understood one covers the ones you have not met.',
-		category: 'practice',
-		tier: 'intermediate'
-	},
-	{
 		id: 'one-scramble-many-ways',
 		title: 'Solve the same scramble five times in a row',
-		body: 'The first attempt is a solve. The next four are an experiment in which cross you should have built, which pair to have started with, and where the rotations really came from. It removes the luck from the comparison and shows you decisions you did not know you were making.',
+		body: 'The first attempt is a solve. The next four are an experiment in which cross you should have built, which pair to have started with, and where the rotations really came from. It removes the luck from the comparison and shows you decisions you did not know you were making. Below about fifteen seconds this is most of what is left: the knowledge is in, and the gains come from choosing better.',
 		category: 'practice',
-		tier: 'advanced'
+		tier: 'expert'
 	},
 
 	// --- Hardware ------------------------------------------------------------
@@ -259,14 +217,7 @@ export const TIPS: readonly Tip[] = [
 	{
 		id: 'lube-weights',
 		title: 'Thick lube in the core, thin on the pieces',
-		body: 'Heavy silicone — the treacle-like sort — goes on the springs and core to slow a cube down, quieten it and take away a rattly feel. Light silicone goes on the sliding surfaces of the pieces to speed it up. A drop or two of each is a full application; more will make the cube sluggish for a week while it works its way out. Lube is a finishing touch, not a repair.',
-		category: 'hardware',
-		tier: 'intermediate'
-	},
-	{
-		id: 'lube-does-not-fix-catching',
-		title: 'A cube that catches wants its tensions changed, not more lube',
-		body: 'Catching and locking up mean the layers are not lining up in time, which is a tension and corner-cutting problem. Lubricant changes how a turn feels once it is going, not whether it can start. If a cube locks on the same face repeatedly, loosen that face slightly and leave the bottle alone.',
+		body: 'Heavy silicone — the treacle-like sort — goes on the springs and core to slow a cube down, quieten it and take away a rattly feel. Light silicone goes on the sliding surfaces of the pieces to speed it up. A drop or two of each is a full application; more will make the cube sluggish for a week while it works its way out. Lube is a finishing touch, not a repair: a cube that catches or locks up wants its tensions changed, because that is a question of whether a turn can start rather than how it feels once it is going.',
 		category: 'hardware',
 		tier: 'intermediate'
 	},
@@ -292,13 +243,6 @@ export const TIPS: readonly Tip[] = [
 		tier: 'intermediate'
 	},
 	{
-		id: 'stickerless-or-stickers',
-		title: 'Stickerless cubes cannot wear out; stickered ones can look better doing it',
-		body: 'Stickerless plastic never peels, chips or fades, which is why most people use it now. Stickers can be replaced in any colour scheme and some solvers find the flatter finish quicker to read. Both are allowed in competition. It is entirely a matter of what your eyes prefer.',
-		category: 'hardware',
-		tier: 'beginner'
-	},
-	{
 		id: 'dont-buy-during-a-plateau',
 		title: 'The urge to buy a cube arrives precisely when practice gets hard',
 		body: 'A plateau feels like an equipment problem because equipment is the part you can change in an afternoon. It almost never is. If you find yourself reading reviews rather than solving, that is the signal to pick one weakness and drill it for a week — and if the times move, you have saved the money and learnt something.',
@@ -317,7 +261,7 @@ export const TIPS: readonly Tip[] = [
 	{
 		id: 'judge-by-average',
 		title: 'Judge yourself on an average of twelve, never on a personal best',
-		body: 'A single fast time is mostly a lucky scramble and cannot be repeated on request. An average of twelve reflects what you can actually do, moves slowly enough to be believed, and improves in a way you can point at. Keep the best single for the pleasure of it and make decisions on the average.',
+		body: 'A single fast time is mostly a lucky scramble and cannot be repeated on request. An average of twelve reflects what you can actually do, moves slowly enough to be believed, and improves in a way you can point at. It also absorbs the sessions that come out several seconds slow for no reason you will ever find, which everyone has and nobody should go hunting the cause of. Keep the best single for the pleasure of it and make decisions on the average.',
 		category: 'mindset',
 		tier: 'intermediate'
 	},
@@ -325,13 +269,6 @@ export const TIPS: readonly Tip[] = [
 		id: 'finish-every-solve',
 		title: 'Never abandon a solve because it is going badly',
 		body: 'A ruined cross, a pop, a PLL you cannot recall — finish it anyway. Recovering from a solve that has gone wrong is a skill in itself, and it is the one competition asks for most often. Restarting teaches you nothing except how to restart.',
-		category: 'mindset',
-		tier: 'beginner'
-	},
-	{
-		id: 'bad-days-are-normal',
-		title: 'Some sessions are several seconds slower for no reason you will find',
-		body: 'Tiredness, cold hands, a different chair. Everyone has days where the average sits well above normal, and hunting for the cause usually produces a change that makes things worse. Note it, stop early, and come back tomorrow.',
 		category: 'mindset',
 		tier: 'beginner'
 	},
@@ -348,6 +285,13 @@ export const TIPS: readonly Tip[] = [
 		body: 'Both are good reasons to be here and they lead to different advice. Wanting to be fast means CFOP, drills and a stopwatch. Wanting to understand means blocks, commutators and probably Roux or Petrus, with times that stay unremarkable for a long time. Trouble comes from wanting one and following advice written for the other.',
 		category: 'mindset',
 		tier: 'intermediate'
+	},
+	{
+		id: 'diminishing-returns',
+		title: 'Past a certain point, the next second costs more than the last ten did',
+		body: 'Getting from a minute to thirty seconds takes a few weeks. Getting from twelve to eleven can take a year, and it comes from hundreds of small decisions rather than from anything you can be told. That is not a reason to stop; it is a reason to stop measuring your enjoyment in seconds, and to pick projects — a new last-layer set, one-handed, a different method — because you want to do them.',
+		category: 'mindset',
+		tier: 'expert'
 	},
 	{
 		id: 'stop-before-you-are-sick-of-it',
