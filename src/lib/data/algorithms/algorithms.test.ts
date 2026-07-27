@@ -127,13 +127,14 @@ describe('alternative algorithms solve the same case as the primary', () => {
 			for (const variant of c.algs.slice(1)) {
 				// Sets without a clean group invariant get the well-formed check only.
 				const verify = algSet(c.set).verify;
-				if (verify === 'well-formed' || verify === 'derived') {
+				if (verify === 'well-formed') {
 					expect(checkWellFormed(variant.moves).problems, `${c.id} / ${variant.moves}`).toEqual([]);
 					continue;
 				}
-				if (verify === 'f2l' || verify === 'coll' || verify === 'cmll') {
-					// These sets' algorithms are checked individually rather than compared,
-					// because they legitimately finish in different last-layer states.
+				if (verify !== 'oll' && verify !== 'pll') {
+					// F2L, COLL, CMLL and edge-orientation variants are checked
+					// individually rather than compared against the primary, because they
+					// legitimately finish in different last-layer states.
 					expect(checkCase(c, variant.moves).problems, `${c.id} / ${variant.moves}`).toEqual([]);
 					continue;
 				}

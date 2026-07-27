@@ -58,7 +58,7 @@ const DEFAULTS: SettingsShape = {
 	onboarded: false
 };
 
-const KEY = 'cubecraft:settings:v1';
+const KEY = 'rubiks-seanfunk:settings:v1';
 
 function load(): SettingsShape {
 	if (!browser) return { ...DEFAULTS };

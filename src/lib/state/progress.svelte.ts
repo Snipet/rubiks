@@ -49,7 +49,7 @@ export interface ProgressShape {
 	activeDays: number[];
 }
 
-const KEY = 'cubecraft:progress:v1';
+const KEY = 'rubiks-seanfunk:progress:v1';
 const MAX_SOLVES = 2000;
 
 /** Review intervals in days for Leitner boxes 1..5. */

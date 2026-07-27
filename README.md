@@ -1,4 +1,4 @@
-# CubeCraft
+# rubiks[dot]seanfunk
 
 An interactive guide to solving the Rubik's Cube: progressive lessons for every
 skill level, a large searchable algorithm library, and a cube you can paint to

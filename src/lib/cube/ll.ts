@@ -109,8 +109,8 @@ export function orientationKey(state: Facelets | CubieState): string {
 export function permutationKey(state: Facelets | CubieState): string {
 	const { cp, ep } = asCubie(state);
 	// Reduce to positions within the last layer, in cycle order.
-	const cornerAt = new Map(LL_CORNERS.map((slot, i) => [slot, i]));
-	const edgeAt = new Map(LL_EDGES.map((slot, i) => [slot, i]));
+	const cornerAt = new Map<number, number>(LL_CORNERS.map((slot, i) => [slot, i]));
+	const edgeAt = new Map<number, number>(LL_EDGES.map((slot, i) => [slot, i]));
 	const c = LL_CORNERS.map((slot) => cornerAt.get(cp[slot]) ?? -1);
 	const e = LL_EDGES.map((slot) => edgeAt.get(ep[slot]) ?? -1);
 	// A piece from outside the last layer means this is not a PLL case at all.
