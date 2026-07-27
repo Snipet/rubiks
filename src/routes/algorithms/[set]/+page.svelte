@@ -7,8 +7,14 @@
 	import { pageTitle } from '$lib/brand';
 	import { progress } from '$state/progress.svelte';
 	import { SKILL_LABELS, SKILL_TIERS, type SkillTier } from '$data/types';
+	import { algSet, casesOfSet } from '$data/algorithms';
 
 	let { data } = $props();
+
+	// Looked up here rather than passed through `load`, so the prerendered HTML
+	// does not carry a copy of every case's sticker state.
+	const set = $derived(algSet(data.setId));
+	const cases = $derived(casesOfSet(data.setId));
 
 	let query = $state('');
 	let tierFilter = $state<SkillTier | 'all'>('all');
@@ -17,7 +23,7 @@
 	const normalise = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
 	const visible = $derived(
-		data.cases.filter((c) => {
+		cases.filter((c) => {
 			if (tierFilter !== 'all' && c.tier !== tierFilter) return false;
 			if (onlyUnlearned && progress.confidence(c.id) === 'solid') return false;
 			if (!query.trim()) return true;
@@ -37,7 +43,7 @@
 
 	/** Group the visible cases into the set's declared sections. */
 	const grouped = $derived.by(() => {
-		const groups = data.set.groups ?? [];
+		const groups = set.groups ?? [];
 		const buckets = groups.map((name) => ({
 			name,
 			cases: visible.filter((c) => c.group === name)
@@ -48,31 +54,31 @@
 		return buckets.filter((b) => b.cases.length > 0);
 	});
 
-	const learned = $derived(data.cases.filter((c) => progress.confidence(c.id) === 'solid').length);
+	const learned = $derived(cases.filter((c) => progress.confidence(c.id) === 'solid').length);
 </script>
 
 <svelte:head>
-	<title>{pageTitle(data.set.shortName.toLowerCase())}</title>
-	<meta name="description" content={data.set.summary} />
+	<title>{pageTitle(set.shortName.toLowerCase())}</title>
+	<meta name="description" content={set.summary} />
 </svelte:head>
 
 <div class="page page--wide">
 	<nav class="crumbs" aria-label="Breadcrumb">
 		<a href={resolve('/algorithms')}>All algorithms</a>
 		<span aria-hidden="true">/</span>
-		<span>{data.set.shortName}</span>
+		<span>{set.shortName}</span>
 	</nav>
 
 	<header class="head">
 		<div class="head__main">
-			<p class="eyebrow">{data.cases.length} cases</p>
-			<h1>{data.set.name}</h1>
-			<p class="lede">{data.set.summary}</p>
-			<p class="desc">{data.set.description}</p>
+			<p class="eyebrow">{cases.length} cases</p>
+			<h1>{set.name}</h1>
+			<p class="lede">{set.summary}</p>
+			<p class="desc">{set.description}</p>
 			<div class="head__chips">
-				<Chip tone="section" size="md">From {SKILL_LABELS[data.set.tier].toLowerCase()}</Chip>
+				<Chip tone="section" size="md">From {SKILL_LABELS[set.tier].toLowerCase()}</Chip>
 				{#if learned > 0}
-					<Chip tone="positive" size="md">{learned} of {data.cases.length} marked known</Chip>
+					<Chip tone="positive" size="md">{learned} of {cases.length} marked known</Chip>
 				{/if}
 			</div>
 		</div>

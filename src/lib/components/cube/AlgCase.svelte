@@ -218,6 +218,15 @@
 
 <style>
 	.case {
+		/*
+		 * A full set page carries 57 case diagrams, which is about 1,200 SVG
+		 * rectangles. The markup compresses to a few kilobytes, so transfer is not
+		 * the problem — laying it all out is. `content-visibility` lets the browser
+		 * skip that work for cards that are off screen, while keeping the markup
+		 * complete for search engines and for readers without JavaScript.
+		 */
+		content-visibility: auto;
+		contain-intrinsic-size: auto 9rem;
 		background: var(--surface-1);
 		border: var(--border);
 		border-radius: var(--radius-3);
