@@ -45,7 +45,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		recognition:
 			'The corner sits directly above its slot with the cross colour pointing out to the right, and the edge is at the back of the top face with its front colour on top.',
 		notes:
-			'Three moves, and worth understanding rather than memorising: R lifts the corner up to the back-right where the edge is waiting, so the pair forms; U swings the finished pair round to the front; R’ drops it in. Watch the pair appear after the first turn and you will never have to recall this one.',
+			'Three moves, and worth understanding rather than memorising: R swings the corner round to the back-right where the edge is waiting, so the pair forms; U brings the finished pair round to the front; R’ drops it in. Watch the pair appear after the first turn and you will never have to recall this one.',
 		tags: ['three-move', '2-gen', 'fast', 'basic']
 	},
 	{
@@ -61,7 +61,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		recognition:
 			'The corner is above its slot with the cross colour facing you, and the edge is on the left of the top face with its side colour on top.',
 		notes:
-			'The mirror image of case 1 and the same story told the other way round: F’ lifts the corner out to the front-left beside the edge, U’ brings the pair round to the front, F inserts. Learn the two together — between them they cover both hands, and a great many longer algorithms end in one or the other.',
+			'The mirror image of case 1 and the same story told the other way round: F’ swings the corner round to the front-left beside the edge, U’ brings the pair round to the front, F inserts. Learn the two together — between them they cover both hands, and a great many longer algorithms end in one or the other.',
 		tags: ['three-move', 'basic', 'mirror']
 	},
 	{
@@ -165,7 +165,6 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-15',
 		algs: [
 			{ moves: "U' R U2 R' U' R U2 R'" },
-			{ moves: "U' R U2 R' U2 R U' R'", label: 'alternative' },
 			{
 				moves: "F2 U2 R' F2 R U2 F2",
 				label: 'shorter',
@@ -175,7 +174,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		recognition:
 			'Corner above the slot with the cross colour facing you, edge across the top layer on the left with its front colour on top.',
 		notes:
-			'R U2 R’ twice, with a U’ in between. The first pass turns the corner over; the second pairs it with the edge and inserts. Once you can feel R U2 R’ as one motion this is a comfortable eight moves.',
+			'R U2 R’ twice, with a U’ in between. The first pass turns the corner over and leaves a joined pair — case 3 — and the second puts it in. Once you can feel R U2 R’ as one motion this is a comfortable eight moves.',
 		tags: ['2-gen', 'split pair', 'mirror']
 	},
 	{
@@ -212,7 +211,11 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-12',
 		algs: [
 			{ moves: "U' R U R' U R U R'" },
-			{ moves: "U2 R U' R' U' R U R'", label: 'alternative' },
+			{
+				moves: "U2 R U' R' U' R U R'",
+				label: 'Aa insert first',
+				note: 'The same length, but it takes the corner round the other way to begin with.'
+			},
 			{ moves: "U' F' U' F U2 R U R'", label: 'left-hand start' }
 		],
 		recognition:
@@ -232,13 +235,12 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-13',
 		algs: [
 			{ moves: "U' R U R' U' R U2 R'" },
-			{ moves: "U' R U R' U2 R U' R'", label: 'alternative' },
 			{ moves: "F U F' R' F R U' F'", label: 'front-face' }
 		],
 		recognition:
 			'Corner above the slot with the cross colour facing you, edge at the back of the top layer with its front colour on top.',
 		notes:
-			'A sexy move turns the corner over while the edge waits at the side, and R U2 R’ pairs and inserts. Both halves are things your hands already do, so this one comes quickly.',
+			'A sexy move turns the corner over and joins it to the edge, leaving case 3; R U2 R’ then inserts the pair. Both halves are things your hands already do, so this one comes quickly.',
 		triggers: ['sexy move'],
 		tags: ['2-gen', 'split pair', 'mirror']
 	},
@@ -253,7 +255,11 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-16',
 		algs: [
 			{ moves: "U' R U' R' U R U R'" },
-			{ moves: "U2 R2 U R' U R U2 R2", label: 'alternative' }
+			{
+				moves: "U2 R2 U R' U R U2 R2",
+				label: 'double turns',
+				note: 'The same length, built from R2 blocks rather than single turns.'
+			}
 		],
 		recognition:
 			'Corner above the slot with the cross colour to the right, edge beside it on the right with its front colour on top — the two side stickers you can see do not match.',
@@ -273,7 +279,11 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-09',
 		algs: [
 			{ moves: "U R U R' U2 F' U' F" },
-			{ moves: "U' R U' R' U F' U' F", label: 'alternative' },
+			{
+				moves: "U' R U' R' U F' U' F",
+				label: 'Aa insert first',
+				note: 'Takes the corner round the other way; the finish is the same F’ U’ F.'
+			},
 			{ moves: "U F' U' F U' F' U' F", label: 'front-face' }
 		],
 		recognition:
@@ -293,13 +303,12 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-10',
 		algs: [
 			{ moves: "U F' U' F U F' U2 F" },
-			{ moves: "U F' U' F U2 F' U F", label: 'alternative' },
 			{ moves: "R' U' R F R' F' U R", label: 'right-hand start' }
 		],
 		recognition:
 			'Corner above the slot with the cross colour to the right, edge on the left of the top layer with its side colour on top.',
 		notes:
-			'Everything happens on the front face: the first four moves turn the corner over, then F’ U2 F pairs and inserts. If your left hand finds four F turns uncomfortable, the right-hand variant does the same job around the back.',
+			'Everything happens on the front face: the first four moves turn the corner over and leave a joined pair — case 4 — which U F’ U2 F puts in. If your left hand finds four F turns uncomfortable, the right-hand variant does the same job around the back.',
 		tags: ['split pair', 'mirror']
 	},
 	{
@@ -336,7 +345,6 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-07',
 		algs: [
 			{ moves: "U F' U2 F U F' U2 F" },
-			{ moves: "U F' U2 F U2 F' U F", label: 'alternative' },
 			{
 				moves: "R2 U2 F R2 F' U2 R2",
 				label: 'shorter',
@@ -361,12 +369,12 @@ export const F2L_CASES: readonly AlgCase[] = [
 		algs: [
 			{ moves: "U F' U F U' F' U' F" },
 			{ moves: "R U R2 F R F2 U' F", label: 'right-hand start' },
-			{ moves: "U2 F2 U' F U' F' U2 F2", label: 'alternative' }
+			{ moves: "U2 F2 U' F U' F' U2 F2", label: 'double turns' }
 		],
 		recognition:
-			'Corner above the slot with the cross colour facing you, edge directly in front of it showing its front colour on the front face — the corner and edge front stickers sit next to each other but the pair is not usable yet.',
+			'Corner above the slot with the cross colour facing you, and the edge directly in front of it showing its front colour on the front face — so the front face has two different colours stacked on it. Case 4 has the pieces in the same two places but the corner twisted the other way, which gives a matching block instead.',
 		notes:
-			'The first five moves turn the edge over through the front-left slot and leave case 2 behind. The mirror of case 11.',
+			'The first five moves send the corner down through the front-left slot and back, which turns it over and leaves case 2. The mirror of case 11.',
 		tags: ['split pair', 'mirror']
 	},
 
@@ -385,7 +393,11 @@ export const F2L_CASES: readonly AlgCase[] = [
 		algs: [
 			{ moves: "R U' R' U2 R U R'" },
 			{ moves: "U2 F' U' F R U R'", label: 'front-face' },
-			{ moves: "U2 R U R' U R U' R'", label: 'alternative' }
+			{
+				moves: "U2 R U R' U R U' R'",
+				label: 'via case 3',
+				note: 'A move longer, but it stops at a made pair halfway, so you can check you are on track.'
+			}
 		],
 		recognition:
 			'The corner is above its slot with the cross colour on the top face, so you can see it looking straight down; the edge is on the left of the top layer with its front colour on top.',
@@ -403,10 +415,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		tier: 'intermediate',
 		probability: '2/75',
 		mirrorOf: 'f2l-19',
-		algs: [
-			{ moves: "R U2 R' U' R U R'" },
-			{ moves: "U2 R2 U2 F R F' U2 R2", label: 'alternative' }
-		],
+		algs: [{ moves: "R U2 R' U' R U R'" }],
 		recognition:
 			'Corner above its slot showing the cross colour on top, edge beside it on the right with its front colour on top.',
 		notes:
@@ -422,10 +431,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		tier: 'intermediate',
 		probability: '2/75',
 		mirrorOf: 'f2l-18',
-		algs: [
-			{ moves: "F' U2 F U F' U' F" },
-			{ moves: "U2 F2 U2 R' F' R U2 F2", label: 'alternative' }
-		],
+		algs: [{ moves: "F' U2 F U F' U' F" }],
 		recognition:
 			'Corner above its slot showing the cross colour on top, edge directly in front of it with its side colour on top.',
 		notes:
@@ -441,11 +447,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		tier: 'intermediate',
 		probability: '2/75',
 		mirrorOf: 'f2l-17',
-		algs: [
-			{ moves: "U2 R U R' F' U' F" },
-			{ moves: "F' U F U2 F' U' F", label: 'front-face' },
-			{ moves: "U2 F' U' F2 R' F' R", label: 'alternative' }
-		],
+		algs: [{ moves: "U2 R U R' F' U' F" }, { moves: "F' U F U2 F' U' F", label: 'front-face' }],
 		recognition:
 			'Corner above its slot showing the cross colour on top, edge at the back of the top layer with its side colour on top.',
 		notes:
@@ -461,11 +463,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		tier: 'intermediate',
 		probability: '2/75',
 		mirrorOf: 'f2l-22',
-		algs: [
-			{ moves: "U R U2 R' U R U' R'" },
-			{ moves: "U R U2 R2 F R F'", label: 'shorter' },
-			{ moves: "U R U2 R' U2 R U2 R'", label: 'double turns' }
-		],
+		algs: [{ moves: "U R U2 R' U R U' R'" }, { moves: "U R U2 R2 F R F'", label: 'shorter' }],
 		recognition:
 			'Corner above its slot with the cross colour on top, edge at the back of the top layer with its front colour on top.',
 		notes:
@@ -482,11 +480,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		tier: 'intermediate',
 		probability: '2/75',
 		mirrorOf: 'f2l-21',
-		algs: [
-			{ moves: "U' F' U2 F U' F' U F" },
-			{ moves: "U' F' U2 F2 R' F' R", label: 'shorter' },
-			{ moves: "U' F' U2 F U2 F' U2 F", label: 'double turns' }
-		],
+		algs: [{ moves: "U' F' U2 F U' F' U F" }, { moves: "U' F' U2 F2 R' F' R", label: 'shorter' }],
 		recognition:
 			'Corner above its slot with the cross colour on top, edge on the left of the top layer with its side colour on top.',
 		notes:
@@ -507,9 +501,8 @@ export const F2L_CASES: readonly AlgCase[] = [
 			{
 				moves: "U F R' F' R U R U R'",
 				label: 'hedgeslammer',
-				note: 'A move longer, but every part of it is a trigger you already own.'
-			},
-			{ moves: "R2 U R' U R U2 R' U' R'", label: 'alternative' }
+				note: 'A move longer, but it breaks into a hedgeslammer and two insertions.'
+			}
 		],
 		recognition:
 			'Corner above its slot with the cross colour on top, edge directly in front of it with its front colour on top — the pair looks tantalisingly close but the corner is the wrong way up.',
@@ -556,13 +549,12 @@ export const F2L_CASES: readonly AlgCase[] = [
 				moves: "F' U F R U2 R'",
 				label: 'mirror',
 				note: 'The same idea starting on the front face.'
-			},
-			{ moves: "R U' R' U F' U F", label: 'alternative' }
+			}
 		],
 		recognition:
 			'The edge is already in the slot but the wrong way round — its front colour is showing on the right-hand face — and the corner is in the top layer with the cross colour on top.',
 		notes:
-			'Nothing can be done while the edge is stuck in backwards, so the first job is always to get it out. R U’ R’ lifts it into the top and parks the corner at the back; F’ U2 F then rebuilds the pair on the front and inserts it. Six moves, and this case is its own mirror image.',
+			'Nothing can be done while the edge is stuck in backwards, so the first job is always to get it out. R U’ R’ lifts it into the top and joins it to the corner at the back-left; F’ U2 F then swings the pair round to the front and inserts it. Six moves, and this case is its own mirror image.',
 		triggers: ['Aa insert'],
 		tags: ['edge in slot', 'edge flipped', 'fast']
 	},
@@ -575,11 +567,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		tier: 'intermediate',
 		probability: '2/75',
 		mirrorOf: 'f2l-27',
-		algs: [
-			{ moves: "U R U R' U2 R U R'" },
-			{ moves: "U' R U2 R' U R U R'", label: 'alternative' },
-			{ moves: "U F' U F U2 F' U F", label: 'front-face' }
-		],
+		algs: [{ moves: "U R U R' U2 R U R'" }, { moves: "U F' U F U2 F' U F", label: 'front-face' }],
 		recognition:
 			'The edge is sitting correctly in the slot with nothing above it, and the corner is in the top layer with the cross colour pointing to the right.',
 		notes:
@@ -597,7 +585,6 @@ export const F2L_CASES: readonly AlgCase[] = [
 		mirrorOf: 'f2l-26',
 		algs: [
 			{ moves: "U' R U' R' U2 R U' R'" },
-			{ moves: "U' R U' R' U' R U2 R'", label: 'alternative' },
 			{ moves: "U F' U2 F U' F' U' F", label: 'front-face' }
 		],
 		recognition:
@@ -662,7 +649,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		recognition:
 			'The edge is already correct in the slot, and the corner sits above it in the top layer with the cross colour facing straight up.',
 		notes:
-			'The most obstinate of the edge-in-slot cases: the corner is the wrong way up and the edge is in the way, so the usual tricks do not apply. Four R2 turns with U turns between them shuttle the pair between the front-right and back-right slots until the corner comes back the right way round. Learn it as a rhythm — R2 U R2 U R2 U2 R2 — rather than as six separate decisions, and note that it is its own mirror image.',
+			'The most obstinate of the edge-in-slot cases: the corner is the wrong way up and the edge is in the way, so the usual tricks do not apply. Four R2 turns with U turns between them shuttle the pair between the front-right and back-right slots until the corner comes back the right way round. Learn it as a rhythm — R2 U R2 U R2 U2 R2 — rather than as seven separate turns, and note that it is its own mirror image.',
 		tags: ['edge in slot', 'corner up', 'awkward', 'last-resort']
 	},
 
@@ -822,7 +809,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		recognition:
 			'Both pieces are in the slot already: the edge is correct, and the corner is twisted with the cross colour showing on the front face.',
 		notes:
-			'When both pieces are down there is nothing to pair, so the whole algorithm is really "take them out, then solve the top-layer case that appears". The nine-move version above does both at once and stays on the right hand throughout. If you would rather think than memorise, pull the pair out with R U R’ and re-read the case.',
+			'When both pieces are down there is nothing to pair, so the whole algorithm is really "take them out, then solve the top-layer case that appears". The nine-move version above does both at once and stays on the right hand throughout. If you would rather think than memorise, pull the pair out with R U R’ and you will be looking at case 18.',
 		triggers: ['Aa insert'],
 		tags: ['2-gen', 'both in slot', 'rare', 'awkward']
 	},
@@ -843,7 +830,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		recognition:
 			'Both pieces are in the slot: the edge is correct, and the corner is twisted with the cross colour showing on the right-hand face.',
 		notes:
-			'The mirror of case 37 and the same nine moves reflected. These two are the cases people most often solve by accident — inserting a pair badly leaves one of them — so it is worth being able to fix them without stopping.',
+			'The mirror of case 37, though not the same nine moves: the algorithm above keeps everything on the right hand, while case 37’s algorithm reflected is the one labelled mirror below. These two are the cases people most often solve by accident — inserting a pair badly leaves one of them — so it is worth being able to fix them without stopping.',
 		tags: ['2-gen', 'both in slot', 'rare', 'awkward']
 	},
 	{
@@ -903,7 +890,7 @@ export const F2L_CASES: readonly AlgCase[] = [
 		recognition:
 			'The corner is solved in its slot but the edge below the top layer is in backwards, showing its front colour on the right-hand face. The slot looks nearly finished until you notice the two colours on the right do not match.',
 		notes:
-			'The worst case in the set, and the one most likely to be missed during a solve — check the side colours of a slot before you call it done. R U R’ empties the slot completely and leaves an ordinary top-layer case, and the remaining eight moves are the route through case 2. This case is its own mirror image, so there is no left-handed shortcut to reach for.',
+			'The worst case in the set, and the one most likely to be missed during a solve — check the side colours of a slot before you call it done. R U R’ empties the slot completely and leaves an ordinary top-layer case, and the remaining eight moves are the route through case 2. Because the case is its own mirror image, reflecting any of these algorithms onto the front face gives you a left-handed version for nothing.',
 		tags: ['both in slot', 'edge flipped', 'rare', 'awkward', 'last-resort']
 	}
 ];

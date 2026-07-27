@@ -29,14 +29,7 @@ export const TIPS: readonly Tip[] = [
 	{
 		id: 'eyes-ahead-of-hands',
 		title: 'While your hands do a pair you know, your eyes should be on the next one',
-		body: 'An algorithm you have drilled needs no supervision. The moment you commit to a pair, stop watching it and start hunting for the next corner and edge. It feels reckless for the first hundred solves and then it feels normal, and the pause between pairs disappears without your ever practising the pairs themselves.',
-		category: 'lookahead',
-		tier: 'intermediate'
-	},
-	{
-		id: 'track-one-piece',
-		title: 'Follow one piece through a whole solve',
-		body: 'Choose an edge before you start — say the blue-orange one — and keep your eyes on it for the entire solve, no matter what else happens. You will lose it. Find it again and carry on. Ten solves of this teaches your eyes to track a piece through turns, which is the whole mechanical skill behind lookahead, and it is quicker to learn deliberately than by accident.',
+		body: 'An algorithm you have drilled needs no supervision. The moment you commit to a pair, stop watching it and start hunting for the next corner and edge. If that feels impossible, train it directly: pick one edge before you start and keep your eyes on it for the whole solve, losing it and finding it again. Tracking a piece through turns is the entire mechanical skill behind lookahead, and it is quicker to learn on purpose than by accident.',
 		category: 'lookahead',
 		tier: 'intermediate'
 	},
@@ -95,7 +88,7 @@ export const TIPS: readonly Tip[] = [
 	{
 		id: 'sexy-move-fingering',
 		title: 'Learn one fingering for the sexy move and never use another',
-		body: 'Right ring finger for R, left index pushing U, right index for R prime, right thumb for U prime. It is the most common four moves on the cube and appears inside dozens of algorithms, so the fingering you use here sets your ceiling everywhere. Get it from a video rather than inventing it, and do it slowly a hundred times before doing it quickly once.',
+		body: 'Right ring finger for R, left index pushing U, right index for R prime, right thumb for U prime. It is the most common four moves on the cube and appears inside dozens of algorithms, so the fingering you use here sets your ceiling everywhere. Get it from a video rather than inventing it, and do it slowly a hundred times before doing it quickly once — speed comes from the fingering, and the fingering is decided in the first few dozen attempts.',
 		category: 'fingertricks',
 		tier: 'beginner',
 		alg: "R U R' U'"
@@ -359,7 +352,7 @@ export const TIPS: readonly Tip[] = [
 	{
 		id: 'stop-before-you-are-sick-of-it',
 		title: 'Stop while you still want another solve',
-		body: 'The session that ends with you frustrated is the one that makes the cube easy to leave in a drawer. Ending on a good average, or on a case that has finally stuck, means you come back. Consistency over months beats intensity over a weekend by a distance nothing else on this page can match.',
+		body: 'The session that ends in frustration is the one that leaves the cube in a drawer for a month. Finish on a good average, or on a case that has finally stuck, and you will come back tomorrow. Consistency over months beats intensity over a weekend by a distance nothing else on this page can match.',
 		category: 'mindset',
 		tier: 'beginner'
 	},

@@ -3,8 +3,8 @@
  *
  * Method comparisons on the web tend to be written by someone defending the
  * method they use, which is how a beginner ends up believing that Roux is
- * "objectively more efficient" or that CFOP is "just memorisation". Both claims
- * contain a fact and hide a cost. Every entry here is written to include the
+ * "objectively more efficient" or that CFOP is "nothing but memorisation". Both
+ * claims contain a fact and hide a cost. Every entry here is written to include the
  * cost: the `cons` are not softened, and `suitedTo` names a person rather than
  * hedging.
  *
