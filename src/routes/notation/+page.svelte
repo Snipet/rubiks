@@ -513,8 +513,9 @@
 			/>
 			<figcaption>
 				A good first exercise: run <code>M</code> four times and watch the middle column go all the
-				way round. A better second one: run <code>Rw</code> and then <code>x'</code>, and see what
-				is left over.
+				way round. A better second one: run <code>Rw</code> and then <code>x'</code>. What you are
+				left with is a single <code>L</code> turn — a wide turn is a rotation and a face turn rolled into
+				one, which is the whole of why the centres move.
 			</figcaption>
 		</figure>
 	</section>
@@ -586,9 +587,10 @@
 		</div>
 		<div class="chips">
 			<Chip tone="section">18 face turns</Chip>
+			<Chip>18 wide turns</Chip>
 			<Chip>9 slice turns</Chip>
 			<Chip>9 rotations</Chip>
-			<Chip>Every algorithm on the site, in these letters</Chip>
+			<Chip>Every algorithm on the site, written in these</Chip>
 		</div>
 	</section>
 

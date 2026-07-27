@@ -7,8 +7,8 @@
  * here is written to be read cold: what the word means, and — where there is one
  * — the thing people get wrong about it.
  *
- * Entries are authored grouped by category because that is how they are easiest
- * to keep honest. The page sorts them alphabetically. Anything in `see` must
+ * Entries are authored grouped by category, because duplicates and gaps show up
+ * fastest that way. The page sorts them alphabetically. Anything in `see` must
  * match another entry's `term` exactly; the glossary page links them by name.
  */
 
@@ -168,7 +168,7 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		term: 'Trigger',
 		category: 'technique',
 		definition:
-			"A short run of moves your hands perform as one unit rather than as separate turns — `R U R'`, `R U' R'`, `F R U`. Long algorithms are far easier to hold in your head as three or four triggers than as fourteen letters, and quick turning is mostly a matter of owning plenty of them.",
+			"A short run of moves your hands perform as one unit rather than as separate turns — `R U R'`, `R U' R'`, `F R U`. Long algorithms take far less holding in your head as three or four triggers than as fourteen letters, and quick turning is mostly a matter of owning plenty of them.",
 		see: ['Sexy move', 'Sledgehammer', 'Finger trick', 'Algorithm']
 	},
 	{
@@ -300,7 +300,7 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		term: 'Conjugate',
 		category: 'theory',
 		definition:
-			"A sequence of the shape `A B A'`: set something up, do the work, put the setup back. Most algorithms are a conjugate wrapped round a commutator, and reading a long one that way makes it far easier to hold on to.",
+			"A sequence of the shape `A B A'`: set something up, do the work, put the setup back. Most algorithms are a conjugate wrapped round a commutator, and reading a long one that way is usually what makes it stick.",
 		see: ['Commutator', 'Algorithm']
 	},
 	{
@@ -447,7 +447,7 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
 		aliases: ['OH', 'one-handed solving'],
 		category: 'community',
 		definition:
-			'Solving with one hand, and an official event in its own right. Algorithms get chosen differently: `U` turns and `M` slices are cheap with a decent grip, `F` turns are expensive, and a longer sequence with an easier grip beats a short one you have to fumble for.',
+			'Solving with one hand, and an official event in its own right. Algorithms get chosen differently: `U` turns and `M` slices are cheap with a decent grip, `F` turns are expensive, and a longer sequence with a comfortable grip beats a short one you have to fumble for.',
 		see: ['Regrip', 'Finger trick', 'WCA']
 	},
 	{
