@@ -211,8 +211,11 @@
 
 /* Red/green separation: push red towards magenta and green towards cyan, and
    keep the luminance ladder wide so the colours also differ in lightness. */
-:root[data-palette='deuteranopia'],
-:root[data-palette='protanopia'] {
+/* Not `:root`-scoped, so a nested element carrying `data-palette` previews that
+   palette rather than inheriting the one in force — which is how the swatches in
+   the appearance menu can show you what you are choosing. */
+[data-palette='deuteranopia'],
+[data-palette='protanopia'] {
 	--sticker-r: #e0447f;
 	--sticker-f: #10b6c4;
 	--sticker-l: #f0951c;
@@ -226,7 +229,7 @@
 }
 
 /* Blue/yellow separation. */
-:root[data-palette='tritanopia'] {
+[data-palette='tritanopia'] {
 	--sticker-b: #6d4bd8;
 	--sticker-d: #d8d8d8;
 	--sticker-u: #ffffff;
@@ -238,14 +241,19 @@
 	--sticker-l-edge: #c46374;
 }
 
-/* High contrast: maximise separation and thicken every edge. */
-:root[data-palette='high-contrast'] {
+/* High contrast: maximise separation and thicken every edge. Only the sticker
+   colours are safe to preview in a swatch; the text and hairline overrides would
+   leak into any element that previews it, so they stay on the root. */
+[data-palette='high-contrast'] {
 	--sticker-u: #ffffff;
 	--sticker-r: #ff1f2e;
 	--sticker-f: #00e05a;
 	--sticker-d: #ffe100;
 	--sticker-l: #ff8000;
 	--sticker-b: #0080ff;
+}
+
+:root[data-palette='high-contrast'] {
 	--hairline: #59667a;
 	--hairline-strong: #7d8b9e;
 	--text: #ffffff;

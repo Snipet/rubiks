@@ -1,4 +1,4 @@
-# CubeCraft
+# rubiks[dot]seanfunk
 
 An interactive guide to solving the Rubik's Cube: progressive lessons for every
 skill level, a large searchable algorithm library, and a cube you can paint to
@@ -62,6 +62,12 @@ feature branch ──PR──▶ dev ──▶ GitHub Pages (preview)
 - **`dev`** is the integration branch. Open pull requests against it, never
   against `main`. Every push to `dev` republishes the GitHub Pages preview via
   `.github/workflows/deploy-pages.yml`.
+
+  One setting is needed on the repository once, and cannot be done from code:
+  **Settings → Pages → Build and deployment → Source → GitHub Actions**. Leaving
+  it on "Deploy from a branch" makes the workflow run and then quietly do
+  nothing.
+
 - **`main`** is production. Merges into it are done by hand and picked up by
   Cloudflare Pages.
 

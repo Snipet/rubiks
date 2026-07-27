@@ -35,7 +35,6 @@ export const SKILL_BLURBS: Record<SkillTier, string> = {
 export type AlgSetId =
 	| 'beginner-f2l'
 	| 'beginner-ll'
-	| 'cross'
 	| 'f2l'
 	| 'oll-2look'
 	| 'oll'
@@ -44,7 +43,6 @@ export type AlgSetId =
 	| 'coll'
 	| 'winter-variation'
 	| 'cmll'
-	| 'oh'
 	| 'commutators';
 
 export interface AlgSetMeta {
@@ -61,10 +59,25 @@ export interface AlgSetMeta {
 	tier: SkillTier;
 	/** How diagrams for this set are drawn. */
 	view: DiagramView;
-	/** Expected number of cases, used as a self-check in tests. */
-	expectedCount: number;
+	/**
+	 * Expected number of cases, asserted in tests. Only set this where the count
+	 * is a mathematical fact — 57 OLL, 21 PLL, 41 F2L — not where it is a matter
+	 * of editorial taste.
+	 */
+	expectedCount?: number;
 	/** Ordered list of sub-group names, for sectioning the set page. */
 	groups?: readonly string[];
+	/**
+	 * Cases borrowed from another set, listed in teaching order and appended after
+	 * any the set authors itself. The two-look sets work this way: they are a route
+	 * through OLL and PLL, not a second copy of those algorithms.
+	 */
+	derivedFrom?: {
+		source: AlgSetId | AlgSetId[];
+		caseIds: readonly string[];
+	};
+	/** Which invariant the verifier holds this set's algorithms to. */
+	verify: 'oll' | 'pll' | 'f2l' | 'coll' | 'cmll' | 'll-edges' | 'well-formed';
 }
 
 /** One way of solving a case. */

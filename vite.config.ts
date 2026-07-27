@@ -5,6 +5,9 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}'],
-		environment: 'node'
+		environment: 'node',
+		// Several suites solve hundreds of cubes; the default five seconds is not a
+		// meaningful budget for them.
+		testTimeout: 60_000
 	}
 });
