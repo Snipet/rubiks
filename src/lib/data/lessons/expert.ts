@@ -563,7 +563,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 			{ kind: 'heading', text: 'Petrus' },
 			{
 				kind: 'prose',
-				text: 'Lars Petrus — whose name you have already met attached to sune — published his method in 1981, and both Roux and ZZ owe it something. It builds a 2×2×2 block, grows it to 2×2×3, orients the edges, finishes the first two layers, then does the last layer.'
+				text: 'Lars Petrus — whose name you have already met attached to sune — worked his method out in 1981, and both Roux and ZZ owe it something. It builds a 2×2×2 block, grows it to 2×2×3, orients the edges, finishes the first two layers, then does the last layer.'
 			},
 			{
 				kind: 'prose',
@@ -688,7 +688,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 			{ kind: 'heading', text: 'Interchange and insertion' },
 			{
 				kind: 'prose',
-				text: 'In practice you build a commutator out of two named parts. The **interchange** is usually a single turn that swaps two of the three pieces you care about. The **insertion** is a short sequence that moves the third piece into the place the interchange is going to act on.'
+				text: 'In practice you build a commutator out of two named parts. The **interchange** is usually a single turn that carries one of your three pieces into the place of another. The **insertion** is a short sequence that reaches the third piece — and touches exactly one square the interchange also touches, which is the condition the whole thing rests on.'
 			},
 			{
 				kind: 'prose',
@@ -698,13 +698,13 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 				kind: 'alg',
 				moves: "R' D' R",
 				caption:
-					'The insertion. Three turns that reach down and swap the up-front-right corner with one in the bottom layer. On its own it is vandalism — four corners and four edges out of place.'
+					'The insertion. Three turns that reach into the bottom layer, lift a corner into the up-front-right and send the one that was there down. On its own it is vandalism — four corners and four edges out of place — but the up-front-right is the only square of the top layer it touches.'
 			},
 			{
 				kind: 'alg',
 				moves: 'U',
 				caption:
-					'The interchange. One turn, which moves the two top-right corners past each other along with everything else in the top layer.'
+					'The interchange. One turn, which carries the up-back-right corner into the up-front-right position, and everything else in the top layer round with it.'
 			},
 			{
 				kind: 'alg',
@@ -846,7 +846,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'prose',
-				text: 'That turns a scramble into a list. Each position on the cube gets a letter, and the solve becomes a sequence of letters — where the buffer piece goes, then where the new buffer piece goes, and so on until the cycle closes. Twenty or so letters for the edges, a dozen for the corners.'
+				text: 'That turns a scramble into a list. Each position on the cube gets a letter, and the solve becomes a sequence of letters — where the buffer piece goes, then where the new buffer piece goes, and so on until the cycle closes. Eleven or so letters for the edges, seven or eight for the corners.'
 			},
 			{
 				kind: 'note',
@@ -873,7 +873,7 @@ export const EXPERT_LESSONS: readonly Lesson[] = [
 			},
 			{
 				kind: 'prose',
-				text: 'The cost of Old Pochmann is turns. Every letter is a setup, a fourteen-turn permutation and the setup undone — so an execution runs to two or three hundred turns. It is reliable, it needs almost nothing new, and it will get you a first success.'
+				text: 'The cost of Old Pochmann is turns. Every letter is a setup, a permutation of fourteen or seventeen turns, and the setup undone — so an execution runs to three hundred turns and beyond. It is reliable, it needs almost nothing new, and it will get you a first success.'
 			},
 			{
 				kind: 'prose',
