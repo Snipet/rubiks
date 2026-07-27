@@ -213,6 +213,31 @@ export function reorientToStandard(f: Facelets): Facelets | null {
 	return null;
 }
 
+/**
+ * The rotation that would put a state back in the canonical frame, as an
+ * algorithm string. Empty when it is already there, `null` when the centres do
+ * not form a valid colour scheme.
+ *
+ * Needed because an algorithm written with a leading `x` or `y` leaves the cube
+ * tilted, and a recommendation the reader is going to perform literally has to
+ * end with the cube the way up it started.
+ */
+export function reorientationFor(f: Facelets): string | null {
+	for (let i = 0; i < ORIENTATION_PERMS.length; i++) {
+		const perm = ORIENTATION_PERMS[i];
+		const candidate = perm ? applyPerm(f, perm) : f;
+		let ok = true;
+		for (const face of FACES) {
+			if (candidate[CENTER_FACELETS[face]] !== face) {
+				ok = false;
+				break;
+			}
+		}
+		if (ok) return ORIENTATIONS[i];
+	}
+	return null;
+}
+
 /** Tally of how many stickers carry each colour, ignoring unset ones. */
 export function colorCounts(f: Facelets): number[] {
 	const counts = [0, 0, 0, 0, 0, 0];

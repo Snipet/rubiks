@@ -9,13 +9,7 @@ import {
 	visibleFaces
 } from './geometry';
 import { movePerm } from './moves';
-import {
-	CORNER_FACELETS,
-	EDGE_FACELETS,
-	CENTER_FACELETS,
-	N_FACELETS,
-	type Face
-} from './types';
+import { CORNER_FACELETS, EDGE_FACELETS, CENTER_FACELETS, N_FACELETS, type Face } from './types';
 
 describe('the 3D cube shows every sticker exactly once', () => {
 	it('has 26 cubies', () => {
@@ -32,8 +26,10 @@ describe('the 3D cube shows every sticker exactly once', () => {
 				);
 				expect(index).toBeLessThan(N_FACELETS);
 				const where = `(${c.x},${c.y},${c.z}) face ${face}`;
-				expect(seen.has(index), `facelet ${index} claimed by both ${seen.get(index)} and ${where}`)
-					.toBe(false);
+				expect(
+					seen.has(index),
+					`facelet ${index} claimed by both ${seen.get(index)} and ${where}`
+				).toBe(false);
 				seen.set(index, where);
 			}
 		}
@@ -116,9 +112,10 @@ describe('layers match what the engine actually turns', () => {
 				// The sticker's new home and its old home must both be in the layer;
 				// a turn cannot carry a sticker out of the block it is part of.
 				expect(layer.has(i), `${base} changes facelet ${i}, which is outside its layer`).toBe(true);
-				expect(layer.has(perm[i]), `${base} sources facelet ${perm[i]} from outside its layer`).toBe(
-					true
-				);
+				expect(
+					layer.has(perm[i]),
+					`${base} sources facelet ${perm[i]} from outside its layer`
+				).toBe(true);
 			}
 		}
 	});
@@ -141,7 +138,10 @@ describe('layers match what the engine actually turns', () => {
 		]) {
 			const layerA = CUBIES.filter((c) => inLayer(a, c));
 			const layerB = new Set(CUBIES.filter((c) => inLayer(b, c)));
-			expect(layerA.some((c) => layerB.has(c)), `${a}/${b}`).toBe(false);
+			expect(
+				layerA.some((c) => layerB.has(c)),
+				`${a}/${b}`
+			).toBe(false);
 		}
 	});
 

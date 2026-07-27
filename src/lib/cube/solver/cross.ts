@@ -69,6 +69,17 @@ const EDGE_LABELS: Record<number, string> = {
 };
 
 /**
+ * Cache of solved crosses, keyed by the four cross-edge positions.
+ *
+ * The advice engine re-plans on every render, and the stepwise route runs ten
+ * separate searches, so recomputing it for a state that has not changed is the
+ * single most wasteful thing this module could do. Only 190,080 cross states
+ * exist and a session touches a handful, so a plain map is the right cache.
+ */
+const CACHE = new Map<string, CrossSolution | null>();
+const CACHE_LIMIT = 512;
+
+/**
  * Find the shortest cross for a state.
  *
  * Returns `null` only if the cross is somehow unreachable within the depth
@@ -78,6 +89,10 @@ const EDGE_LABELS: Record<number, string> = {
 export function solveCross(state: Facelets, maxDepth = 9): CrossSolution | null {
 	const dist = distances();
 	const start = crossStateOf(state);
+
+	const key = `${start.join(',')}:${maxDepth}`;
+	const cached = CACHE.get(key);
+	if (cached !== undefined) return cached;
 
 	const solution = ida<CrossState>({
 		start,
@@ -97,12 +112,24 @@ export function solveCross(state: Facelets, maxDepth = 9): CrossSolution | null 
 		maxDepth
 	});
 
-	if (!solution) return null;
-	return {
+	if (!solution) {
+		remember(key, null);
+		return null;
+	}
+	const result: CrossSolution = {
 		moves: movesToString(solution),
 		length: solution.length,
 		steps: stepwiseCross(start, dist)
 	};
+	remember(key, result);
+	return result;
+}
+
+function remember(key: string, value: CrossSolution | null) {
+	// Plain first-in-first-out eviction: recency barely matters here, and keeping
+	// the map from growing without bound is the only real requirement.
+	if (CACHE.size >= CACHE_LIMIT) CACHE.delete(CACHE.keys().next().value!);
+	CACHE.set(key, value);
 }
 
 /**

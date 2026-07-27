@@ -14,7 +14,12 @@
  * would not actually solve the case in front of you is never offered.
  */
 
-import { applyAlg, isSolvedIgnoringOrientation, solvedFacelets } from '../facelets';
+import {
+	applyAlg,
+	isSolvedIgnoringOrientation,
+	reorientationFor,
+	solvedFacelets
+} from '../facelets';
 import { htmLength, parseAlg } from '../moves';
 import {
 	analyze,
@@ -22,6 +27,7 @@ import {
 	F2L_SLOTS,
 	findAuf,
 	isLastLayerOriented,
+	LL_CORNERS,
 	LL_EDGES,
 	orientationKey,
 	permutationKey,
@@ -31,7 +37,7 @@ import {
 import { faceletsToCubie } from '../cubie';
 import type { Facelets } from '../types';
 import { solveCross } from './cross';
-import { casesOfSet, caseById } from '$data/algorithms';
+import { casesOfSet, caseById, F2L_BY_KEY } from '$data/algorithms';
 import type { ResolvedAlgCase, SkillTier } from '$data/types';
 
 /** One suggestion for what to do next. */
@@ -74,6 +80,14 @@ const SLOT_ROTATION: Record<F2lSlotId, string> = {
 	BR: 'y'
 };
 
+/** The rotation that puts each slot back where it came from. */
+const SLOT_ROTATION_UNDO: Record<F2lSlotId, string> = {
+	FR: '',
+	FL: 'y',
+	BL: 'y2',
+	BR: "y'"
+};
+
 const SLOT_PROSE: Record<F2lSlotId, string> = {
 	FR: 'front-right',
 	FL: 'front-left',
@@ -81,13 +95,18 @@ const SLOT_PROSE: Record<F2lSlotId, string> = {
 	BR: 'back-right'
 };
 
+const AUF = ['', 'U', 'U2', "U'"] as const;
+
 /**
- * Try every candidate algorithm with every AUF, and return the shortest that
- * reaches `goal`.
+ * Try every candidate algorithm with every setup and finishing U turn, and
+ * return the shortest sequence that reaches `goal`.
  *
- * This is the workhorse: rather than trusting a lookup table, the engine
- * verifies on the spot that the algorithm it is about to recommend actually
- * works on the cube in front of the user.
+ * The important detail is that each candidate is checked by **applying it
+ * literally** to the cube in front of the reader, rather than by trusting a
+ * lookup table or a helper with its own orientation conventions. Whatever comes
+ * back is a string the reader can perform exactly as written, ending with the
+ * cube the way up it started — which is what makes the "do it on this cube"
+ * button and the advice agree.
  */
 function bestFit(
 	state: Facelets,
@@ -96,10 +115,21 @@ function bestFit(
 ): { id?: string; moves: string; length: number } | null {
 	let best: { id?: string; moves: string; length: number } | null = null;
 	for (const candidate of candidates) {
-		const fit = findAuf(state, candidate.moves, goal);
-		if (!fit) continue;
-		const length = htmLength(parseAlg(fit.full));
-		if (!best || length < best.length) best = { id: candidate.id, moves: fit.full, length };
+		for (const pre of AUF) {
+			for (const post of AUF) {
+				const body = [pre, candidate.moves, post].filter(Boolean).join(' ');
+				let after = applyAlg(state, body);
+				// An algorithm written with a leading rotation finishes tilted; put the
+				// cube back the way up it started before judging the result.
+				const fix = reorientationFor(after);
+				if (fix === null) continue;
+				if (fix) after = applyAlg(after, fix);
+				if (!goal(after)) continue;
+				const full = [body, fix].filter(Boolean).join(' ');
+				const length = htmLength(parseAlg(full));
+				if (!best || length < best.length) best = { id: candidate.id, moves: full, length };
+			}
+		}
 	}
 	return best;
 }
@@ -122,14 +152,130 @@ function candidates(setId: Parameters<typeof casesOfSet>[0]) {
 }
 
 /**
+ * F2L candidates for a slot, narrowed by the case key before anything is
+ * simulated.
+ *
+ * Trying all 41 cases against all 16 AUF combinations for every unsolved slot is
+ * roughly four million array operations, which is slow enough to be felt when it
+ * runs on every keystroke in the sticker editor — and pointless, because the case
+ * key already says which entry applies. The full scan stays as a fallback for the
+ * awkward positions the key reports as `elsewhere`.
+ */
+function f2lCandidates(key: string, slot: F2lSlotId) {
+	const matched = F2L_BY_KEY.get(key);
+	const pool = matched?.length ? matched : casesOfSet('f2l');
+	const before = SLOT_ROTATION[slot];
+	const after = SLOT_ROTATION_UNDO[slot];
+	// Conjugate: turn the cube so the slot is at the front-right, do the
+	// algorithm, turn it back. Rotations cost no moves, and the reader ends up
+	// holding the cube exactly as they started.
+	return pool.flatMap((c) =>
+		c.algs.map((a) => ({ id: c.id, moves: [before, a.moves, after].filter(Boolean).join(' ') }))
+	);
+}
+
+/**
+ * How many slots have a piece stranded in a *different* slot.
+ *
+ * These are the positions no F2L algorithm covers: you cannot pair a corner with
+ * its edge while one of them is buried in another slot. The fix is always to lift
+ * the offender into the top layer, and counting *pieces* rather than *slots* is
+ * what makes that provably progress — when three pairs are tangled in a cycle,
+ * one extraction frees a piece without yet freeing any whole pair, so a
+ * slot-based count would not budge and the advice could loop forever.
+ */
+function strandedPieces(state: Facelets): number {
+	const { cp, ep } = faceletsToCubie(state);
+	const cornerHomes = F2L_SLOTS.map((s) => s.corner);
+	const edgeHomes = F2L_SLOTS.map((s) => s.edge);
+	let n = 0;
+	for (const spec of F2L_SLOTS) {
+		// Only pieces that belong to *some* slot count. A last-layer piece sitting
+		// in a slot is not a problem: an ordinary F2L insertion displaces it as it
+		// goes.
+		const corner = cp[spec.corner];
+		if (corner !== spec.corner && cornerHomes.includes(corner)) n++;
+		const edge = ep[spec.edge];
+		if (edge !== spec.edge && edgeHomes.includes(edge)) n++;
+	}
+	return n;
+}
+
+/**
+ * Short sequences that lift whatever is sitting in a slot up into the top layer,
+ * conjugated so they act on the slot named.
+ */
+function extractions(slot: F2lSlotId): { moves: string }[] {
+	const before = SLOT_ROTATION[slot];
+	const after = SLOT_ROTATION_UNDO[slot];
+	return ["R U R'", "R U' R'", "R U2 R'", "F' U F", "F' U' F", "R U2 R' U' R U R'"].map((alg) => ({
+		moves: [before, alg, after].filter(Boolean).join(' ')
+	}));
+}
+
+/**
  * The three beginner algorithms that carry the whole last layer. Written out
  * here rather than looked up, because the beginner method is defined by these
  * specific sequences and a learner is told to memorise exactly them.
  */
+/**
+ * The beginner method leans on repeating one algorithm until a step is done, and
+ * which repetition helps depends on where the cube is turned to. Rather than
+ * quoting the algorithm bare and hoping, each beginner step is searched for the
+ * setup turn and repeat count that *demonstrably* moves the step forward.
+ *
+ * Without this, "repeat sune" is advice that can cycle forever: applied at the
+ * wrong angle it undoes exactly what the previous repetition achieved.
+ */
+function repeated(alg: string, times: number): { moves: string }[] {
+	// The instruction is never bare "do it again": it is "turn the top so the next
+	// piece is in position, then do it again". Allowing a U turn between
+	// repetitions is what makes the sequence able to finish the step at all — with
+	// the H corner case, for instance, two sunes with no turn between them get you
+	// precisely nowhere.
+	let frontier = [alg];
+	const out = [{ moves: alg }];
+	for (let round = 1; round < times; round++) {
+		frontier = frontier.flatMap((chain) =>
+			AUF.map((turn) => [chain, turn, alg].filter(Boolean).join(' '))
+		);
+		out.push(...frontier.map((moves) => ({ moves })));
+	}
+	return out;
+}
+
+/** How many last-layer corners already show the top colour. */
+function orientedCorners(state: Facelets): number {
+	const { co } = faceletsToCubie(state);
+	return LL_CORNERS.filter((slot) => co[slot] === 0).length;
+}
+
+/** How many last-layer corners are home, ignoring which way round they face. */
+function placedCorners(state: Facelets): number {
+	const { cp } = faceletsToCubie(state);
+	// Corners count as placed when they sit in the right slot relative to each
+	// other, which a closing U turn can always arrange.
+	let best = 0;
+	for (let auf = 0; auf < 4; auf++) {
+		const rotated = auf === 0 ? state : applyAlg(state, AUF[auf]);
+		const perm = faceletsToCubie(rotated).cp;
+		const n = LL_CORNERS.filter((slot) => perm[slot] === slot).length;
+		if (n > best) best = n;
+	}
+	void cp;
+	return best;
+}
+
 const BEGINNER = {
 	cross: "F R U R' U' F'",
 	sune: "R U R' U R U2 R'",
-	cornerCycle: "U R U' L' U R' U' L",
+	/*
+	 * A corner three-cycle that leaves orientation alone. The commutator usually
+	 * quoted for beginners, U R U' L' U R' U' L, twists corners as it goes — fine
+	 * in guides that permute the corners *before* orienting them, but wrong here,
+	 * where the top face is already yellow by this point and must stay that way.
+	 */
+	cornerCycle: "R' F R' B2 R F' R' B2 R2",
 	edgeCycle: "R U' R U R U R U' R' U' R2"
 } as const;
 
@@ -226,16 +372,23 @@ function planF2l(state: Facelets, analysis: StateAnalysis): SolvePlan {
 		fit: ReturnType<typeof bestFit>;
 	};
 	const options: SlotOption[] = unsolved.map((s) => {
-		const rotation = SLOT_ROTATION[s.id as F2lSlotId];
+		const slot = s.id as F2lSlotId;
+		const rotation = SLOT_ROTATION[slot];
+		// The case key is read with the slot turned round to the front-right, which
+		// is the only frame the F2L library is written for.
 		const rotated = rotation ? applyAlg(state, rotation) : state;
+		const key = f2lKey(rotated, 'FR');
 		return {
-			slot: s.id as F2lSlotId,
+			slot,
 			rotation,
 			rotated,
-			key: f2lKey(rotated, 'FR'),
-			fit: bestFit(rotated, candidates('f2l'), (after) => {
+			key,
+			// The fit, though, is judged in the reader's own frame against the
+			// conjugated algorithm: the cross must survive and *this* slot must end
+			// up filled, with the cube left the way up it started.
+			fit: bestFit(state, f2lCandidates(key, slot), (after) => {
 				const a = analyze(after);
-				return a.crossSolved && a.slots.find((x) => x.id === 'FR')!.solved;
+				return a.crossSolved && a.slots.find((x) => x.id === slot)!.solved;
 			})
 		};
 	});
@@ -246,7 +399,7 @@ function planF2l(state: Facelets, analysis: StateAnalysis): SolvePlan {
 
 	if (cheapest) {
 		const prose = SLOT_PROSE[cheapest.slot];
-		const withRotation = [cheapest.rotation, cheapest.fit!.moves].filter(Boolean).join(' ');
+		const withRotation = cheapest.fit!.moves;
 		const holdNote =
 			cheapest.rotation === ''
 				? 'Hold the cube with that slot at the front-right.'
@@ -293,14 +446,45 @@ function planF2l(state: Facelets, analysis: StateAnalysis): SolvePlan {
 		});
 	}
 
-	if (stuck.length > 0 && !cheapest) {
-		recommendations.push({
-			tier: 'beginner',
-			title: 'A piece is trapped in the wrong slot',
-			detail: `The pieces for the ${stuck.map((o) => SLOT_PROSE[o.slot]).join(' and ')} slot are stuck in a slot they do not belong in. Pull one out into the top layer first — hold the offending slot at the front-right and do R U R' — then carry on as normal.`,
-			moves: "R U R'",
-			moveCount: 3
-		});
+	if (!cheapest) {
+		// Nothing can be inserted, which means a piece is buried in a slot it does
+		// not belong in. Try lifting each unfinished slot in turn, and take whichever
+		// move genuinely reduces the number of stranded pairs — so this can never
+		// become a move that simply shuffles the problem sideways.
+		const strandedBefore = strandedPieces(state);
+		const solvedAlready = analysis.slots.filter((x) => x.solved).map((x) => x.id);
+		let rescue: { slot: F2lSlotId; moves: string; length: number } | null = null;
+
+		for (const option of options) {
+			const fit = bestFit(state, extractions(option.slot), (after) => {
+				const a = analyze(after);
+				if (!a.crossSolved) return false;
+				if (!solvedAlready.every((id) => a.slots.find((x) => x.id === id)!.solved)) return false;
+				return strandedPieces(after) < strandedBefore;
+			});
+			if (fit && (!rescue || fit.length < rescue.length)) {
+				rescue = { slot: option.slot, moves: fit.moves, length: fit.length };
+			}
+		}
+
+		if (rescue) {
+			const detail = `The two pieces for one of the remaining slots cannot be paired up, because one of them is buried in a slot it does not belong in. Lift it out into the top layer first — hold the ${SLOT_PROSE[rescue.slot]} slot at the front-right and do R U R' — and then carry on as normal. It looks like a step backwards and is not.`;
+			recommendations.push({
+				tier: 'beginner',
+				title: 'Lift a trapped piece out first',
+				detail,
+				moves: rescue.moves,
+				moveCount: rescue.length
+			});
+			recommendations.push({
+				tier: 'advanced',
+				title: `Free the ${SLOT_PROSE[rescue.slot]} slot`,
+				detail:
+					'Nothing is insertable, so a pair has to come out before anything goes in. Watch where both pieces land as you do it — the extraction usually sets up the pair for free.',
+				moves: rescue.moves,
+				moveCount: rescue.length
+			});
+		}
 	}
 
 	return {
@@ -323,15 +507,15 @@ function planOll(state: Facelets, analysis: StateAnalysis): SolvePlan {
 	const crossDone = edgesOriented(state);
 
 	if (!crossDone) {
-		const fit = findAuf(state, BEGINNER.cross, edgesOriented);
+		const fit = bestFit(state, repeated(BEGINNER.cross, 3), edgesOriented);
 		const oriented = LL_EDGES.filter((slot) => faceletsToCubie(state).eo[slot] === 0).length;
 		const shape = oriented === 0 ? 'a dot' : 'a line or an L';
 		recommendations.push({
 			tier: 'beginner',
 			title: 'Make the cross on top',
 			detail: `You have ${shape} on top. Run F R U R' U' F' — once for an L, once for a line, and twice for a dot, turning the top face between goes so the shape faces you the right way. Ignore the corners entirely for now.`,
-			moves: fit?.full ?? BEGINNER.cross,
-			moveCount: htmLength(parseAlg(fit?.full ?? BEGINNER.cross)),
+			moves: fit?.moves ?? BEGINNER.cross,
+			moveCount: htmLength(parseAlg(fit?.moves ?? BEGINNER.cross)),
 			setId: 'beginner-ll'
 		});
 
@@ -349,13 +533,17 @@ function planOll(state: Facelets, analysis: StateAnalysis): SolvePlan {
 			});
 		}
 	} else {
-		const sune = findAuf(state, BEGINNER.sune, isLastLayerOriented);
+		// Either finish the job outright, or at least orient one more corner.
+		const before = orientedCorners(state);
+		const sune =
+			bestFit(state, repeated(BEGINNER.sune, 4), isLastLayerOriented) ??
+			bestFit(state, repeated(BEGINNER.sune, 3), (after) => orientedCorners(after) > before);
 		recommendations.push({
 			tier: 'beginner',
 			title: 'Turn the corners the right way up',
 			detail: `Hold the cube so a corner that still needs turning is at the front-right, then run R U R' U R U2 R'. Repeat it until that corner is yellow on top, move to the next one, and keep going. The top will look badly broken part-way through — that is expected, and it comes back together.`,
-			moves: sune?.full ?? BEGINNER.sune,
-			moveCount: htmLength(parseAlg(sune?.full ?? BEGINNER.sune)),
+			moves: sune?.moves ?? BEGINNER.sune,
+			moveCount: htmLength(parseAlg(sune?.moves ?? BEGINNER.sune)),
 			setId: 'beginner-ll'
 		});
 
@@ -414,13 +602,22 @@ function planPll(state: Facelets, analysis: StateAnalysis): SolvePlan {
 	const cornersDone = cornersPlaced(state);
 
 	if (!cornersDone) {
-		const corner = findAuf(state, BEGINNER.cornerCycle, cornersPlaced);
+		const placedBefore = placedCorners(state);
+		const corner =
+			bestFit(state, repeated(BEGINNER.cornerCycle, 3), cornersPlaced) ??
+			bestFit(
+				state,
+				repeated(BEGINNER.cornerCycle, 2),
+				// Progress means more corners home *without* unpicking the orientation
+				// that the previous step just finished.
+				(after) => isLastLayerOriented(after) && placedCorners(after) > placedBefore
+			);
 		recommendations.push({
 			tier: 'beginner',
 			title: 'Put the corners in the right places',
-			detail: `Find two corners that are already next to each other correctly — hold that pair at the back — then run U R U' L' U R' U' L. Repeat until all four corners sit between the right centres. Their colours will still be facing every which way; that is the next step's problem.`,
-			moves: corner?.full ?? BEGINNER.cornerCycle,
-			moveCount: htmLength(parseAlg(corner?.full ?? BEGINNER.cornerCycle)),
+			detail: `The top is yellow, but the corners are in the wrong places. This algorithm cycles three of them round without disturbing which way up they face. Turn the top until one corner is already correct, hold it at the back-right, and run it — repeating if the first go does not finish the job.`,
+			moves: corner?.moves ?? BEGINNER.cornerCycle,
+			moveCount: htmLength(parseAlg(corner?.moves ?? BEGINNER.cornerCycle)),
 			setId: 'beginner-ll'
 		});
 
@@ -438,13 +635,13 @@ function planPll(state: Facelets, analysis: StateAnalysis): SolvePlan {
 			});
 		}
 	} else {
-		const edge = findAuf(state, BEGINNER.edgeCycle, isSolvedIgnoringOrientation);
+		const edge = bestFit(state, repeated(BEGINNER.edgeCycle, 3), isSolvedIgnoringOrientation);
 		recommendations.push({
 			tier: 'beginner',
 			title: 'Cycle the last three edges',
 			detail: `The corners are home, so only the edges are left. Hold the cube so the one edge that is already correct is at the back, then run R U' R U R U R U' R' U' R2. If none looks correct, run it once anyway and one will appear.`,
-			moves: edge?.full ?? BEGINNER.edgeCycle,
-			moveCount: htmLength(parseAlg(edge?.full ?? BEGINNER.edgeCycle)),
+			moves: edge?.moves ?? BEGINNER.edgeCycle,
+			moveCount: htmLength(parseAlg(edge?.moves ?? BEGINNER.edgeCycle)),
 			setId: 'beginner-ll'
 		});
 
