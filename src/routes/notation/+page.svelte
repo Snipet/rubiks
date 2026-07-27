@@ -470,8 +470,8 @@
 			<figure class="example">
 				<div class="scroll-x"><AlgString alg="R U R' U'" size="md" count /></div>
 				<figcaption>
-					Four moves, one motion: right up, right back, up back. Most people learn this before they
-					learn anything else, and six repetitions of it return the cube to solved.
+					Four moves, but one motion: right, up, right back, up back. Most people learn this before
+					they learn anything else, and six repetitions of it bring the cube back to solved.
 				</figcaption>
 			</figure>
 			<figure class="example">
