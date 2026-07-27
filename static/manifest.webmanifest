@@ -1,0 +1,11 @@
+{
+	"name": "CubeCraft — Rubik's Cube guide, algorithms and solver",
+	"short_name": "CubeCraft",
+	"description": "Learn to solve the cube, look up any algorithm, and get advice on the cube in front of you.",
+	"start_url": ".",
+	"scope": ".",
+	"display": "standalone",
+	"background_color": "#0a0d11",
+	"theme_color": "#0a0d11",
+	"icons": [{ "src": "favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" }]
+}

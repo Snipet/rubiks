@@ -1,0 +1,286 @@
+/**
+ * Design tokens.
+ *
+ * Two ideas hold the visual language together:
+ *
+ * 1. **The six cube colours are the site's navigation palette.** Learn is green,
+ *    Algorithms red, Solve blue, Trainer orange, Timer yellow, Reference white.
+ *    Each route sets `--section` and the chrome follows it, so you always know
+ *    where you are without reading a label.
+ * 2. **Sticker colours are never reused for interface meaning.** Anything the
+ *    interface needs to say — focus, danger, success — comes from the neutral and
+ *    accent ramps, so a red button can never be mistaken for a red sticker.
+ */
+
+:root {
+	color-scheme: dark light;
+
+	/* --- Sticker colours -------------------------------------------------- */
+	/* Tuned for contrast against both surfaces while staying recognisably
+	   "cube": the classic scheme reads as plastic, not as flat web swatches. */
+	--sticker-u: #f4f6f8;
+	--sticker-r: #d92d3a;
+	--sticker-f: #21a04a;
+	--sticker-d: #f5c518;
+	--sticker-l: #f07a1c;
+	--sticker-b: #1668d4;
+	--sticker-none: #2b3138;
+	--sticker-ignored: #3a424b;
+
+	--sticker-u-edge: #cdd4db;
+	--sticker-r-edge: #9c1e28;
+	--sticker-f-edge: #167235;
+	--sticker-d-edge: #b08d0c;
+	--sticker-l-edge: #b05612;
+	--sticker-b-edge: #0f4a99;
+
+	/* --- Neutrals --------------------------------------------------------- */
+	--bg: #0a0d11;
+	--bg-deep: #06080a;
+	--surface-1: #10151b;
+	--surface-2: #161d25;
+	--surface-3: #1e2731;
+	--surface-raised: #232d38;
+	--hairline: #262f3a;
+	--hairline-strong: #35414f;
+
+	--text: #e7ecf2;
+	--text-muted: #9dabbb;
+	--text-faint: #6b7987;
+	--text-inverse: #0a0d11;
+
+	/* --- Accent ----------------------------------------------------------- */
+	/* Deliberately not one of the six sticker hues. */
+	--accent: #7c8cff;
+	--accent-strong: #9aa6ff;
+	--accent-dim: #3a4270;
+	--accent-wash: color-mix(in oklab, var(--accent) 14%, transparent);
+	--accent-contrast: #0a0d11;
+
+	--positive: #35c07a;
+	--caution: #e0a020;
+	--danger: #f0525f;
+
+	/* --- Section colour, overridden per route ----------------------------- */
+	--section: var(--accent);
+	--section-wash: color-mix(in oklab, var(--section) 12%, transparent);
+	--section-edge: color-mix(in oklab, var(--section) 42%, var(--hairline));
+
+	/* --- Type ------------------------------------------------------------- */
+	--font-sans:
+		'Inter var', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+		'Helvetica Neue', sans-serif;
+	--font-mono:
+		ui-monospace, 'SF Mono', 'SFMono-Regular', 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas,
+		monospace;
+	--font-display: var(--font-sans);
+
+	--step--2: clamp(0.69rem, 0.68rem + 0.06vw, 0.73rem);
+	--step--1: clamp(0.83rem, 0.81rem + 0.11vw, 0.9rem);
+	--step-0: clamp(1rem, 0.96rem + 0.18vw, 1.11rem);
+	--step-1: clamp(1.2rem, 1.14rem + 0.3vw, 1.39rem);
+	--step-2: clamp(1.44rem, 1.34rem + 0.47vw, 1.73rem);
+	--step-3: clamp(1.73rem, 1.58rem + 0.72vw, 2.16rem);
+	--step-4: clamp(2.07rem, 1.85rem + 1.07vw, 2.7rem);
+	--step-5: clamp(2.49rem, 2.16rem + 1.56vw, 3.38rem);
+
+	--leading-tight: 1.15;
+	--leading-snug: 1.35;
+	--leading-normal: 1.6;
+	--leading-loose: 1.75;
+
+	--tracking-tight: -0.02em;
+	--tracking-wide: 0.06em;
+	--tracking-caps: 0.1em;
+
+	/* --- Space ------------------------------------------------------------ */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.5rem;
+	--space-6: 2rem;
+	--space-7: 3rem;
+	--space-8: 4rem;
+	--space-9: 6rem;
+
+	/* --- Shape ------------------------------------------------------------ */
+	--radius-1: 4px;
+	--radius-2: 8px;
+	--radius-3: 12px;
+	--radius-4: 18px;
+	--radius-pill: 999px;
+	--radius-sticker: 14%;
+
+	--border: 1px solid var(--hairline);
+	--border-strong: 1px solid var(--hairline-strong);
+
+	/* --- Depth ------------------------------------------------------------ */
+	--shadow-1: 0 1px 2px rgb(0 0 0 / 0.3);
+	--shadow-2: 0 2px 6px -1px rgb(0 0 0 / 0.35), 0 1px 2px rgb(0 0 0 / 0.2);
+	--shadow-3: 0 12px 28px -8px rgb(0 0 0 / 0.5), 0 2px 6px rgb(0 0 0 / 0.25);
+	--shadow-4: 0 28px 60px -18px rgb(0 0 0 / 0.6), 0 4px 12px rgb(0 0 0 / 0.3);
+	--shadow-glow:
+		0 0 0 1px var(--section-edge),
+		0 8px 24px -10px color-mix(in oklab, var(--section) 40%, transparent);
+
+	/* --- Motion ----------------------------------------------------------- */
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+	--ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+	--dur-instant: 90ms;
+	--dur-fast: 160ms;
+	--dur-mid: 260ms;
+	--dur-slow: 420ms;
+	/* Turn animation speed for the interactive cube, driven by a user setting. */
+	--turn-duration: 260ms;
+
+	/* --- Layout ----------------------------------------------------------- */
+	--measure: 68ch;
+	--page-max: 78rem;
+	--page-wide: 96rem;
+	--gutter: clamp(1rem, 4vw, 2.5rem);
+	--header-height: 3.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   Light theme
+   -------------------------------------------------------------------------- */
+:root[data-theme='light'] {
+	color-scheme: light;
+
+	--bg: #f6f7f9;
+	--bg-deep: #eceef2;
+	--surface-1: #ffffff;
+	--surface-2: #f4f6f9;
+	--surface-3: #e9edf2;
+	--surface-raised: #ffffff;
+	--hairline: #dfe4ea;
+	--hairline-strong: #c3ccd6;
+
+	--text: #131a22;
+	--text-muted: #566573;
+	--text-faint: #7d8b99;
+	--text-inverse: #ffffff;
+
+	--accent: #4b56d2;
+	--accent-strong: #3a44bd;
+	--accent-dim: #ccd0f5;
+	--accent-contrast: #ffffff;
+
+	--positive: #17864f;
+	--caution: #a56a00;
+	--danger: #c62839;
+
+	--sticker-u: #ffffff;
+	--sticker-none: #d7dde4;
+	--sticker-ignored: #c2cad3;
+	--sticker-u-edge: #b9c2cc;
+
+	--shadow-1: 0 1px 2px rgb(16 24 40 / 0.06);
+	--shadow-2: 0 2px 6px -1px rgb(16 24 40 / 0.1), 0 1px 2px rgb(16 24 40 / 0.06);
+	--shadow-3: 0 12px 28px -10px rgb(16 24 40 / 0.16), 0 2px 6px rgb(16 24 40 / 0.06);
+	--shadow-4: 0 28px 60px -20px rgb(16 24 40 / 0.2), 0 4px 12px rgb(16 24 40 / 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   Section colours
+   -------------------------------------------------------------------------- */
+[data-section='learn'] {
+	--section: var(--sticker-f);
+}
+[data-section='algorithms'] {
+	--section: var(--sticker-r);
+}
+[data-section='solve'] {
+	--section: var(--sticker-b);
+}
+[data-section='trainer'] {
+	--section: var(--sticker-l);
+}
+[data-section='timer'] {
+	--section: var(--sticker-d);
+}
+[data-section='reference'] {
+	--section: #a7b4c2;
+}
+
+/* --------------------------------------------------------------------------
+   Colour-vision alternatives
+   -------------------------------------------------------------------------- */
+
+/* Red/green separation: push red towards magenta and green towards cyan, and
+   keep the luminance ladder wide so the colours also differ in lightness. */
+:root[data-palette='deuteranopia'],
+:root[data-palette='protanopia'] {
+	--sticker-r: #e0447f;
+	--sticker-f: #10b6c4;
+	--sticker-l: #f0951c;
+	--sticker-b: #2b52c9;
+	--sticker-d: #f2e14a;
+	--sticker-r-edge: #9c2354;
+	--sticker-f-edge: #0a7c86;
+	--sticker-l-edge: #b06810;
+	--sticker-b-edge: #1c3688;
+	--sticker-d-edge: #b0a316;
+}
+
+/* Blue/yellow separation. */
+:root[data-palette='tritanopia'] {
+	--sticker-b: #6d4bd8;
+	--sticker-d: #d8d8d8;
+	--sticker-u: #ffffff;
+	--sticker-f: #16a34a;
+	--sticker-r: #d92d3a;
+	--sticker-l: #ff8fa0;
+	--sticker-b-edge: #4a2f9c;
+	--sticker-d-edge: #9ea3a8;
+	--sticker-l-edge: #c46374;
+}
+
+/* High contrast: maximise separation and thicken every edge. */
+:root[data-palette='high-contrast'] {
+	--sticker-u: #ffffff;
+	--sticker-r: #ff1f2e;
+	--sticker-f: #00e05a;
+	--sticker-d: #ffe100;
+	--sticker-l: #ff8000;
+	--sticker-b: #0080ff;
+	--hairline: #59667a;
+	--hairline-strong: #7d8b9e;
+	--text: #ffffff;
+	--text-muted: #c8d2de;
+}
+
+/* --------------------------------------------------------------------------
+   Density
+   -------------------------------------------------------------------------- */
+:root[data-density='compact'] {
+	--space-4: 0.75rem;
+	--space-5: 1.125rem;
+	--space-6: 1.5rem;
+	--space-7: 2.25rem;
+	--space-8: 3rem;
+	--header-height: 3.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   Motion preferences
+   -------------------------------------------------------------------------- */
+:root[data-motion='reduced'] {
+	--dur-instant: 0ms;
+	--dur-fast: 0ms;
+	--dur-mid: 0ms;
+	--dur-slow: 0ms;
+	--turn-duration: 0ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root:not([data-motion='full']) {
+		--dur-instant: 0ms;
+		--dur-fast: 0ms;
+		--dur-mid: 0ms;
+		--dur-slow: 0ms;
+		--turn-duration: 0ms;
+	}
+}

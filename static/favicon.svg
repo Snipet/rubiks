@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="An isometric twisty cube">
+	<title>CubeCraft</title>
+	<defs>
+		<clipPath id="top"><path d="M32 4 60 18 32 32 4 18Z" /></clipPath>
+		<clipPath id="left"><path d="M4 18 32 32 32 60 4 46Z" /></clipPath>
+		<clipPath id="right"><path d="M60 18 60 46 32 60 32 32Z" /></clipPath>
+	</defs>
+
+	<!-- Up face: three rows of three, sheared onto the isometric top -->
+	<g clip-path="url(#top)">
+		<path d="M32 4 60 18 32 32 4 18Z" fill="#f4f6f8" />
+		<g stroke="#aeb7c1" stroke-width="1.6" fill="none">
+			<path d="M13.33 12.67 41.33 26.67M22.67 7.33 50.67 21.33" />
+			<path d="M50.67 12.67 22.67 26.67M41.33 7.33 13.33 21.33" />
+		</g>
+	</g>
+
+	<!-- Front-left face -->
+	<g clip-path="url(#left)">
+		<path d="M4 18 32 32 32 60 4 46Z" fill="#21a04a" />
+		<g stroke="#12662f" stroke-width="1.6" fill="none">
+			<path d="M13.33 22.67 13.33 50.67M22.67 27.33 22.67 55.33" />
+			<path d="M4 27.33 32 41.33M4 36.67 32 50.67" />
+		</g>
+	</g>
+
+	<!-- Front-right face -->
+	<g clip-path="url(#right)">
+		<path d="M60 18 60 46 32 60 32 32Z" fill="#d92d3a" />
+		<g stroke="#8d1a23" stroke-width="1.6" fill="none">
+			<path d="M50.67 22.67 50.67 50.67M41.33 27.33 41.33 55.33" />
+			<path d="M60 27.33 32 41.33M60 36.67 32 50.67" />
+		</g>
+	</g>
+
+	<!-- Silhouette -->
+	<path
+		d="M32 4 60 18 60 46 32 60 4 46 4 18Z"
+		fill="none"
+		stroke="#0a0d11"
+		stroke-width="2.4"
+		stroke-linejoin="round"
+	/>
+	<path d="M4 18 32 32 60 18M32 32 32 60" fill="none" stroke="#0a0d11" stroke-width="2.4" stroke-linejoin="round" />
+</svg>
