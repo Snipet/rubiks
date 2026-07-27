@@ -142,11 +142,7 @@
 							<p class="method__aka">Also called {method.alsoKnownAs.join(', ')}</p>
 						{/if}
 					</div>
-					<div class="method__chips">
-						<Chip tone="section">{SKILL_LABELS[method.tier]}</Chip>
-						<Chip>{method.moveCount}</Chip>
-						<Chip>{method.algCount} algorithms</Chip>
-					</div>
+					<Chip tone="section" size="md">{SKILL_LABELS[method.tier]}</Chip>
 				</header>
 
 				<p class="method__summary">{method.summary}</p>
@@ -158,6 +154,21 @@
 						{/if}{#if method.year}{method.year}{/if}
 					</p>
 				{/if}
+
+				<dl class="facts">
+					<div>
+						<dt>Typical solve</dt>
+						<dd>{method.moveCount}</dd>
+					</div>
+					<div>
+						<dt>Algorithms</dt>
+						<dd>{method.algCount}</dd>
+					</div>
+					<div>
+						<dt>Steps</dt>
+						<dd>{method.steps.length}</dd>
+					</div>
+				</dl>
 
 				<div class="method__body">
 					<div class="method__steps">
@@ -274,7 +285,7 @@
 	/* --- At a glance ------------------------------------------------------- */
 	.table {
 		width: 100%;
-		min-width: 46rem;
+		min-width: 48rem;
 		border-collapse: collapse;
 		font-size: var(--step--1);
 	}
@@ -451,12 +462,6 @@
 		font-size: var(--step--1);
 	}
 
-	.method__chips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2);
-	}
-
 	.method__summary {
 		max-width: var(--measure);
 		margin-block-start: var(--space-4);
@@ -469,6 +474,30 @@
 		margin-block-start: var(--space-3);
 		color: var(--text-faint);
 		font-size: var(--step--1);
+	}
+
+	.facts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3) var(--space-6);
+		margin-block-start: var(--space-5);
+		padding-block-start: var(--space-4);
+		border-top: var(--border);
+	}
+
+	.facts dt {
+		color: var(--text-faint);
+		font-size: var(--step--2);
+		letter-spacing: var(--tracking-caps);
+		text-transform: uppercase;
+	}
+
+	.facts dd {
+		max-width: 26ch;
+		color: var(--text);
+		font-size: var(--step-0);
+		font-weight: 620;
+		line-height: var(--leading-snug);
 	}
 
 	.method__body {
