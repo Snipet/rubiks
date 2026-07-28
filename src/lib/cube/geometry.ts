@@ -112,6 +112,23 @@ export const TURN: Record<string, { axis: 'X' | 'Y' | 'Z'; sign: 1 | -1 }> = {
 	z: { axis: 'Z', sign: 1 }
 };
 
+/**
+ * The same axis-and-direction table, keyed by face rather than by move name.
+ *
+ * The N×N engine reduces every turn to "a face, and how deep", so this is the
+ * form the size-generic view needs. Deriving it from {@link TURN} rather than
+ * writing it out again means the two can never say different things about
+ * which way an `R` goes.
+ */
+export const FACE_SPIN: Record<Face, { axis: 'X' | 'Y' | 'Z'; sign: 1 | -1 }> = {
+	0: TURN.U,
+	1: TURN.R,
+	2: TURN.F,
+	3: TURN.D,
+	4: TURN.L,
+	5: TURN.B
+};
+
 /** Whether a cubie belongs to the layer a move turns. */
 export function inLayer(base: string, c: CubiePosition): boolean {
 	switch (base) {

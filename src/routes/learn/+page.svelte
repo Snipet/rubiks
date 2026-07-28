@@ -4,9 +4,14 @@
 	import Button from '$components/ui/Button.svelte';
 	import { pageTitle } from '$lib/brand';
 	import { lessonsOfTrack, TRACKS, trackMinutes } from '$data/lessons';
-	import { SKILL_LABELS } from '$data/types';
+	import { SKILL_LABELS, TRACK_LABELS } from '$data/types';
 	import { settings } from '$state/settings.svelte';
 	import { progress } from '$state/progress.svelte';
+
+	// Tracks belong to a puzzle; the four 3×3 ones carry no puzzle field because
+	// they predate modes, so an absent value means three.
+	const order = $derived(settings.current.puzzle);
+	const tracks = $derived(TRACKS.filter((t) => (t.puzzle ?? 3) === order));
 
 	const mine = $derived(settings.current.skill);
 </script>
@@ -31,7 +36,7 @@
 	</header>
 
 	<div class="tracks">
-		{#each TRACKS as t (t.id)}
+		{#each tracks as t (t.id)}
 			{@const lessons = lessonsOfTrack(t.id)}
 			{@const done = lessons.filter((l) => progress.lessonDone(l.slug)).length}
 			<section class="track" class:track--mine={t.id === mine}>
@@ -39,7 +44,7 @@
 					<div>
 						<div class="track__chips">
 							<Chip tone={t.id === mine ? 'section' : 'neutral'} size="md">
-								{SKILL_LABELS[t.id]}
+								{TRACK_LABELS[t.id]}
 							</Chip>
 							{#if lessons.length > 0}
 								<Chip>{lessons.length} lessons</Chip>

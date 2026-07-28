@@ -28,6 +28,9 @@
 
 	let { entry, open = false, diagramSize = 108 }: Props = $props();
 
+	/** Cases carry their puzzle through their set; anything older is a 3×3. */
+	const order = $derived(entry.set_.puzzle ?? 3);
+
 	// Both read their prop once, at construction: they seed the component rather
 	// than tracking it.
 	let expanded = $state(untrack(() => open));
@@ -76,6 +79,7 @@
 		<div class="case__diagram">
 			<CubeDiagram
 				facelets={entry.caseState}
+				{order}
 				view={entry.set_.view}
 				size={diagramSize}
 				label="{entry.name}: the case this algorithm solves"
@@ -101,7 +105,7 @@
 			</div>
 
 			<div class="case__alg scroll-x">
-				<AlgString alg={algs[0].moves} size="md" wrap={false} />
+				<AlgString alg={algs[0].moves} {order} size="md" wrap={false} />
 			</div>
 
 			{#if entry.recognition}
@@ -139,6 +143,7 @@
 				<Cube3D
 					bind:this={cube}
 					bind:facelets={demo}
+					{order}
 					size={190}
 					label="{entry.name} demonstration"
 				/>
@@ -165,7 +170,7 @@
 								<span class="variant__count">{htmLength(parseAlg(variant.moves))} moves</span>
 							</div>
 							<div class="variant__alg scroll-x">
-								<AlgString alg={variant.moves} size="sm" wrap={false} />
+								<AlgString alg={variant.moves} {order} size="sm" wrap={false} />
 							</div>
 							{#if variant.note}<p class="variant__note">{variant.note}</p>{/if}
 							<Button

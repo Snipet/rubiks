@@ -33,6 +33,7 @@ export const SKILL_BLURBS: Record<SkillTier, string> = {
 
 /** The algorithm collections the library is grouped into. */
 export type AlgSetId =
+	// 3×3
 	| 'beginner-f2l'
 	| 'beginner-ll'
 	| 'f2l'
@@ -43,7 +44,15 @@ export type AlgSetId =
 	| 'coll'
 	| 'winter-variation'
 	| 'cmll'
-	| 'commutators';
+	| 'commutators'
+	// 2×2
+	| 'pocket-oll'
+	| 'pocket-pll'
+	| 'pocket-pbl'
+	| 'pocket-cll'
+	// 4×4
+	| 'revenge-parity'
+	| 'revenge-centres';
 
 export interface AlgSetMeta {
 	id: AlgSetId;
@@ -57,6 +66,11 @@ export interface AlgSetMeta {
 	description: string;
 	/** Earliest tier that should meet this set. */
 	tier: SkillTier;
+	/**
+	 * Which puzzle the set belongs to. Everything written before the site had
+	 * modes is a 3×3 set, so that is the default and no existing entry changes.
+	 */
+	puzzle?: import('$cube/puzzle').PuzzleSize;
 	/** How diagrams for this set are drawn. */
 	view: DiagramView;
 	/**
@@ -77,7 +91,22 @@ export interface AlgSetMeta {
 		caseIds: readonly string[];
 	};
 	/** Which invariant the verifier holds this set's algorithms to. */
-	verify: 'oll' | 'pll' | 'f2l' | 'coll' | 'cmll' | 'll-edges' | 'well-formed';
+	verify:
+		| 'oll'
+		| 'pll'
+		| 'f2l'
+		| 'coll'
+		| 'cmll'
+		| 'll-edges'
+		| 'well-formed'
+		| 'pocket-oll'
+		| 'pocket-pll'
+		| 'pocket-pbl'
+		| 'pocket-cll'
+		| 'edge-flip'
+		| 'edge-swap'
+		| 'centres-only'
+		| 'pocket-cll';
 }
 
 /** One way of solving a case. */
@@ -171,6 +200,28 @@ export type LessonBlock =
 	/** A link across to another lesson or to a set page. */
 	| { kind: 'jump'; href: string; label: string; blurb?: string };
 
+/**
+ * Tracks are a reading order. The four 3×3 ones are named after the skill tier
+ * they suit; the puzzle-specific ones are named after their puzzle, because
+ * "beginner 2×2" and "advanced 2×2" is a distinction the 2×2 is too small to
+ * carry — one track covers it end to end.
+ */
+export type TrackId = SkillTier | 'pocket' | 'revenge';
+
+/**
+ * What to call a track in a chip. The 3×3 tracks are named after the skill tier
+ * they suit, which is the useful label there; the puzzle tracks are named after
+ * the puzzle, because a 2×2 is not a difficulty.
+ */
+export const TRACK_LABELS: Record<TrackId, string> = {
+	beginner: 'Beginner',
+	intermediate: 'Intermediate',
+	advanced: 'Advanced',
+	expert: 'Expert',
+	pocket: '2×2',
+	revenge: '4×4'
+};
+
 export interface Lesson {
 	/** URL slug. */
 	slug: string;
@@ -178,7 +229,7 @@ export interface Lesson {
 	/** One sentence shown in listings. */
 	summary: string;
 	/** Which track this lesson belongs to. */
-	track: SkillTier;
+	track: TrackId;
 	/** Position within the track. */
 	order: number;
 	/** Rough reading/practice time in minutes. */
@@ -193,10 +244,12 @@ export interface Lesson {
 }
 
 export interface Track {
-	id: SkillTier;
+	id: TrackId;
 	title: string;
 	tagline: string;
 	description: string;
+	/** Which puzzle it is about. Absent means the 3×3. */
+	puzzle?: import('$cube/puzzle').PuzzleSize;
 	/** Ordered lesson slugs. */
 	lessons: string[];
 }

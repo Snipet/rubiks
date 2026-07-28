@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { onMount } from 'svelte';
+	import { untrack } from 'svelte';
 	import Wordmark from '$components/layout/Wordmark.svelte';
 	import SkillPicker from '$components/layout/SkillPicker.svelte';
 	import Cube3D from '$components/cube/Cube3D.svelte';
@@ -10,43 +10,129 @@
 	import AlgString from '$components/ui/AlgString.svelte';
 	import { BRAND, TAGLINE } from '$lib/brand';
 	import { NAV } from '$lib/nav';
-	import { caseFromAlg, solvedFacelets, stateFromAlg } from '$cube/facelets';
-	import { randomScramble } from '$cube/scramble';
-	import { algorithmCount, ALL_CASES, casesOfSet } from '$data/algorithms';
-	import { settings } from '$state/settings.svelte';
-	import { SKILL_LABELS } from '$data/types';
+	import { puzzle, type PuzzleSize } from '$cube/puzzle';
+	import { scrambleFor } from '$cube/puzzleScramble';
+	import { apply, tokenise } from '$cube/puzzleState';
+	import { ALG_SETS, RESOLVED_CASES } from '$data/algorithms';
+	import { PUZZLE_LABELS, settings } from '$state/settings.svelte';
+	import { SKILL_LABELS, type ResolvedAlgCase } from '$data/types';
+	import type { Facelets } from '$cube/types';
 
-	let hero = $state(solvedFacelets());
+	const order = $derived(settings.current.puzzle);
+
+	// Everything counted and shown on this page is the current puzzle's. Showing
+	// a 3×3 while the header says 2×2 is the one thing the mode switch must never
+	// do, so nothing here is hard-coded to three.
+	const setsForPuzzle = $derived(ALG_SETS.filter((s) => (s.puzzle ?? 3) === order));
+	const puzzleCases = $derived.by(() => {
+		const ids = new Set(setsForPuzzle.map((s) => s.id));
+		return RESOLVED_CASES.filter((c) => ids.has(c.set));
+	});
+	const caseCount = $derived(puzzleCases.length);
+	const algCount = $derived(puzzleCases.reduce((n, c) => n + c.algs.length, 0));
+
+	/**
+	 * Hero scramble lengths.
+	 *
+	 * Shorter than a competition scramble on purpose: the button animates every
+	 * turn, and a full 44-move 4×4 scramble would take eleven seconds to watch.
+	 * The cube only has to *look* scrambled.
+	 */
+	const HERO_LENGTH: Record<PuzzleSize, number> = { 2: 9, 3: 20, 4: 24, 5: 30 };
+
+	let hero = $state<Facelets>(puzzle(3).solved());
 	let cube = $state<{ play: (alg: string) => Promise<void> } | null>(null);
 	let scramble = $state('');
 	let busy = $state(false);
 
-	const caseCount = ALL_CASES.length;
-	const algCount = algorithmCount();
-
-	/** A short parade of cases for the strip beneath the hero. */
-	const showcase = (
-		[
-			{ label: 'PLL', alg: "R U R' U' R' F R2 U' R' U' R U R' F'", view: 'pll' },
-			{ label: 'OLL', alg: "R U R' U R U2 R'", view: 'oll' },
-			{ label: 'OLL', alg: "R U2 R' U' R U' R'", view: 'oll' },
-			{ label: 'PLL', alg: 'M2 U M2 U2 M2 U M2', view: 'pll' }
-		] as const
-	).map((c) => ({ ...c, state: caseFromAlg(c.alg) }));
-
-	const featured = casesOfSet('pll').slice(0, 3);
-
-	onMount(() => {
-		// Land on something that looks like a cube mid-solve rather than a solved one.
-		scramble = randomScramble({ length: 20 });
-		hero = stateFromAlg(scramble);
+	/**
+	 * Land on something that looks like a cube mid-solve rather than a solved one,
+	 * and start again whenever the puzzle changes.
+	 *
+	 * Only `order` is read reactively — `untrack` keeps the scramble it writes
+	 * from feeding back in — and the server renders a solved 3×3 with no scramble
+	 * text, so the prerendered HTML is stable.
+	 */
+	$effect(() => {
+		const size = order;
+		untrack(() => {
+			const p = puzzle(size);
+			const alg = scrambleFor(p, { length: HERO_LENGTH[size] });
+			scramble = alg;
+			hero = apply(p, p.solved(), tokenise(alg));
+		});
 	});
+
+	/**
+	 * Cases grouped by set, best-looking sets first.
+	 *
+	 * The flat last-layer diagram is the one that reads at ninety-two pixels: it
+	 * fills its square and the case is legible. The isometric views used for F2L
+	 * and cross cases shrink to a thumbnail of a whole cube, which next to a flat
+	 * one looks like a mistake. So the shop window prefers flat sets, and falls
+	 * back to the rest only when a puzzle has nothing else — which is the 4×4,
+	 * whose one set is drawn in full colour.
+	 */
+	const FLAT_VIEWS = ['oll', 'pll', 'last-layer'];
+	const groupedSets = $derived(
+		setsForPuzzle
+			.map((set) => ({ set, cases: puzzleCases.filter((c) => c.set === set.id) }))
+			.filter((group) => group.cases.length > 0)
+			.sort(
+				(a, b) => Number(FLAT_VIEWS.includes(b.set.view)) - Number(FLAT_VIEWS.includes(a.set.view))
+			)
+	);
+
+	/** A short parade of cases for the strip beneath the hero, one per set. */
+	const showcase = $derived.by(() => {
+		const out: ResolvedAlgCase[] = [];
+		// Sets legitimately share algorithms — a 2×2 PBL case with the bottom layer
+		// already done *is* the 2×2 PLL case — but the same moves printed twice in
+		// a four-item row reads as a bug rather than as a connection. A plain array
+		// rather than a Set: this one is scratch state inside a derivation, never
+		// read reactively, and the lint rule cannot tell the difference.
+		const seen: string[] = [];
+		// Round-robin, so a set with fifty-seven cases cannot crowd out the rest.
+		for (let depth = 0; out.length < 4; depth++) {
+			const before = out.length;
+			for (const group of groupedSets) {
+				if (out.length >= 4) break;
+				const entry = group.cases[depth];
+				if (!entry || seen.includes(entry.algs[0].moves)) continue;
+				seen.push(entry.algs[0].moves);
+				out.push(entry);
+			}
+			if (out.length === before) break;
+		}
+		return out;
+	});
+
+	/** Three more from the biggest of those sets, beside the promise. */
+	const featured = $derived.by(() => {
+		const shown = new Set(showcase.map((c) => c.id));
+		const biggest = [...groupedSets].sort((a, b) => b.cases.length - a.cases.length)[0];
+		return (biggest?.cases ?? []).filter((c) => !shown.has(c.id)).slice(0, 3);
+	});
+
+	/**
+	 * What coverage means for this puzzle, stated in its own numbers rather than
+	 * the 3×3's. A claim that is right for one size and wrong for another is worse
+	 * than no claim at all.
+	 */
+	const coverage = $derived(
+		order === 3
+			? 'Coverage is checked against the cases the engine enumerates from first principles: 57 for OLL, 21 for PLL, 41 for F2L.'
+			: order === 2
+				? 'Coverage is checked against the cases the engine enumerates from first principles — all seven ways the top of a 2×2 can be twisted, each with exactly one algorithm.'
+				: 'Each parity algorithm is measured sticker by sticker: it has to move wing pieces and nothing else, leave the puzzle still reduced, and produce a 3×3 that genuinely could not be assembled.'
+	);
 
 	async function shuffle() {
 		if (busy) return;
 		busy = true;
-		scramble = randomScramble({ length: 20 });
-		hero = solvedFacelets();
+		const p = puzzle(order);
+		scramble = scrambleFor(p, { length: HERO_LENGTH[order] });
+		hero = p.solved();
 		await cube?.play(scramble);
 		busy = false;
 	}
@@ -81,8 +167,8 @@
 					<dd>{algCount}</dd>
 				</div>
 				<div>
-					<dt>Checked by machine</dt>
-					<dd>every one</dd>
+					<dt>Puzzle</dt>
+					<dd>{PUZZLE_LABELS[order]}</dd>
 				</div>
 			</dl>
 		</div>
@@ -91,8 +177,9 @@
 			<Cube3D
 				bind:this={cube}
 				bind:facelets={hero}
+				{order}
 				size={340}
-				label="A scrambled cube. Drag it to turn it round."
+				label="A scrambled {PUZZLE_LABELS[order]}. Drag it to turn it round."
 			/>
 			<div class="hero__cube-tools">
 				<Button size="sm" variant="ghost" onclick={shuffle} disabled={busy}>
@@ -102,23 +189,25 @@
 			</div>
 			{#if scramble}
 				<div class="hero__scramble scroll-x">
-					<AlgString alg={scramble} size="sm" wrap={false} />
+					<AlgString alg={scramble} {order} size="sm" wrap={false} />
 				</div>
 			{/if}
 		</div>
 	</section>
 
-	<section class="showcase" aria-label="Example cases">
-		{#each showcase as item (item.alg)}
-			<a class="showcase__item" href={resolve('/algorithms')}>
-				<CubeDiagram facelets={item.state} view={item.view} size={92} />
-				<span class="showcase__label">
-					<Chip tone="section">{item.label}</Chip>
-					<AlgString alg={item.alg} size="sm" />
-				</span>
-			</a>
-		{/each}
-	</section>
+	{#if showcase.length > 0}
+		<section class="showcase" aria-label="Example cases">
+			{#each showcase as item (item.id)}
+				<a class="showcase__item" href={resolve('/algorithms/[set]', { set: item.set })}>
+					<CubeDiagram facelets={item.caseState} {order} view={item.set_.view} size={92} />
+					<span class="showcase__label">
+						<Chip tone="section">{item.set_.shortName}</Chip>
+						<AlgString alg={item.algs[0].moves} {order} size="sm" />
+					</span>
+				</a>
+			{/each}
+		</section>
+	{/if}
 
 	<section class="where">
 		<div class="where__intro">
@@ -150,11 +239,11 @@
 			<h2>Every algorithm is run on a real cube engine before it reaches this page.</h2>
 			<p>
 				Algorithm lists on the web get copied from one another, and mistakes propagate. Here, each
-				of the {algCount} algorithms is executed and checked against what its set claims to do — a PLL
-				algorithm must permute the last layer and disturb nothing else, an F2L algorithm must fill its
-				slot without breaking the cross. Coverage is checked against the cases the engine enumerates from
-				first principles: 57 for OLL, 21 for PLL, 41 for F2L. A mistyped move fails the build rather than
-				reaching you.
+				of the {algCount}
+				{PUZZLE_LABELS[order]} algorithms is executed and checked against what its set claims to do —
+				a last-layer algorithm must permute the last layer and disturb nothing else, an F2L algorithm
+				must fill its slot without breaking the cross. {coverage} A mistyped move fails the build rather
+				than reaching you.
 			</p>
 			<p>
 				Case diagrams are computed from the algorithm rather than drawn alongside it, so a picture
@@ -167,10 +256,10 @@
 			<div class="promise__demo">
 				{#each featured as c (c.id)}
 					<figure class="demo">
-						<CubeDiagram facelets={c.caseState} view="pll" size={104} />
+						<CubeDiagram facelets={c.caseState} {order} view={c.set_.view} size={104} />
 						<figcaption>
 							<strong>{c.name}</strong>
-							<AlgString alg={c.algs[0].moves} size="sm" count />
+							<AlgString alg={c.algs[0].moves} {order} size="sm" count />
 						</figcaption>
 					</figure>
 				{/each}
@@ -231,6 +320,7 @@
 	}
 
 	.hero__cube {
+		--hero-cube: 340px;
 		display: grid;
 		justify-items: center;
 		gap: var(--space-3);
@@ -238,6 +328,14 @@
 	}
 
 	.hero__cube-tools {
+		/*
+		 * The cube is drawn in perspective and tilted, so it spills well outside the
+		 * square its scene element reserves — measured at 90px below a 340px box at
+		 * the default angle. The scene cannot know that (its contents are absolutely
+		 * positioned around a zero-sized origin), so the hero reserves the room here
+		 * instead. Without it the cube sits on top of these controls.
+		 */
+		margin-block-start: calc(var(--hero-cube) * 0.29);
 		display: flex;
 		align-items: center;
 		gap: var(--space-3);

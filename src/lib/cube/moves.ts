@@ -394,36 +394,50 @@ export function invertAlg(moves: readonly Move[]): Move[] {
 		.map((m) => makeMove(m.base, m.amount === 2 ? 2 : m.amount === 1 ? 3 : 1));
 }
 
-/** Mirror map for reflection through the M plane (the L/R mirror). */
-const MIRROR_M: Record<string, string> = {
-	R: 'L',
-	L: 'R',
-	Rw: 'Lw',
-	Lw: 'Rw',
-	U: 'U',
-	D: 'D',
-	F: 'F',
-	B: 'B',
-	Uw: 'Uw',
-	Dw: 'Dw',
-	Fw: 'Fw',
-	Bw: 'Bw',
-	M: 'M',
-	E: 'E',
-	S: 'S',
-	x: 'x',
-	y: 'y',
-	z: 'z'
+/**
+ * Mirror map for reflection through the M plane, giving the replacement base and
+ * whether the turn direction reverses.
+ *
+ * Most turns reverse, which is why the naive "swap R and L, flip everything"
+ * rule looks right — but it is wrong for the two turns whose axis the reflection
+ * itself flips. Reflecting through `x → -x` sends a rotation about `+x` to one
+ * about `-x` *and* negates the angle, and those two cancel. So an `x` rotation
+ * and an `M` slice come through a mirror completely unchanged: hold a cube up to
+ * a mirror and tilt it towards you, and the reflection tilts towards you too.
+ */
+const MIRROR_M: Record<string, { base: string; flip: boolean }> = {
+	R: { base: 'L', flip: true },
+	L: { base: 'R', flip: true },
+	Rw: { base: 'Lw', flip: true },
+	Lw: { base: 'Rw', flip: true },
+	U: { base: 'U', flip: true },
+	D: { base: 'D', flip: true },
+	F: { base: 'F', flip: true },
+	B: { base: 'B', flip: true },
+	Uw: { base: 'Uw', flip: true },
+	Dw: { base: 'Dw', flip: true },
+	Fw: { base: 'Fw', flip: true },
+	Bw: { base: 'Bw', flip: true },
+	E: { base: 'E', flip: true },
+	S: { base: 'S', flip: true },
+	y: { base: 'y', flip: true },
+	z: { base: 'z', flip: true },
+	// The two on the reflected axis: unchanged, direction included.
+	M: { base: 'M', flip: false },
+	x: { base: 'x', flip: false }
 };
 
 /**
- * Reflect an algorithm through the M plane. Every turn direction flips, and R↔L
- * (and Rw↔Lw) swap. Useful for generating the mirror case of an F2L or OLL alg.
+ * Reflect an algorithm through the M plane: R↔L swap, most directions reverse,
+ * and `x` and `M` come through untouched. Useful for generating the mirror case
+ * of an F2L or OLL algorithm.
  */
 export function mirrorAlg(moves: readonly Move[]): Move[] {
-	return moves.map((m) =>
-		makeMove(MIRROR_M[m.base] ?? m.base, m.amount === 2 ? 2 : m.amount === 1 ? 3 : 1)
-	);
+	return moves.map((m) => {
+		const rule = MIRROR_M[m.base] ?? { base: m.base, flip: true };
+		const amount = !rule.flip || m.amount === 2 ? m.amount : m.amount === 1 ? 3 : 1;
+		return makeMove(rule.base, amount);
+	});
 }
 
 /** Faces that share an axis, used for cancellation. */

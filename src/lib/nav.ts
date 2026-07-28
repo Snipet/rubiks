@@ -63,7 +63,7 @@ export const NAV: readonly NavItem[] = [
 		href: '/notation/',
 		label: 'Reference',
 		blurb: 'Notation, glossary, method comparison, finger tricks and hardware notes.',
-		match: ['/notation', '/glossary', '/methods', '/tips', '/about']
+		match: ['/notation', '/glossary', '/methods', '/tips', '/about', '/data']
 	}
 ];
 

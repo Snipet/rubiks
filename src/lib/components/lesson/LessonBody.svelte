@@ -13,15 +13,41 @@
 	import InteractiveCube from './InteractiveCube.svelte';
 	import CubeDiagram from '../cube/CubeDiagram.svelte';
 	import { caseFromAlg, solvedFacelets, stateFromAlg } from '$cube/facelets';
+	import { applyPerm, puzzle, type PuzzleSize } from '$cube/puzzle';
+	import { tokenise } from '$cube/puzzleState';
 	import { caseById } from '$data/algorithms';
 	import type { Pathname } from '$app/types';
 	import type { LessonBlock } from '$data/types';
 
 	interface Props {
 		blocks: readonly LessonBlock[];
+		/** Which puzzle the lesson is about. Absent means the 3×3. */
+		order?: PuzzleSize;
 	}
 
-	let { blocks }: Props = $props();
+	let { blocks, order = 3 }: Props = $props();
+
+	/**
+	 * A lesson's cubes and algorithms are in its own puzzle's notation, and the
+	 * 3×3 parser cannot read a 4×4's `2R`. Keep the verified 3×3 path for 3×3
+	 * lessons and use the general engine for everything else.
+	 */
+	function stateFor(setup: string) {
+		if (order === 3) return stateFromAlg(setup);
+		const p = puzzle(order);
+		return applyPerm(p.solved(), p.algPerm(tokenise(setup)));
+	}
+
+	function caseStateFor(moves: string) {
+		if (order === 3) return caseFromAlg(moves);
+		const p = puzzle(order);
+		const inverse = tokenise(moves)
+			.reverse()
+			.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+		return applyPerm(p.solved(), p.algPerm(inverse));
+	}
+
+	const solvedFor = () => (order === 3 ? solvedFacelets() : puzzle(order).solved());
 
 	/** Turn a heading's text into a stable anchor. */
 	const slugify = (s: string) =>
@@ -65,11 +91,13 @@
 				<Prose text={block.text} class="note__text" />
 			</aside>
 		{:else if block.kind === 'alg'}
-			{@const state = block.setup ? stateFromAlg(block.setup) : caseFromAlg(block.moves)}
+			{@const state = block.setup ? stateFor(block.setup) : caseStateFor(block.moves)}
 			<figure class="alg-figure">
 				<div class="alg-figure__main">
-					<CubeDiagram facelets={state} view="last-layer" size={104} />
-					<div class="scroll-x"><AlgString alg={block.moves} size="md" count wrap={false} /></div>
+					<CubeDiagram facelets={state} {order} view="last-layer" size={104} />
+					<div class="scroll-x">
+						<AlgString alg={block.moves} {order} size="md" count wrap={false} />
+					</div>
 				</div>
 				{#if block.caption}<figcaption><Prose as="span" text={block.caption} /></figcaption>{/if}
 			</figure>
@@ -78,14 +106,25 @@
 			{#if entry}
 				<figure class="case-figure">
 					<div class="case-figure__main">
-						<CubeDiagram facelets={entry.caseState} view={entry.set_.view} size={112} />
+						<CubeDiagram
+							facelets={entry.caseState}
+							order={entry.set_.puzzle ?? 3}
+							view={entry.set_.view}
+							size={112}
+						/>
 						<div class="case-figure__body">
 							<div class="case-figure__head">
 								<strong>{entry.name}</strong>
 								<Chip tone="section">{entry.set_.shortName}</Chip>
 							</div>
 							<div class="scroll-x">
-								<AlgString alg={entry.algs[0].moves} size="md" count wrap={false} />
+								<AlgString
+									alg={entry.algs[0].moves}
+									order={entry.set_.puzzle ?? 3}
+									size="md"
+									count
+									wrap={false}
+								/>
 							</div>
 						</div>
 					</div>
@@ -97,9 +136,9 @@
 				</figure>
 			{/if}
 		{:else if block.kind === 'cube'}
-			{@const initial = block.setup ? stateFromAlg(block.setup) : solvedFacelets()}
+			{@const initial = block.setup ? stateFor(block.setup) : solvedFor()}
 			<figure class="cube-figure">
-				<InteractiveCube {initial} label={block.label} />
+				<InteractiveCube {initial} {order} label={block.label} />
 				{#if block.caption}<figcaption><Prose as="span" text={block.caption} /></figcaption>{/if}
 			</figure>
 		{:else if block.kind === 'steps'}

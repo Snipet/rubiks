@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		variant?: 'primary' | 'secondary' | 'ghost' | 'section';
+		variant?: 'primary' | 'secondary' | 'ghost' | 'section' | 'danger';
 		size?: 'sm' | 'md' | 'lg';
 		href?: string;
 		type?: 'button' | 'submit';
@@ -123,6 +123,22 @@
 	.btn--secondary:hover:not(:disabled) {
 		background: var(--surface-3);
 		border-color: var(--section);
+	}
+
+	/*
+	 * Danger is the one place the interface borrows a colour close to a sticker
+	 * red, and it earns it: an irreversible action should not look like the other
+	 * buttons. It is the accent ramp's red rather than the R face's, so a swatch
+	 * and a warning still cannot be confused.
+	 */
+	.btn--danger {
+		background: var(--danger);
+		color: #fff;
+		border-color: transparent;
+	}
+
+	.btn--danger:hover:not(:disabled) {
+		background: color-mix(in oklab, var(--danger) 85%, black);
 	}
 
 	.btn--ghost {

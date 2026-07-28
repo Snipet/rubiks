@@ -205,6 +205,87 @@ export const ALG_SETS: readonly AlgSetMeta[] = [
 		tier: 'expert',
 		view: 'full',
 		verify: 'well-formed'
+	},
+	{
+		id: 'pocket-oll',
+		name: 'Ortega OLL — orienting the 2×2 top',
+		shortName: '2×2 OLL',
+		summary: 'Seven algorithms that turn every top-colour sticker upwards.',
+		description:
+			'Once the bottom of a 2×2 shows a single colour, every remaining case is one of exactly seven — a fact the site works out from first principles rather than taking on faith, by counting the ways four corners can be twisted so the total comes to a multiple of three. Each of the seven is a 3×3 corner-orientation algorithm doing here what it does there. Learn the two sunes first: repeating sune with a turn of the top between goes will orient any case at all, which is enough to finish the puzzle before you know the other five.',
+		tier: 'beginner',
+		puzzle: 2,
+		view: 'oll',
+		verify: 'pocket-oll',
+		expectedCount: 7
+	},
+	{
+		id: 'pocket-pll',
+		name: '2×2 PLL — finishing the top',
+		shortName: '2×2 PLL',
+		summary: 'The two ways a solved-but-jumbled top layer can be wrong.',
+		description:
+			'With the first layer genuinely solved and the top oriented, only two things can be left: a pair of neighbouring corners want swapping, or a pair of diagonal ones do. Telling them apart takes no counting — turn the top and look for two matching stickers on one face. A pair means adjacent. No pair anywhere means diagonal.',
+		tier: 'intermediate',
+		puzzle: 2,
+		view: 'last-layer',
+		verify: 'pocket-pll',
+		expectedCount: 2
+	},
+	{
+		id: 'pocket-pbl',
+		name: 'PBL — permuting both layers',
+		shortName: 'PBL',
+		summary: 'Ortega’s finish: sort out the top and the bottom in one algorithm.',
+		description:
+			'Ortega does not solve the first layer, only the first face — the bottom corners all show one colour but may be in any order. That is quicker to build and leaves both layers to permute at the end, which is what these five algorithms do. Two of them are the 2×2 PLLs you already have; the other three handle a bottom layer that is also out of order. The three-move one for the worst-looking case is worth learning on its own even if you never touch the rest of the method.',
+		tier: 'intermediate',
+		puzzle: 2,
+		view: 'last-layer',
+		verify: 'pocket-pbl',
+		expectedCount: 5
+	},
+	{
+		id: 'pocket-cll',
+		name: 'CLL — the 2×2 last layer in one algorithm',
+		shortName: 'CLL',
+		summary: 'Forty cases that finish the puzzle from a solved first layer.',
+		description:
+			'With the first layer done, CLL finishes the rest in a single algorithm — no separate orientation and permutation steps. The forty cases were derived rather than copied: there are 648 ways the top can sit, two of them are the same case when an adjusting turn before and after can carry one to the other, and counting those gives 43. One is already solved and two need no twisting, which leaves forty. That reproduces the published structure exactly, including the detail that trips people up — the H group has four cases rather than six, because the H shape looks the same after a half turn. One caution: these are shortest solutions found by search, not the ergonomically chosen sequences a speedsolver drills. They are efficient and every one is verified, but only a few are two-gen. This site tells you elsewhere not to learn an algorithm you cannot finger, and it means it here too — treat this as a complete map of the cases rather than a sheet to memorise.',
+		tier: 'advanced',
+		puzzle: 2,
+		view: 'last-layer',
+		verify: 'pocket-cll',
+		expectedCount: 40,
+		groups: ['Sune', 'Anti-Sune', 'T', 'U', 'L', 'Pi', 'H']
+	},
+	{
+		id: 'revenge-centres',
+		name: '4×4 centre commutators',
+		shortName: 'Centres',
+		summary: 'Move centre pieces about without disturbing anything else.',
+		description:
+			'Building the centres of a 4×4 is mostly done by eye, and it should be — but the last few pieces are the awkward ones, because every turn that fetches the piece you want undoes one you already placed. A commutator solves that by construction: do a thing, do another, undo the first, undo the second, and the two interferences cancel out. Everything here is built from inner slices alone, which is why it comes with a guarantee rather than a hope — a slice cannot reach a corner, and the tests measure that no corner and no wing moves. Six centre pieces travel in two three-cycles, and the rest of the puzzle is exactly where you left it. These were found by search rather than copied: every commutator of two slices was generated, its effect read off the piece model, and these kept.',
+		tier: 'intermediate',
+		puzzle: 4,
+		view: 'full',
+		verify: 'centres-only',
+		expectedCount: 5,
+		groups: ['Centres']
+	},
+	{
+		id: 'revenge-parity',
+		name: '4×4 parity',
+		shortName: 'Parity',
+		summary: 'The position a 4×4 can reach that a 3×3 cannot, and the way out of it.',
+		description:
+			'Reduce a 4×4 — centres built, wings paired — and it behaves like a 3×3 until it does not. Because there are two of each wing piece and no fixed centres, the puzzle can finish in a position no real 3×3 could hold: two edges wanting to swap with nothing else out of place. That is parity, and no amount of 3×3 technique touches it, because as a 3×3 the position does not exist. The site detects it the same way: it reduces your 4×4 to the 3×3 it has become and asks whether that cube could be assembled. Note the notation carefully — 2R is the slice one layer in, turned on its own. It is not Rw, and substituting one for the other turns a parity fix into a scramble.',
+		tier: 'intermediate',
+		puzzle: 4,
+		view: 'full',
+		verify: 'edge-swap',
+		expectedCount: 1,
+		groups: ['Parity']
 	}
 ];
 

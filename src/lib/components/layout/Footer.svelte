@@ -23,17 +23,29 @@
 				<a href={resolve(item.href)} data-section={item.id}>{item.label}</a>
 			{/each}
 			<a href={resolve('/about')}>About</a>
+			<a href={resolve('/data/')}>Your data</a>
 		</nav>
 
 		<p class="footer__legal">
 			An independent project, not affiliated with or endorsed by the owners of the Rubik's
 			trademark. All icons and cube illustrations are original. Your progress is stored in this
-			browser and nowhere else.
+			browser and nowhere else — <a class="footer__inline" href={resolve('/data/')}>take a copy</a>
+			whenever you like.
 		</p>
 	</div>
 </footer>
 
 <style>
+	.footer__inline {
+		color: var(--text-muted);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.footer__inline:hover {
+		color: var(--text);
+	}
+
 	.footer {
 		margin-block-start: var(--space-9);
 		padding-block: var(--space-7);
