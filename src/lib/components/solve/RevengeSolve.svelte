@@ -176,7 +176,7 @@
 				{#if parityCase}
 					<div class="parity">
 						<div class="parity__moves scroll-x">
-							<AlgString alg={parityCase.algs[0].moves} size="md" wrap />
+							<AlgString alg={parityCase.algs[0].moves} order={4} size="md" wrap />
 						</div>
 						<div class="rec__tools">
 							<Button

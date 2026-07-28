@@ -156,7 +156,7 @@
 		<section class="stage" aria-label="Timer">
 			<div class="scramble">
 				<div class="scramble__moves scroll-x">
-					<AlgString alg={scramble} size="lg" wrap={false} />
+					<AlgString alg={scramble} {order} size="lg" wrap={false} />
 				</div>
 				<div class="scramble__tools">
 					<Button size="sm" variant="ghost" onclick={() => (scramble = scrambleFor(cube))}>
@@ -256,7 +256,12 @@
 									{formatTime(record.ms, record.penalty)}
 								</span>
 								<span class="solve__scramble scroll-x">
-									<AlgString alg={record.scramble} size="sm" wrap={false} />
+									<AlgString
+										alg={record.scramble}
+										order={record.puzzle ?? 3}
+										size="sm"
+										wrap={false}
+									/>
 								</span>
 								<span class="solve__actions">
 									<button
