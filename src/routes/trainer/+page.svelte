@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { resolve } from '$app/paths';
 	import CubeDiagram from '$components/cube/CubeDiagram.svelte';
 	import AlgString from '$components/ui/AlgString.svelte';
@@ -11,7 +11,8 @@
 	import { SKILL_LABELS, type AlgSetId, type ResolvedAlgCase } from '$data/types';
 	import { progress } from '$state/progress.svelte';
 	import { settings } from '$state/settings.svelte';
-	import { lastLayerScramble } from '$cube/scramble';
+	import { puzzle } from '$cube/puzzle';
+	import { caseSetupFor } from '$cube/puzzleScramble';
 
 	type Stage = 'question' | 'answer';
 
@@ -34,13 +35,18 @@
 	const availableSets = $derived(ALG_SETS.filter((s) => (s.puzzle ?? 3) === order));
 	const pool = $derived(availableSets.some((s) => s.id === setId) ? casesOfSet(setId) : []);
 
+	// Switching puzzle usually leaves the chosen set behind, so move to one this
+	// puzzle actually has and deal a case from it straight away. Clearing `current`
+	// without dealing again would leave the panel empty until the reader guessed
+	// that a button needed pressing.
 	$effect(() => {
 		if (availableSets.length === 0) return;
-		if (!availableSets.some((s) => s.id === setId)) {
+		if (availableSets.some((s) => s.id === setId)) return;
+		untrack(() => {
 			setId = availableSets[0].id;
-			stage = 'question';
 			current = null;
-		}
+			next();
+		});
 	});
 
 	/** Cases whose review is due, soonest first, falling back to everything. */
@@ -71,7 +77,7 @@
 			Math.floor(Math.random() * Math.min(6, (candidates.length ? candidates : ids).length))
 		];
 		current = pool.find((c) => c.id === pick) ?? null;
-		setup = current ? lastLayerScramble(current.algs[0].moves) : '';
+		setup = current ? caseSetupFor(puzzle(current.set_.puzzle ?? 3), current.algs[0].moves) : '';
 		stage = 'question';
 		startedAt = performance.now();
 		lastResult = null;
@@ -182,7 +188,7 @@
 					{#if setup}
 						<div class="setup scroll-x">
 							<span class="setup__label">Set up with</span>
-							<AlgString alg={setup} size="sm" wrap={false} />
+							<AlgString alg={setup} order={current.set_.puzzle ?? 3} size="sm" wrap={false} />
 						</div>
 					{/if}
 					<Button variant="section" size="lg" onclick={() => (stage = 'answer')}>
@@ -197,7 +203,13 @@
 							<Chip>{SKILL_LABELS[current.tier]}</Chip>
 						</div>
 						<div class="reveal__alg scroll-x">
-							<AlgString alg={current.algs[0].moves} size="lg" count wrap={false} />
+							<AlgString
+								alg={current.algs[0].moves}
+								order={current.set_.puzzle ?? 3}
+								size="lg"
+								count
+								wrap={false}
+							/>
 						</div>
 						{#if current.algs.length > 1}
 							<details class="others">
@@ -208,7 +220,7 @@
 									{#each current.algs.slice(1) as variant (variant.moves)}
 										<li>
 											{#if variant.label}<Chip>{variant.label}</Chip>{/if}
-											<AlgString alg={variant.moves} size="sm" />
+											<AlgString alg={variant.moves} order={current.set_.puzzle ?? 3} size="sm" />
 										</li>
 									{/each}
 								</ul>
@@ -260,7 +272,7 @@
 							title="{c.name} — {confidence}"
 							onclick={() => {
 								current = c;
-								setup = lastLayerScramble(c.algs[0].moves);
+								setup = caseSetupFor(puzzle(c.set_.puzzle ?? 3), c.algs[0].moves);
 								stage = 'question';
 								startedAt = performance.now();
 								lastResult = null;

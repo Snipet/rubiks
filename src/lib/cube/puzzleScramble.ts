@@ -80,3 +80,66 @@ export function scrambledStateFor(
 	const moves = scramble ? scramble.split(' ') : [];
 	return { scramble, moves, state: applyPerm(p.solved(), p.algPerm(moves)) };
 }
+
+/** Reverse an algorithm and invert every turn in it. */
+export function invertNames(names: readonly string[]): string[] {
+	return [...names]
+		.reverse()
+		.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+}
+
+/**
+ * A setup that leaves everything before the last layer intact, for drilling.
+ *
+ * The inverse of the case algorithm, wrapped in random U turns so the case turns
+ * up at a different angle each time and recognition gets properly exercised.
+ *
+ * This is the size-generic version, and the 4×4 is why it exists: the 3×3 one
+ * runs the algorithm through a parser that canonicalises `2R` to `Rw`, which is
+ * the substitution that turns a parity algorithm into a scramble. Here the tokens
+ * are inverted as written and never rewritten.
+ */
+export function caseSetupFor(p: Puzzle, alg: string, options: { seed?: number } = {}): string {
+	const rand = options.seed === undefined ? Math.random : makeRng(options.seed);
+	const names = alg
+		.replace(/[()[\],]/g, ' ')
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean);
+	if (names.some((name) => p.parse(name) === null)) return '';
+
+	const auf = () => {
+		const n = Math.floor(rand() * 4);
+		return n === 0 ? [] : [`U${['', '2', "'"][n - 1]}`];
+	};
+	return mergeAdjacent(p, [...auf(), ...invertNames(names), ...auf()]).join(' ');
+}
+
+/**
+ * Collapse neighbouring turns of the same layers into one.
+ *
+ * Only needed at the seams: an adjusting turn landing next to the algorithm's
+ * own first or last move leaves something like `U2 U2` on the page, which is
+ * correct but reads as a mistake. Deliberately not a general simplifier — it
+ * merges same-layer neighbours and stops there.
+ */
+function mergeAdjacent(p: Puzzle, names: readonly string[]): string[] {
+	const out: string[] = [];
+	const layersOf = (name: string) => {
+		const t = p.parse(name);
+		return t ? `${t.face}:${t.from}:${t.to}` : name;
+	};
+	for (const name of names) {
+		const last = out[out.length - 1];
+		if (last && layersOf(last) === layersOf(name)) {
+			const total = (p.parse(last)!.amount + p.parse(name)!.amount) % 4;
+			out.pop();
+			if (total === 0) continue;
+			const base = name.replace(/[2']$/, '');
+			out.push(base + (total === 1 ? '' : total === 2 ? '2' : "'"));
+			continue;
+		}
+		out.push(name);
+	}
+	return out;
+}

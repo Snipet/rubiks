@@ -8,9 +8,27 @@
 import { describe, expect, it } from 'vitest';
 import * as three from './facelets';
 import { puzzle, PUZZLE_SIZES, type PuzzleSize } from './puzzle';
-import { scrambleFor, scrambledStateFor, SCRAMBLE_LENGTH } from './puzzleScramble';
+import { caseSetupFor, scrambleFor, scrambledStateFor, SCRAMBLE_LENGTH } from './puzzleScramble';
 import * as ps from './puzzleState';
 import { FACES, type Face } from './types';
+
+/**
+ * A trainer setup does not have to leave the case bolt upright — that is the
+ * point of the random adjusting turns. What it must guarantee is that the case
+ * is *the* case: solvable by turning the top, doing the algorithm, and turning
+ * the top again. Anything weaker would let a broken setup pass.
+ */
+function solvableWithAuf(p: ReturnType<typeof puzzle>, setup: string, alg: string): boolean {
+	const AUF = ['', 'U', 'U2', "U'"];
+	const start = ps.applyAlgString(p, p.solved(), setup);
+	for (const before of AUF) {
+		for (const after of AUF) {
+			const moves = [before, alg, after].filter(Boolean).join(' ');
+			if (ps.equal(ps.applyAlgString(p, start, moves), p.solved())) return true;
+		}
+	}
+	return false;
+}
 
 describe('at size 3 it agrees with the 3×3 module', () => {
 	const p = puzzle(3);
@@ -271,6 +289,64 @@ describe('geometry matches the sticker model', () => {
 					geometry.inLayer(base, c)
 				);
 			}
+		}
+	});
+});
+
+describe('case setups are never rewritten', () => {
+	it('inverts a 4×4 parity algorithm token for token', () => {
+		// The bug this guards against: the 3×3 parser canonicalises `2R` to `Rw`,
+		// which on a 4×4 is a different move — the slice versus the slice dragging
+		// the face with it. A setup built that way does not produce the case.
+		const p = puzzle(4);
+		const alg = '2R2 U2 2R2 Uw2 2R2 Uw2 U2';
+		const setup = caseSetupFor(p, alg, { seed: 5 });
+		expect(setup).toContain('2R2');
+		expect(setup).not.toContain('Rw2');
+
+		// And it must actually set the case up.
+		expect(solvableWithAuf(p, setup, alg), setup).toBe(true);
+	});
+
+	it('gives up rather than guess at notation the size does not have', () => {
+		expect(caseSetupFor(puzzle(4), 'M2 U M2')).toBe('');
+		expect(caseSetupFor(puzzle(2), "Rw U Rw'")).not.toBe('');
+	});
+
+	it('sets a 3×3 case up too', () => {
+		const p = puzzle(3);
+		for (let seed = 1; seed <= 20; seed++) {
+			const alg = "R U R' U' R' F R2 U' R' U' R U R' F'";
+			const setup = caseSetupFor(p, alg, { seed });
+			expect(solvableWithAuf(p, setup, alg), `${setup} (seed ${seed})`).toBe(true);
+		}
+	});
+});
+
+describe('setup seams', () => {
+	it('merges an adjusting turn that lands on the algorithm’s own first move', () => {
+		// `U2` from the random adjust next to the inverse's leading `U2` should read
+		// as nothing at all, not as `U2 U2`.
+		const p = puzzle(4);
+		for (let seed = 1; seed <= 40; seed++) {
+			const setup = caseSetupFor(p, '2R2 U2 2R2 Uw2 2R2 Uw2 U2', { seed });
+			if (!setup) continue;
+			const names = setup.split(' ');
+			for (let i = 1; i < names.length; i++) {
+				const a = p.parse(names[i - 1])!;
+				const b = p.parse(names[i])!;
+				const same = a.face === b.face && a.from === b.from && a.to === b.to;
+				expect(same, `${setup} (seed ${seed})`).toBe(false);
+			}
+		}
+	});
+
+	it('still sets the case up after merging', () => {
+		const p = puzzle(4);
+		const alg = '2R2 U2 2R2 Uw2 2R2 Uw2 U2';
+		for (let seed = 1; seed <= 40; seed++) {
+			const setup = caseSetupFor(p, alg, { seed });
+			expect(solvableWithAuf(p, setup, alg), `${setup} (seed ${seed})`).toBe(true);
 		}
 	});
 });

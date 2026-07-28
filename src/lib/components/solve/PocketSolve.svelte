@@ -272,7 +272,7 @@
 						<p class="rec__detail">{rec.detail}</p>
 						{#if rec.moves}
 							<div class="rec__moves scroll-x">
-								<AlgString alg={rec.moves} size="md" wrap />
+								<AlgString alg={rec.moves} order={2} size="md" wrap />
 							</div>
 							<div class="rec__tools">
 								{#if view === 'cube'}

@@ -177,7 +177,7 @@
 						</div>
 						{#if sample}
 							<div class="set__sample scroll-x">
-								<AlgString alg={sample.algs[0].moves} size="sm" wrap={false} />
+								<AlgString alg={sample.algs[0].moves} {order} size="sm" wrap={false} />
 							</div>
 						{/if}
 					</div>

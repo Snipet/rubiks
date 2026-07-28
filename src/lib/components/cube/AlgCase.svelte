@@ -105,7 +105,7 @@
 			</div>
 
 			<div class="case__alg scroll-x">
-				<AlgString alg={algs[0].moves} size="md" wrap={false} />
+				<AlgString alg={algs[0].moves} {order} size="md" wrap={false} />
 			</div>
 
 			{#if entry.recognition}
@@ -170,7 +170,7 @@
 								<span class="variant__count">{htmLength(parseAlg(variant.moves))} moves</span>
 							</div>
 							<div class="variant__alg scroll-x">
-								<AlgString alg={variant.moves} size="sm" wrap={false} />
+								<AlgString alg={variant.moves} {order} size="sm" wrap={false} />
 							</div>
 							{#if variant.note}<p class="variant__note">{variant.note}</p>{/if}
 							<Button
