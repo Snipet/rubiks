@@ -37,8 +37,11 @@ import {
 	pocketPermutationKey
 } from '$cube/pocket';
 import { POCKET_OLL_CASES, POCKET_PBL_CASES, POCKET_PLL_CASES } from './pocket';
-import { REVENGE_PARITY_CASES } from './revenge';
+import { REVENGE_CENTRE_CASES, REVENGE_PARITY_CASES } from './revenge';
+import { describeEffect, effectSummary } from '$cube/pieces';
 import { isReduced, readRevenge } from '$cube/revenge';
+
+const p4Solved = () => puzzle(4).solved();
 
 /** Run the check a set's `verify` field asks for. */
 function checkCase(c: AlgCase, alg: string): CaseCheck {
@@ -398,5 +401,58 @@ describe('the 4×4 parity set', () => {
 		const swapped = variants[0].replace(/2R/g, 'Rw');
 		const after = applyPerm(p4.solved(), p4.algPerm(tokenise(swapped)));
 		expect(isReduced(after)).toBe(false);
+	});
+});
+
+describe('the 4×4 centre set', () => {
+	it('every centre algorithm moves centres and nothing else', () => {
+		// The guarantee the set description makes, measured piece by piece rather
+		// than sticker by sticker: centre pieces of a face are interchangeable in
+		// colour, so only the piece model can tell whether a corner or a wing moved.
+		for (const c of REVENGE_CENTRE_CASES) {
+			for (const variant of c.algs) {
+				const effect = describeEffect(4, variant.moves);
+				expect(effect.identity, `${c.id}: ${variant.moves}`).toBe(false);
+				expect(effect.moved.corner, `${c.id}: ${variant.moves}`).toBe(0);
+				expect(effect.moved.edge, `${c.id}: ${variant.moves}`).toBe(0);
+				expect(effect.moved.centre, `${c.id}: ${variant.moves}`).toBeGreaterThan(0);
+			}
+		}
+	});
+
+	it('they are built from inner slices only', () => {
+		// Which is *why* the guarantee holds: a slice turn cannot reach a corner.
+		// If a face turn crept into one of these, the property above would become a
+		// coincidence rather than a consequence.
+		const p4 = puzzle(4);
+		for (const c of REVENGE_CENTRE_CASES) {
+			for (const variant of c.algs) {
+				for (const name of tokenise(variant.moves)) {
+					const turn = p4.parse(name);
+					expect(turn, `${c.id}: ${name}`).not.toBeNull();
+					expect(turn!.from, `${c.id}: ${name} reaches the outer layer`).toBeGreaterThan(0);
+				}
+			}
+		}
+	});
+
+	it('each one is a commutator, so undoing it is doing it backwards', () => {
+		for (const c of REVENGE_CENTRE_CASES) {
+			for (const variant of c.algs) {
+				const names = tokenise(variant.moves);
+				const inverse = [...names]
+					.reverse()
+					.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+				const round = applyPerm(p4Solved(), puzzle(4).algPerm([...names, ...inverse]));
+				expect(Array.from(round), `${c.id}: ${variant.moves}`).toEqual(Array.from(p4Solved()));
+			}
+		}
+	});
+
+	it('the set covers distinct effects', () => {
+		// Five entries that all did the same thing would be five ways of padding a
+		// page rather than five tools.
+		const seen = REVENGE_CENTRE_CASES.map((c) => effectSummary(describeEffect(4, c.algs[0].moves)));
+		expect(new Set(seen).size).toBe(REVENGE_CENTRE_CASES.length);
 	});
 });

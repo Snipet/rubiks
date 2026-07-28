@@ -246,6 +246,20 @@ export const ALG_SETS: readonly AlgSetMeta[] = [
 		expectedCount: 5
 	},
 	{
+		id: 'revenge-centres',
+		name: '4×4 centre commutators',
+		shortName: 'Centres',
+		summary: 'Move centre pieces about without disturbing anything else.',
+		description:
+			'Building the centres of a 4×4 is mostly done by eye, and it should be — but the last few pieces are the awkward ones, because every turn that fetches the piece you want undoes one you already placed. A commutator solves that by construction: do a thing, do another, undo the first, undo the second, and the two interferences cancel out. Everything here is built from inner slices alone, which is why it comes with a guarantee rather than a hope — a slice cannot reach a corner, and the tests measure that no corner and no wing moves. Six centre pieces travel in two three-cycles, and the rest of the puzzle is exactly where you left it. These were found by search rather than copied: every commutator of two slices was generated, its effect read off the piece model, and these kept.',
+		tier: 'intermediate',
+		puzzle: 4,
+		view: 'full',
+		verify: 'centres-only',
+		expectedCount: 5,
+		groups: ['Centres']
+	},
+	{
 		id: 'revenge-parity',
 		name: '4×4 parity',
 		shortName: 'Parity',

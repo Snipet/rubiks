@@ -21,7 +21,7 @@ import { OLL_CASES, TWO_LOOK_OLL_EDGE_CASES } from './oll';
 import { PLL_CASES } from './pll';
 import { CMLL_CASES, COLL_CASES, COMMUTATOR_CASES, WINTER_VARIATION_CASES } from './advanced';
 import { POCKET_OLL_CASES, POCKET_PBL_CASES, POCKET_PLL_CASES } from './pocket';
-import { REVENGE_PARITY_CASES } from './revenge';
+import { REVENGE_CENTRE_CASES, REVENGE_PARITY_CASES } from './revenge';
 
 /** Every authored case, in set order. */
 export const ALL_CASES: readonly AlgCase[] = [
@@ -38,6 +38,7 @@ export const ALL_CASES: readonly AlgCase[] = [
 	...POCKET_OLL_CASES,
 	...POCKET_PLL_CASES,
 	...POCKET_PBL_CASES,
+	...REVENGE_CENTRE_CASES,
 	...REVENGE_PARITY_CASES
 ];
 
