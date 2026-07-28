@@ -28,6 +28,9 @@
 
 	let { entry, open = false, diagramSize = 108 }: Props = $props();
 
+	/** Cases carry their puzzle through their set; anything older is a 3×3. */
+	const order = $derived(entry.set_.puzzle ?? 3);
+
 	// Both read their prop once, at construction: they seed the component rather
 	// than tracking it.
 	let expanded = $state(untrack(() => open));
@@ -76,6 +79,7 @@
 		<div class="case__diagram">
 			<CubeDiagram
 				facelets={entry.caseState}
+				{order}
 				view={entry.set_.view}
 				size={diagramSize}
 				label="{entry.name}: the case this algorithm solves"
@@ -139,6 +143,7 @@
 				<Cube3D
 					bind:this={cube}
 					bind:facelets={demo}
+					{order}
 					size={190}
 					label="{entry.name} demonstration"
 				/>

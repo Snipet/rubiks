@@ -1,23 +1,34 @@
 <!--
-	An interactive cube you can turn and orbit.
+	An interactive cube you can turn and orbit, at any size the site supports.
 
-	Built from 26 positional cubies in CSS 3D rather than a canvas, so it stays
-	sharp at any size, inherits the theme's sticker colours for free, and needs no
+	Built from positional cubies in CSS 3D rather than a canvas, so it stays sharp
+	at any scale, inherits the theme's sticker colours for free, and needs no
 	rendering library. Each cubie shows whatever stickers currently sit at *its
 	position*, which means a turn is animated by rotating the affected cubies and
 	then simply repainting from the new state — no piece identity to track.
+
+	Where the cubies are, which sticker each one shows and which of them a turn
+	carries all come from the N×N engine, so the picture and the permutation are
+	reading the same table. The only thing this file decides for itself is which
+	CSS axis a face spins around, and that comes from `$cube/geometry`, where the
+	3×3 tests pin it down.
 -->
 <script lang="ts">
-	import { applyMove, UNSET } from '$cube/facelets';
+	import { UNSET } from '$cube/facelets';
 	import { untrack } from 'svelte';
-	import { parseAlg, type Move } from '$cube/moves';
 	import { FACE_NAMES, type Face, type Facelets } from '$cube/types';
-	import { CUBIES, faceletAt, FACE_TRANSFORM, inLayer, TURN, visibleFaces } from '$cube/geometry';
+	import { FACE_TRANSFORM } from '$cube/geometry';
+	import { FACE_SPIN } from '$cube/geometry';
+	import { applyPerm, puzzle, type Cell, type PuzzleSize } from '$cube/puzzle';
+	import { tokenise } from '$cube/puzzleState';
 	import { settings } from '$state/settings.svelte';
 
 	interface Props {
 		facelets: Facelets;
+		/** Pixel width of the whole scene. */
 		size?: number;
+		/** How many layers a side. Defaults to the 3×3. */
+		order?: PuzzleSize;
 		/** Allow dragging and keyboard orbiting. */
 		orbit?: boolean;
 		/** Called after each move finishes, with the move's name. */
@@ -36,6 +47,7 @@
 	let {
 		facelets = $bindable(),
 		size = 260,
+		order = 3,
 		orbit = true,
 		onmove,
 		onsticker,
@@ -45,6 +57,8 @@
 		label = 'Interactive cube',
 		class: className = ''
 	}: Props = $props();
+
+	const cube = $derived(puzzle(order));
 
 	// --- orbit --------------------------------------------------------------
 	// Read once at construction: these props seed the view, they do not drive it.
@@ -103,53 +117,66 @@
 		[pitch, yaw] = views[at];
 	}
 
-	// Cubie positions, sticker mapping and face placement all live in
-	// `$cube/geometry`, where they are covered by tests — a wrong entry there shows
-	// up as stickers in the wrong places, which is hard to spot by eye.
-
-	const CUBIE = $derived(size / 3.35);
+	// The 0.35 is headroom for the perspective: a cube drawn edge-to-edge in its
+	// box clips its own near corner when you orbit it.
+	const CUBIE = $derived(size / (order + 0.35));
 	const HALF = $derived(CUBIE / 2);
 	const GAP = $derived(CUBIE * 0.035);
 
 	// --- turning ------------------------------------------------------------
 
-	let cubieEls: (HTMLElement | null)[] = $state(Array(26).fill(null));
+	let cubieEls: (HTMLElement | null)[] = $state([]);
 	let busy = $state(false);
+
+	// Changing size changes how many cubies there are, so the element list has to
+	// be rebuilt rather than reused — a stale entry would animate the wrong piece.
+	$effect(() => {
+		const count = cube.cubies.length;
+		if (cubieEls.length !== count) cubieEls = Array(count).fill(null);
+	});
 
 	/** True while an algorithm is playing, so callers can disable controls. */
 	export function isBusy() {
 		return busy;
 	}
 
-	function baseTransform(c: { x: number; y: number; z: number }): string {
+	function baseTransform(c: Cell): string {
 		// CSS y points down, so the model's up becomes a negative offset.
 		const step = CUBIE + GAP;
 		return `translate3d(${c.x * step}px, ${-c.y * step}px, ${c.z * step}px)`;
 	}
 
 	/** Play a single move, animating it. Resolves once the state has been updated. */
-	export function turn(move: Move | string): Promise<void> {
-		const parsed = typeof move === 'string' ? parseAlg(move)[0] : move;
+	export function turn(move: string): Promise<void> {
+		const parsed = cube.parse(move);
+		// A move this size has no meaning for is skipped rather than thrown: a
+		// keypad or a lesson may offer `M` while the reader is on a 4×4.
 		if (!parsed) return Promise.resolve();
-		const spec = TURN[parsed.base];
-		const duration = settings.current.turnSpeed * (parsed.amount === 2 ? 1.55 : 1);
 
-		if (!spec || duration <= 0) {
-			// Reduced motion, or a move with no visual layer: apply it outright.
-			facelets = applyMove(facelets, parsed);
-			onmove?.(parsed.name, facelets);
+		const perm = cube.perm(move);
+		const spec = FACE_SPIN[parsed.face];
+		const duration = settings.current.turnSpeed * (parsed.amount === 2 ? 1.55 : 1);
+		const finish = () => {
+			facelets = applyPerm(facelets, perm);
+			onmove?.(move, facelets);
+		};
+
+		if (duration <= 0) {
+			// Reduced motion: apply it outright.
+			finish();
 			return Promise.resolve();
 		}
 
 		const degrees = spec.sign * 90 * (parsed.amount === 3 ? -1 : parsed.amount);
-		const affected = CUBIES.map((c, i) => (inLayer(parsed.base, c) ? i : -1)).filter((i) => i >= 0);
+		const cells = cube.cubies;
+		const affected = cells.map((c, i) => (cube.inLayer(parsed, c) ? i : -1)).filter((i) => i >= 0);
 
 		busy = true;
 		const animations = affected
 			.map((i) => {
 				const el = cubieEls[i];
 				if (!el) return null;
-				const base = baseTransform(CUBIES[i]);
+				const base = baseTransform(cells[i]);
 				return el.animate(
 					[
 						{ transform: `rotate${spec.axis}(0deg) ${base}` },
@@ -161,24 +188,22 @@
 			.filter((a): a is Animation => a !== null);
 
 		if (animations.length === 0) {
-			facelets = applyMove(facelets, parsed);
+			finish();
 			busy = false;
-			onmove?.(parsed.name, facelets);
 			return Promise.resolve();
 		}
 
 		return Promise.all(animations.map((a) => a.finished.catch(() => undefined))).then(() => {
 			// `fill: 'none'` means the cubies snap back to their base transform, which
 			// is exactly right once the repaint below has moved the colours along.
-			facelets = applyMove(facelets, parsed);
+			finish();
 			busy = false;
-			onmove?.(parsed.name, facelets);
 		});
 	}
 
 	/** Play a whole algorithm, one move at a time. */
-	export async function play(alg: string | readonly Move[]) {
-		const moves = typeof alg === 'string' ? parseAlg(alg) : alg;
+	export async function play(alg: string | readonly string[]) {
+		const moves = typeof alg === 'string' ? tokenise(alg) : alg;
 		for (const move of moves) await turn(move);
 	}
 
@@ -219,10 +244,10 @@
 	{onkeydown}
 >
 	<div class="cube" style:transform="rotateX({pitch}deg) rotateY({yaw}deg)">
-		{#each CUBIES as c, i (i)}
+		{#each cube.cubies as c, i (i)}
 			<div class="cubie" bind:this={cubieEls[i]} style:transform={baseTransform(c)}>
-				{#each visibleFaces(c.x, c.y, c.z) as face (face)}
-					{@const index = faceletAt(face, c.x, c.y, c.z)}
+				{#each cube.facesOf(c) as face (face)}
+					{@const index = cube.stickerFacing(c, face)}
 					{@const colour = facelets[index]}
 					{#if onsticker}
 						<button
