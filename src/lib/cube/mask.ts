@@ -78,6 +78,37 @@ export const FLAT_TOP = FLAT_LAYOUT.filter((s) => s.kind === 'top');
 export const FLAT_SIDES = FLAT_LAYOUT.filter((s) => s.kind === 'side');
 
 /**
+ * The same layout at any size.
+ *
+ * A 2×2 last layer wants exactly this picture too — it is how every Ortega and
+ * CLL sheet is drawn — so the shape above is generalised rather than duplicated.
+ * A test checks that this reproduces {@link FLAT_LAYOUT} at size 3, which is why
+ * the hand-written table above is kept: it is the thing being checked against.
+ */
+export function flatLayout(order: number): FlatSticker[] {
+	const stride = order * order;
+	const out: FlatSticker[] = [];
+	for (let i = 0; i < stride; i++) {
+		out.push({
+			index: i,
+			face: U as Face,
+			col: 1 + (i % order),
+			row: 1 + Math.floor(i / order),
+			kind: 'top'
+		});
+	}
+	for (let c = 0; c < order; c++) {
+		// Each side strip is that face's top row, read outwards from U. B and R
+		// therefore run backwards relative to their own row-major numbering.
+		out.push({ index: 5 * stride + c, face: 5, col: order - c, row: 0, kind: 'side' });
+		out.push({ index: 2 * stride + c, face: 2, col: 1 + c, row: order + 1, kind: 'side' });
+		out.push({ index: 4 * stride + c, face: 4, col: 0, row: 1 + c, kind: 'side' });
+		out.push({ index: 1 * stride + c, face: 1, col: order + 1, row: order - c, kind: 'side' });
+	}
+	return out;
+}
+
+/**
  * The three faces visible in the isometric view, each listed row-major as seen
  * from the front-top-right. A component maps `(face, row, col)` onto its
  * parallelogram.
@@ -200,8 +231,8 @@ export function caseArrows(state: Facelets): CaseArrow[] {
  * True when the last layer is fully oriented — every U-face sticker shows the U
  * colour. This is the boundary between OLL and PLL.
  */
-export function lastLayerOriented(state: Facelets): boolean {
-	for (let i = 0; i < 9; i++) if (state[i] !== U) return false;
+export function lastLayerOriented(state: Facelets, order = 3): boolean {
+	for (let i = 0; i < order * order; i++) if (state[i] !== U) return false;
 	return true;
 }
 

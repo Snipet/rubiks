@@ -3,20 +3,26 @@
 
 	Laid out as the usual cross — up above the front, down below it, and left,
 	front, right, back in a row — which happens to mean every face renders as a
-	plain row-major 3×3 with no index gymnastics. That is not a coincidence: the
-	facelet numbering was chosen to make this the natural layout.
+	plain row-major grid with no index gymnastics. That is not a coincidence: the
+	sticker numbering was chosen to make this the natural layout, and it holds at
+	every size.
 
 	Doubles as the sticker editor. Pass `onpaint` and every sticker becomes a
-	button; centres are never editable, because they are what define the colour
-	scheme.
+	button; anchors are never editable, because they are what define the colour
+	scheme. On a 3×3 or 5×5 that means the centres, on a 2×2 the reference corner,
+	and on a 4×4 nothing at all — see `puzzleState.anchors`.
 -->
 <script lang="ts">
 	import { UNSET } from '$cube/facelets';
-	import { CENTER_FACELETS, FACE_NAMES, type Face, type Facelets } from '$cube/types';
+	import { puzzle, type PuzzleSize } from '$cube/puzzle';
+	import { anchors } from '$cube/puzzleState';
+	import { FACE_NAMES, type Face, type Facelets } from '$cube/types';
 	import { settings } from '$state/settings.svelte';
 
 	interface Props {
 		facelets: Facelets;
+		/** How many layers a side. Defaults to the 3×3. */
+		order?: PuzzleSize;
 		/** Called with the facelet index when a sticker is activated. */
 		onpaint?: (index: number) => void;
 		/** Stickers to ring, e.g. the ones a validation error points at. */
@@ -31,6 +37,7 @@
 
 	let {
 		facelets,
+		order = 3,
 		onpaint,
 		highlight = [],
 		cursor,
@@ -39,7 +46,9 @@
 		class: className = ''
 	}: Props = $props();
 
-	/** Face, and where its 3×3 sits in the 4×3 grid of faces. */
+	const cube = $derived(puzzle(order));
+
+	/** Face, and where its grid sits in the 4×3 arrangement of faces. */
 	const LAYOUT: { face: Face; col: number; row: number }[] = [
 		{ face: 0, col: 1, row: 0 }, // U
 		{ face: 4, col: 0, row: 1 }, // L
@@ -49,9 +58,12 @@
 		{ face: 3, col: 1, row: 2 } // D
 	];
 
-	const CELL = 16;
-	const GAP = 1.5;
-	const FACE_SPAN = CELL * 3 + GAP * 2;
+	// A face keeps the same drawn width whatever the size, so the net stays the
+	// same shape on the page and only the stickers inside it get finer.
+	const FACE_SPAN = 51;
+	const GAP = $derived(order > 3 ? 1 : 1.5);
+	const CELL = $derived((FACE_SPAN - GAP * (order - 1)) / order);
+	const RADIUS = $derived(Math.max(1, CELL * 0.16));
 	const FACE_GAP = 6;
 	const WIDTH = FACE_SPAN * 4 + FACE_GAP * 3;
 	const HEIGHT = $derived(FACE_SPAN * 3 + FACE_GAP * 2 + (labels ? 8 : 0));
@@ -73,16 +85,15 @@
 		5: 'var(--sticker-b-edge)'
 	};
 
-	const CENTRES = new Set(CENTER_FACELETS);
+	const fixed = $derived(anchors(cube));
 	const highlighted = $derived(new Set(highlight));
 
-	function cellPosition(face: Face, i: number) {
-		const spot = LAYOUT.find((l) => l.face === face)!;
+	function cellPosition(spot: { col: number; row: number }, i: number) {
 		const originX = spot.col * (FACE_SPAN + FACE_GAP);
 		const originY = spot.row * (FACE_SPAN + FACE_GAP);
 		return {
-			x: originX + (i % 3) * (CELL + GAP),
-			y: originY + Math.floor(i / 3) * (CELL + GAP)
+			x: originX + (i % order) * (CELL + GAP),
+			y: originY + Math.floor(i / order) * (CELL + GAP)
 		};
 	}
 
@@ -90,7 +101,7 @@
 	let painting = $state(false);
 
 	function paint(index: number) {
-		if (!onpaint || CENTRES.has(index)) return;
+		if (!onpaint || fixed.has(index)) return;
 		onpaint(index);
 	}
 </script>
@@ -124,18 +135,18 @@
 			class="face-plate"
 		/>
 
-		{#each Array(9) as _, i (i)}
-			{@const index = spot.face * 9 + i}
-			{@const pos = cellPosition(spot.face, i)}
+		{#each { length: cube.faceStride } as _, i (i)}
+			{@const index = spot.face * cube.faceStride + i}
+			{@const pos = cellPosition(spot, i)}
 			{@const colour = facelets[index]}
-			{@const isCentre = CENTRES.has(index)}
+			{@const isCentre = fixed.has(index)}
 			<g>
 				<rect
 					x={pos.x}
 					y={pos.y}
 					width={CELL}
 					height={CELL}
-					rx="2.5"
+					rx={RADIUS}
 					fill={colour === UNSET ? 'var(--sticker-none)' : FILL[colour]}
 					stroke={colour === UNSET ? 'var(--hairline-strong)' : STROKE[colour]}
 					stroke-width="0.8"
@@ -148,7 +159,7 @@
 					role={onpaint && !isCentre ? 'button' : undefined}
 					tabindex={onpaint && !isCentre ? 0 : undefined}
 					aria-label={onpaint && !isCentre
-						? `${FACE_NAMES[spot.face]} face, row ${Math.floor(i / 3) + 1}, column ${(i % 3) + 1}${colour === UNSET ? ', not set' : `, ${FACE_NAMES[colour as Face]}`}`
+						? `${FACE_NAMES[spot.face]} face, row ${Math.floor(i / order) + 1}, column ${(i % order) + 1}${colour === UNSET ? ', not set' : `, ${FACE_NAMES[colour as Face]}`}`
 						: undefined}
 					onpointerdown={onpaint && !isCentre
 						? () => {
@@ -167,8 +178,13 @@
 						: undefined}
 				/>
 				{#if isCentre}
-					<text x={pos.x + CELL / 2} y={pos.y + CELL / 2} class="centre-mark">
-						{FACE_NAMES[spot.face]}
+					<text
+						x={pos.x + CELL / 2}
+						y={pos.y + CELL / 2}
+						class="centre-mark"
+						style:font-size="{CELL * 0.5}px"
+					>
+						{FACE_NAMES[fixed.get(index) as Face]}
 					</text>
 				{:else if settings.current.stickerLetters && colour !== UNSET}
 					<text
@@ -176,6 +192,7 @@
 						y={pos.y + CELL / 2}
 						class="letter"
 						class:letter--dark={colour === 0 || colour === 3}
+						style:font-size="{CELL * 0.5}px"
 					>
 						{FACE_NAMES[colour as Face]}
 					</text>
@@ -219,7 +236,7 @@
 	}
 
 	.sticker--centre {
-		/* Centres define the colour scheme, so they are never editable. */
+		/* Anchors define the colour scheme, so they are never editable. */
 		opacity: 0.92;
 	}
 
@@ -235,7 +252,6 @@
 
 	.centre-mark {
 		font-family: var(--font-mono);
-		font-size: 8px;
 		font-weight: 700;
 		text-anchor: middle;
 		dominant-baseline: central;
@@ -245,7 +261,6 @@
 
 	.letter {
 		font-family: var(--font-mono);
-		font-size: 8px;
 		font-weight: 600;
 		text-anchor: middle;
 		dominant-baseline: central;

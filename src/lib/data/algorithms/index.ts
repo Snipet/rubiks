@@ -10,6 +10,8 @@
 import { caseFromAlg, stateFromAlg } from '$cube/facelets';
 import { f2lKey, orientationKey, permutationKey } from '$cube/ll';
 import { htmLength, parseAlg } from '$cube/moves';
+import { applyPerm, puzzle, type PuzzleSize } from '$cube/puzzle';
+import { tokenise } from '$cube/puzzleState';
 import type { AlgCase, AlgSetId, AlgSetMeta, ResolvedAlgCase, SkillTier } from '../types';
 import { algSet, ALG_SETS } from './sets';
 
@@ -18,6 +20,8 @@ import { F2L_CASES } from './f2l';
 import { OLL_CASES, TWO_LOOK_OLL_EDGE_CASES } from './oll';
 import { PLL_CASES } from './pll';
 import { CMLL_CASES, COLL_CASES, COMMUTATOR_CASES, WINTER_VARIATION_CASES } from './advanced';
+import { POCKET_OLL_CASES, POCKET_PBL_CASES, POCKET_PLL_CASES } from './pocket';
+import { REVENGE_PARITY_CASES } from './revenge';
 
 /** Every authored case, in set order. */
 export const ALL_CASES: readonly AlgCase[] = [
@@ -30,19 +34,54 @@ export const ALL_CASES: readonly AlgCase[] = [
 	...COLL_CASES,
 	...WINTER_VARIATION_CASES,
 	...CMLL_CASES,
-	...COMMUTATOR_CASES
+	...COMMUTATOR_CASES,
+	...POCKET_OLL_CASES,
+	...POCKET_PLL_CASES,
+	...POCKET_PBL_CASES,
+	...REVENGE_PARITY_CASES
 ];
+
+/**
+ * The state a case represents: what the puzzle looks like *before* the algorithm.
+ *
+ * Derived by running the algorithm backwards from solved, never stored, so a
+ * diagram can never drift away from the moves printed under it.
+ */
+function caseStateFor(c: AlgCase, size: PuzzleSize): import('$cube/types').Facelets {
+	const p = puzzle(size);
+	const source = c.setup ?? c.algs[0]?.moves ?? '';
+	const names = tokenise(source);
+	const moves = c.setup
+		? names
+		: [...names]
+				.reverse()
+				.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+	return applyPerm(p.solved(), p.algPerm(moves));
+}
 
 /** Fill in everything derivable about a case. */
 export function resolveCase(c: AlgCase): ResolvedAlgCase {
+	const set = algSet(c.set);
+	const size = set.puzzle ?? 3;
 	const primaryAlg = c.algs[0]?.moves ?? '';
-	const primary = parseAlg(primaryAlg);
+	// The 3×3 keeps its own parser, which knows about aliases and named triggers
+	// the general one has no reason to carry.
+	if (size === 3) {
+		const primary = parseAlg(primaryAlg);
+		return {
+			...c,
+			primary,
+			moveCount: htmLength(primary),
+			caseState: c.setup ? stateFromAlg(c.setup) : caseFromAlg(primary),
+			set_: set
+		};
+	}
 	return {
 		...c,
-		primary,
-		moveCount: htmLength(primary),
-		caseState: c.setup ? stateFromAlg(c.setup) : caseFromAlg(primary),
-		set_: algSet(c.set)
+		primary: [],
+		moveCount: tokenise(primaryAlg).length,
+		caseState: caseStateFor(c, size),
+		set_: set
 	};
 }
 

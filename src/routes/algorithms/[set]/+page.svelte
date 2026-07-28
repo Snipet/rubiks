@@ -6,6 +6,7 @@
 	import Segmented from '$components/ui/Segmented.svelte';
 	import { pageTitle } from '$lib/brand';
 	import { progress } from '$state/progress.svelte';
+	import { PUZZLE_LABELS, settings } from '$state/settings.svelte';
 	import { SKILL_LABELS, SKILL_TIERS, type SkillTier } from '$data/types';
 	import { algSet, casesOfSet } from '$data/algorithms';
 
@@ -15,6 +16,12 @@
 	// does not carry a copy of every case's sticker state.
 	const set = $derived(algSet(data.setId));
 	const cases = $derived(casesOfSet(data.setId));
+
+	// A set page can be reached from a link or a bookmark while the site is in a
+	// different mode. Rather than quietly showing 3×3 algorithms to someone on a
+	// 2×2, say so and offer the switch.
+	const setOrder = $derived(set.puzzle ?? 3);
+	const mismatch = $derived(setOrder !== settings.current.puzzle);
 
 	let query = $state('');
 	let tierFilter = $state<SkillTier | 'all'>('all');
@@ -69,9 +76,19 @@
 		<span>{set.shortName}</span>
 	</nav>
 
+	{#if mismatch}
+		<p class="mismatch">
+			These are {PUZZLE_LABELS[setOrder]} algorithms, and the site is set to
+			{PUZZLE_LABELS[settings.current.puzzle]}.
+			<button type="button" onclick={() => settings.set('puzzle', setOrder)}>
+				Switch to {PUZZLE_LABELS[setOrder]}
+			</button>
+		</p>
+	{/if}
+
 	<header class="head">
 		<div class="head__main">
-			<p class="eyebrow">{cases.length} cases</p>
+			<p class="eyebrow">{cases.length} cases · {PUZZLE_LABELS[setOrder]}</p>
 			<h1>{set.name}</h1>
 			<p class="lede">{set.summary}</p>
 			<p class="desc">{set.description}</p>
@@ -140,6 +157,34 @@
 </div>
 
 <style>
+	.mismatch {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-3);
+		margin-block-end: var(--space-5);
+		padding: var(--space-3) var(--space-4);
+		border: var(--border);
+		border-inline-start: 3px solid var(--caution);
+		border-radius: var(--radius-2);
+		background: var(--surface-2);
+		color: var(--text-muted);
+		font-size: var(--step--1);
+	}
+
+	.mismatch button {
+		padding: var(--space-1) var(--space-3);
+		border: var(--border-strong);
+		border-radius: var(--radius-pill);
+		color: var(--text);
+		font-size: var(--step--1);
+		font-weight: 600;
+	}
+
+	.mismatch button:hover {
+		background: var(--surface-3);
+	}
+
 	.crumbs {
 		display: flex;
 		gap: var(--space-2);

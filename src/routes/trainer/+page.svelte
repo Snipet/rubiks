@@ -27,7 +27,21 @@
 	let sessionSeen = $state(0);
 	let sessionRight = $state(0);
 
-	const pool = $derived(casesOfSet(setId));
+	// Only sets for the puzzle the site is set to. Drilling 3×3 OLL while the
+	// header says 2×2 would be a quiet lie, and the trainer's whole value is that
+	// what it shows you is what you are about to pick up.
+	const order = $derived(settings.current.puzzle);
+	const availableSets = $derived(ALG_SETS.filter((s) => (s.puzzle ?? 3) === order));
+	const pool = $derived(availableSets.some((s) => s.id === setId) ? casesOfSet(setId) : []);
+
+	$effect(() => {
+		if (availableSets.length === 0) return;
+		if (!availableSets.some((s) => s.id === setId)) {
+			setId = availableSets[0].id;
+			stage = 'question';
+			current = null;
+		}
+	});
 
 	/** Cases whose review is due, soonest first, falling back to everything. */
 	const queue = $derived.by(() => {
@@ -126,7 +140,7 @@
 				setId = v;
 				next();
 			}}
-			options={ALG_SETS.map((s) => ({ value: s.id, label: s.shortName }))}
+			options={availableSets.map((s) => ({ value: s.id, label: s.shortName }))}
 		/>
 		<div class="controls__stats">
 			<Chip tone={dueCount > 0 ? 'caution' : 'positive'}>
@@ -149,6 +163,7 @@
 			<div class="card__diagram">
 				<CubeDiagram
 					facelets={current.caseState}
+					order={current.set_.puzzle ?? 3}
 					view={current.set_.view}
 					size={200}
 					label="The case to recall"
@@ -229,7 +244,7 @@
 
 		<section class="board" aria-label="Progress through this set">
 			<h2 class="board__heading">
-				{ALG_SETS.find((s) => s.id === setId)?.name}
+				{availableSets.find((s) => s.id === setId)?.name}
 				<span class="board__count">
 					{pool.filter((c) => progress.confidence(c.id) === 'solid').length} of {pool.length} solid
 				</span>

@@ -26,6 +26,19 @@ import {
 } from '$cube/ll';
 import { describeCase } from './ascii';
 import type { AlgCase, AlgSetId } from '../types';
+import { applyPerm, puzzle } from '$cube/puzzle';
+import { reorientToStandard, tokenise } from '$cube/puzzleState';
+import {
+	enumeratePocketOrientations,
+	faceletsToPocket,
+	firstLayerSolved,
+	lastLayerOriented as lastLayerOrientedPocket,
+	pocketOrientationKey,
+	pocketPermutationKey
+} from '$cube/pocket';
+import { POCKET_OLL_CASES, POCKET_PBL_CASES, POCKET_PLL_CASES } from './pocket';
+import { REVENGE_PARITY_CASES } from './revenge';
+import { isReduced, readRevenge } from '$cube/revenge';
 
 /** Run the check a set's `verify` field asks for. */
 function checkCase(c: AlgCase, alg: string): CaseCheck {
@@ -77,8 +90,9 @@ describe('library structure', () => {
 
 	it('resolves derived fields for every case', () => {
 		for (const c of RESOLVED_CASES) {
+			const size = c.set_.puzzle ?? 3;
 			expect(c.moveCount, `${c.id}`).toBeGreaterThan(0);
-			expect(c.caseState.length, `${c.id}`).toBe(54);
+			expect(c.caseState.length, `${c.id}`).toBe(6 * size * size);
 		}
 	});
 
@@ -222,5 +236,167 @@ describe('resolveCase', () => {
 		});
 		expect(resolved.moveCount).toBe(4);
 		expect(resolved.caseState.length).toBe(54);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// The 2×2 and 4×4 sets
+// ---------------------------------------------------------------------------
+
+describe('the 2×2 sets', () => {
+	const orient = (alg: string) => {
+		const inverse = tokenise(alg)
+			.reverse()
+			.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+		return faceletsToPocket(applyPerm(puzzle(2).solved(), puzzle(2).algPerm(inverse)));
+	};
+
+	it('the seven orientation algorithms cover all seven cases, once each', () => {
+		// The engine enumerates the cases from first principles; the data has to
+		// match that list exactly. A duplicate or a gap fails here rather than
+		// showing up as a case with no algorithm on a page nobody opened.
+		const expected = enumeratePocketOrientations().filter((k) => k !== '0000');
+		const found = POCKET_OLL_CASES.map((c) => pocketOrientationKey(orient(c.algs[0].moves)));
+		expect(found.slice().sort()).toEqual(expected.slice().sort());
+		expect(new Set(found).size).toBe(found.length);
+	});
+
+	it('every 2×2 orientation algorithm really orients, and leaves the bottom alone', () => {
+		// Run through the sticker engine rather than the corner model, because the
+		// left-hand variants turn L, which the corner model deliberately does not
+		// know: it holds the back-bottom-left corner still. Putting the result back
+		// in the home frame first is what makes the two views comparable.
+		const p = puzzle(2);
+		for (const c of [...POCKET_OLL_CASES]) {
+			for (const variant of c.algs) {
+				const names = tokenise(variant.moves);
+				const inverse = [...names]
+					.reverse()
+					.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+				const scrambled = applyPerm(p.solved(), p.algPerm(inverse));
+				const before = faceletsToPocket(reorientToStandard(p, scrambled)!);
+				expect(firstLayerSolved(before), `${c.id} ${variant.moves}`).toBe(true);
+
+				const done = reorientToStandard(p, applyPerm(scrambled, p.algPerm(names)));
+				expect(done, `${c.id} ${variant.moves}`).not.toBeNull();
+				const after = faceletsToPocket(done!);
+				expect(lastLayerOrientedPocket(after), `${c.id} ${variant.moves}`).toBe(true);
+				expect(firstLayerSolved(after), `${c.id} ${variant.moves}`).toBe(true);
+			}
+		}
+	});
+
+	it('the two permutation algorithms are one adjacent and one diagonal', () => {
+		const keys = POCKET_PLL_CASES.map((c) => pocketPermutationKey(orient(c.algs[0].moves)));
+		expect(keys.slice().sort()).toEqual(['adjacent', 'diagonal']);
+	});
+
+	it('every 2×2 algorithm solves the case it stands for', () => {
+		const p = puzzle(2);
+		for (const c of [...POCKET_OLL_CASES, ...POCKET_PLL_CASES, ...POCKET_PBL_CASES]) {
+			for (const variant of c.algs) {
+				const names = tokenise(variant.moves);
+				for (const name of names) expect(p.parse(name), `${c.id}: ${name}`).not.toBeNull();
+				const inverse = [...names]
+					.reverse()
+					.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+				const scrambled = applyPerm(p.solved(), p.algPerm(inverse));
+				const solved = applyPerm(scrambled, p.algPerm(names));
+				expect(Array.from(solved), `${c.id}: ${variant.moves}`).toEqual(Array.from(p.solved()));
+			}
+		}
+	});
+
+	it('the five PBL cases are five different cases', () => {
+		const keys = POCKET_PBL_CASES.map((c) => {
+			const s = orient(c.algs[0].moves);
+			return `${s.cp.slice(0, 4).join('')}|${s.cp.slice(4).join('')}`;
+		});
+		expect(new Set(keys).size).toBe(5);
+		// None of them is already finished.
+		for (const key of keys) expect(key).not.toBe('0123|4567');
+	});
+});
+
+describe('the 4×4 parity set', () => {
+	const p4 = puzzle(4);
+
+	/** Which kind of piece a sticker belongs to on a 4×4. */
+	function kindOf(index: number): 'centre' | 'wing' | 'corner' {
+		const { row, col } = p4.locate(index);
+		const edgeRow = row === 0 || row === 3;
+		const edgeCol = col === 0 || col === 3;
+		if (!edgeRow && !edgeCol) return 'centre';
+		return edgeRow && edgeCol ? 'corner' : 'wing';
+	}
+
+	function effectOf(alg: string) {
+		const names = tokenise(alg);
+		for (const name of names) expect(p4.parse(name), name).not.toBeNull();
+		const after = applyPerm(p4.solved(), p4.algPerm(names));
+		const solved = p4.solved();
+		const tally = { centre: 0, wing: 0, corner: 0 };
+		for (let i = 0; i < p4.stickers; i++) if (after[i] !== solved[i]) tally[kindOf(i)]++;
+		return tally;
+	}
+
+	const variants = REVENGE_PARITY_CASES.flatMap((c) => c.algs.map((a) => a.moves));
+
+	it('every version moves wings and nothing else', () => {
+		// A centre or a corner out of place would mean the algorithm is not a
+		// parity fix but a scramble that happens to look like one.
+		for (const moves of variants) {
+			const effect = effectOf(moves);
+			expect(effect.centre, moves).toBe(0);
+			expect(effect.corner, moves).toBe(0);
+			expect(effect.wing, moves).toBeGreaterThan(0);
+		}
+	});
+
+	it('every version leaves the puzzle still reduced', () => {
+		// This is what makes a parity algorithm usable mid-solve instead of a
+		// fresh start: your centres stay built and your wings stay paired.
+		for (const moves of variants) {
+			const after = applyPerm(p4.solved(), p4.algPerm(tokenise(moves)));
+			expect(isReduced(after), moves).toBe(true);
+		}
+	});
+
+	it('every version produces a 3×3 that could not exist', () => {
+		// Which is the definition of parity, and the thing the site detects.
+		for (const moves of variants) {
+			expect(readRevenge(applyPerm(p4.solved(), p4.algPerm(tokenise(moves)))).stage, moves).toBe(
+				'parity'
+			);
+		}
+	});
+
+	it('the two versions are genuinely different sequences', () => {
+		// They fix the same kind of position but not from the same angle: each
+		// swaps its own pair of edges, so which one you reach for depends on how
+		// you are holding the puzzle. Claiming they were interchangeable would be
+		// wrong, and this is the check that keeps that claim out of the notes.
+		const [short, classic] = variants;
+		expect(Array.from(p4.algPerm(tokenise(short)))).not.toEqual(
+			Array.from(p4.algPerm(tokenise(classic)))
+		);
+	});
+
+	it('each version is its own inverse', () => {
+		// Swapping the same two edge pairs back puts the puzzle right, so doubled
+		// each algorithm must be the identity. A stray quarter turn shows up here.
+		for (const moves of variants) {
+			const alg = tokenise(moves);
+			const twice = applyPerm(p4.solved(), p4.algPerm([...alg, ...alg]));
+			expect(Array.from(twice), moves).toEqual(Array.from(p4.solved()));
+		}
+	});
+
+	it('needs the slice, not the wide turn', () => {
+		// The distinction the set description makes has to be a real one: writing
+		// Rw where 2R belongs must break the algorithm, or the warning is noise.
+		const swapped = variants[0].replace(/2R/g, 'Rw');
+		const after = applyPerm(p4.solved(), p4.algPerm(tokenise(swapped)));
+		expect(isReduced(after)).toBe(false);
 	});
 });

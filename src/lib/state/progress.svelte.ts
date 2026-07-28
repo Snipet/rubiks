@@ -9,6 +9,7 @@
  */
 
 import { browser } from '$app/environment';
+import type { PuzzleSize } from '$cube/puzzle';
 
 export type CaseConfidence = 'unseen' | 'learning' | 'known' | 'solid';
 
@@ -34,6 +35,12 @@ export interface SolveRecord {
 	/** Elapsed milliseconds. */
 	ms: number;
 	scramble: string;
+	/**
+	 * Which puzzle it was. Absent on records written before the site had modes,
+	 * and those were all 3×3 — so a missing value means 3, and a 2×2 time can
+	 * never wander into a 3×3 average.
+	 */
+	puzzle?: PuzzleSize;
 	/** `dnf` and `plus2` follow competition conventions. */
 	penalty?: 'dnf' | 'plus2';
 	/** Optional note the solver typed afterwards. */

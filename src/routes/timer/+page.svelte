@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, untrack } from 'svelte';
 	import AlgString from '$components/ui/AlgString.svelte';
 	import Button from '$components/ui/Button.svelte';
 	import CubeDiagram from '$components/cube/CubeDiagram.svelte';
 	import { pageTitle } from '$lib/brand';
-	import { randomScramble } from '$cube/scramble';
-	import { stateFromAlg } from '$cube/facelets';
+	import { puzzle } from '$cube/puzzle';
+	import { scrambleFor } from '$cube/puzzleScramble';
+	import { apply, tokenise } from '$cube/puzzleState';
+	import { PUZZLE_LABELS, settings } from '$state/settings.svelte';
 	import { formatTime, progress, solveStats, type SolveRecord } from '$state/progress.svelte';
 
 	/**
@@ -19,18 +21,31 @@
 
 	let phase = $state<Phase>('idle');
 	let elapsed = $state(0);
-	let scramble = $state(randomScramble({ length: 20 }));
 	let inspection = $state(false);
 	let inspectionLeft = $state(15);
+
+	const order = $derived(settings.current.puzzle);
+	const cube = $derived(puzzle(order));
+
+	// Seeded on the server so the prerendered page is stable, then replaced with a
+	// fresh one on mount and whenever the puzzle changes. Only `order` is read
+	// reactively: if `phase` were, arming the timer would swap out the scramble
+	// you had just finished memorising.
+	let scramble = $state(scrambleFor(puzzle(3), { seed: 1 }));
+	$effect(() => {
+		const size = order;
+		untrack(() => (scramble = scrambleFor(puzzle(size))));
+	});
 
 	let startedAt = 0;
 	let holdTimer: ReturnType<typeof setTimeout> | undefined;
 	let frame: number | undefined;
 	let inspectionTimer: ReturnType<typeof setInterval> | undefined;
 
-	const solves = $derived(progress.current.solves);
+	// Records written before the site had modes carry no puzzle and were all 3×3.
+	const solves = $derived(progress.current.solves.filter((s) => (s.puzzle ?? 3) === order));
 	const stats = $derived(solveStats(solves));
-	const preview = $derived(stateFromAlg(scramble));
+	const preview = $derived(apply(cube, cube.solved(), tokenise(scramble)));
 
 	function tick() {
 		elapsed = performance.now() - startedAt;
@@ -66,8 +81,8 @@
 		if (frame) cancelAnimationFrame(frame);
 		phase = 'stopped';
 		elapsed = performance.now() - startedAt;
-		progress.addSolve({ at: Date.now(), ms: Math.round(elapsed), scramble });
-		scramble = randomScramble({ length: 20 });
+		progress.addSolve({ at: Date.now(), ms: Math.round(elapsed), scramble, puzzle: order });
+		scramble = scrambleFor(cube);
 	}
 
 	function startInspection() {
@@ -128,11 +143,12 @@
 
 <div class="page page--wide">
 	<header class="head">
-		<p class="eyebrow">Timer</p>
-		<h1>Time a solve</h1>
+		<p class="eyebrow">Timer · {PUZZLE_LABELS[order]}</p>
+		<h1>Time a {PUZZLE_LABELS[order]} solve</h1>
 		<p class="lede">
 			Hold the space bar until it turns green, let go to start, press anything to stop. Everything
-			stays in this browser.
+			stays in this browser, and each puzzle keeps its own times — a {PUZZLE_LABELS[order]} solve never
+			lands in another puzzle's average.
 		</p>
 	</header>
 
@@ -143,11 +159,7 @@
 					<AlgString alg={scramble} size="lg" wrap={false} />
 				</div>
 				<div class="scramble__tools">
-					<Button
-						size="sm"
-						variant="ghost"
-						onclick={() => (scramble = randomScramble({ length: 20 }))}
-					>
+					<Button size="sm" variant="ghost" onclick={() => (scramble = scrambleFor(cube))}>
 						New scramble
 					</Button>
 					<Button
@@ -182,8 +194,10 @@
 			</button>
 
 			<div class="preview">
-				<CubeDiagram facelets={preview} view="full" size={160} label="The scrambled cube" />
-				<p class="preview__note">The cube after this scramble, seen from the top-front-right.</p>
+				<CubeDiagram facelets={preview} {order} view="full" size={160} label="The scrambled cube" />
+				<p class="preview__note">
+					The {PUZZLE_LABELS[order]} after this scramble, seen from the top-front-right.
+				</p>
 			</div>
 		</section>
 

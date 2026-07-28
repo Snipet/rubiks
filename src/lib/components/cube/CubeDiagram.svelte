@@ -13,14 +13,17 @@
 	orientation only (top colour versus not), everything else shows real colours.
 -->
 <script lang="ts">
-	import { FLAT_LAYOUT, caseArrows, paintSticker, type DiagramView } from '$cube/mask';
+	import { caseArrows, flatLayout, paintSticker, type DiagramView } from '$cube/mask';
 	import { UNSET } from '$cube/facelets';
+	import type { PuzzleSize } from '$cube/puzzle';
 	import { FACE_NAMES, type Face, type Facelets } from '$cube/types';
 	import { settings } from '$state/settings.svelte';
 
 	interface Props {
 		facelets: Facelets;
 		view?: DiagramView;
+		/** How many layers a side. Defaults to the 3×3. */
+		order?: PuzzleSize;
 		/** Pixel size of the rendered square. */
 		size?: number;
 		/** Draw permutation arrows. Defaults to on for the `pll` view. */
@@ -37,6 +40,7 @@
 	let {
 		facelets,
 		view = 'last-layer',
+		order = 3,
 		size = 132,
 		arrows,
 		label,
@@ -46,30 +50,37 @@
 	}: Props = $props();
 
 	const isFlat = $derived(view === 'oll' || view === 'pll' || view === 'last-layer');
-	const showArrows = $derived(arrows ?? view === 'pll');
+	// Arrows are worked out from the 3×3 piece model, so they are offered only
+	// there. A 2×2 PBL diagram reads perfectly well from its colours alone.
+	const showArrows = $derived((arrows ?? view === 'pll') && order === 3);
+	const stride = $derived(order * order);
+	const layout = $derived(flatLayout(order));
 	const interactive = $derived(onsticker !== undefined);
 	const highlighted = $derived(new Set(highlight));
 
 	// --- flat geometry ------------------------------------------------------
-	// A 3×3 top face of 20-unit stickers, with 8-unit folded-out side strips.
-	const TOP = 20;
+	// The drawing keeps a fixed extent whatever the size, so a 2×2 and a 3×3
+	// diagram sit at the same weight on the page; only the stickers get finer.
+	// At size 3 the numbers come out at exactly the 20/8/2 they were written as.
 	const SIDE = 8;
 	const GAP = 2;
-	const PITCH = TOP + GAP;
 	const ORIGIN = SIDE + GAP * 2;
-	const EXTENT = ORIGIN * 2 + TOP * 3 + GAP * 2;
+	const EXTENT = 88;
+	const TOP = $derived((EXTENT - ORIGIN * 2 - GAP * (order - 1)) / order);
+	const PITCH = $derived(TOP + GAP);
 
 	/** Where a flat-layout cell sits, given its grid column and row. */
 	function flatRect(col: number, row: number) {
+		const outer = order + 1;
 		const axis = (n: number) =>
-			n === 0 ? 0 : n === 4 ? ORIGIN + TOP * 3 + GAP * 2 + GAP : ORIGIN + (n - 1) * PITCH;
-		const span = (n: number) => (n === 0 || n === 4 ? SIDE : TOP);
+			n === 0 ? 0 : n === outer ? EXTENT - SIDE : ORIGIN + (n - 1) * PITCH;
+		const span = (n: number) => (n === 0 || n === outer ? SIDE : TOP);
 		return { x: axis(col), y: axis(row), width: span(col), height: span(row) };
 	}
 
 	/** Centre of a facelet in flat coordinates, for anchoring arrows. */
 	function flatCentre(index: number) {
-		const cell = FLAT_LAYOUT.find((s) => s.index === index);
+		const cell = layout.find((s) => s.index === index);
 		if (!cell) return { x: EXTENT / 2, y: EXTENT / 2 };
 		const r = flatRect(cell.col, cell.row);
 		return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
@@ -87,8 +98,8 @@
 
 	/** The four corners of one sticker on one of the three visible faces. */
 	function isoQuad(face: Face, row: number, col: number) {
-		const lo = (n: number) => n / 3;
-		const hi = (n: number) => (n + 1) / 3;
+		const lo = (n: number) => n / order;
+		const hi = (n: number) => (n + 1) / order;
 		let corners: [number, number, number][];
 		if (face === 0) {
 			// U: rows run back to front, columns left to right.
@@ -123,10 +134,10 @@
 
 	const ISO_CELLS = $derived(
 		([0, 2, 1] as Face[]).flatMap((face) =>
-			Array.from({ length: 9 }, (_, i) => ({
+			Array.from({ length: stride }, (_, i) => ({
 				face,
-				index: face * 9 + i,
-				points: isoQuad(face, Math.floor(i / 3), i % 3)
+				index: face * stride + i,
+				points: isoQuad(face, Math.floor(i / order), i % order)
 			}))
 		)
 	);
@@ -205,7 +216,7 @@
 	</defs>
 
 	{#if isFlat}
-		{#each FLAT_LAYOUT as cell (cell.index)}
+		{#each layout as cell (cell.index)}
 			{@const r = flatRect(cell.col, cell.row)}
 			{@const paint = paintSticker(facelets, cell, view)}
 			<g class="cell" class:cell--side={cell.kind === 'side'}>
@@ -215,7 +226,7 @@
 						y={r.y}
 						width={r.width}
 						height={r.height}
-						rx={cell.kind === 'top' ? 3 : 2}
+						rx={cell.kind === 'top' ? Math.min(3, TOP * 0.15) : 2}
 						fill={fillFor(cell.index)}
 						stroke={strokeFor(cell.index)}
 						stroke-width="1"
@@ -239,7 +250,7 @@
 						y={r.y}
 						width={r.width}
 						height={r.height}
-						rx={cell.kind === 'top' ? 3 : 2}
+						rx={cell.kind === 'top' ? Math.min(3, TOP * 0.15) : 2}
 						fill={fillFor(cell.index)}
 						stroke={strokeFor(cell.index)}
 						stroke-width="1"
