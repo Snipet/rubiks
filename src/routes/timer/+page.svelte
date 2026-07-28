@@ -256,7 +256,12 @@
 									{formatTime(record.ms, record.penalty)}
 								</span>
 								<span class="solve__scramble scroll-x">
-									<AlgString alg={record.scramble} order={record.puzzle ?? 3} size="sm" wrap={false} />
+									<AlgString
+										alg={record.scramble}
+										order={record.puzzle ?? 3}
+										size="sm"
+										wrap={false}
+									/>
 								</span>
 								<span class="solve__actions">
 									<button
