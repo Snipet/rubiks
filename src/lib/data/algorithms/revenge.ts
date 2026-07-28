@@ -58,3 +58,103 @@ export const REVENGE_PARITY_CASES: readonly AlgCase[] = [
 		]
 	}
 ];
+
+/**
+ * Centre commutators.
+ *
+ * The centres stage of a 4×4 is mostly done by eye, and the lesson says so. But
+ * the last few pieces are the awkward ones — every move that fetches the piece
+ * you want undoes a piece you already placed — and that is what a commutator is
+ * for: do a thing, do another, undo the first, undo the second, and the two
+ * interferences cancel.
+ *
+ * All of these are built from inner slices alone, which is why they can be
+ * offered with a guarantee rather than a hope: a slice turn cannot touch a
+ * corner, and the tests measure that no corner and no wing moves. Six centre
+ * pieces travel, in two three-cycles, and nothing else on the puzzle changes.
+ *
+ * They were found by search rather than transcribed — every commutator of two
+ * slices was generated, its effect read off the piece model, and these kept.
+ */
+export const REVENGE_CENTRE_CASES: readonly AlgCase[] = [
+	{
+		id: 'revenge-centre-basic',
+		set: 'revenge-centres',
+		name: 'The basic slice commutator',
+		shortName: 'Slice comm',
+		group: 'Centres',
+		tier: 'intermediate',
+		recognition:
+			'Two centre pieces sit one slice apart and each is in the other\u2019s way. Set the puzzle so both are on inner slices that cross, and this trades them round.',
+		notes:
+			'Four moves, and the shape behind every other algorithm on this page: turn, turn, undo, undo. Learn what it does to the puzzle rather than the letters — once you can see the two three-cycles you will invent the rest yourself.',
+		algs: [
+			{
+				moves: "2R 2U 2R' 2U'",
+				note: 'Three-cycles two sets of three centres and touches nothing else at all.'
+			},
+			{
+				moves: "2R 2U' 2R' 2U",
+				label: 'reverse',
+				note: 'The same shape the other way, when the cycle you want runs the other direction.'
+			}
+		]
+	},
+	{
+		id: 'revenge-centre-down',
+		set: 'revenge-centres',
+		name: 'Against the bottom slice',
+		shortName: 'Down comm',
+		group: 'Centres',
+		tier: 'intermediate',
+		recognition: 'The piece you want is in the lower inner slice rather than the upper one.',
+		notes:
+			'Identical in shape; only the second slice changes. Worth doing a few times to feel that the choice of slice is what picks which centres travel.',
+		algs: [{ moves: "2R 2D 2R' 2D'" }]
+	},
+	{
+		id: 'revenge-centre-front',
+		set: 'revenge-centres',
+		name: 'Against the front slice',
+		shortName: 'Front comm',
+		group: 'Centres',
+		tier: 'intermediate',
+		recognition: 'The two pieces cross on the front inner slice rather than a horizontal one.',
+		notes:
+			'The third axis. Between these three you can reach any centre from any other, which is the whole of the centres stage once you stop guessing.',
+		algs: [{ moves: "2R 2F 2R' 2F'" }]
+	},
+	{
+		id: 'revenge-centre-double',
+		set: 'revenge-centres',
+		name: 'The half-turn commutator',
+		shortName: 'Half comm',
+		group: 'Centres',
+		tier: 'advanced',
+		recognition:
+			'Two centres directly opposite one another across a slice, where a quarter turn would fetch the wrong one.',
+		notes:
+			'Half turns instead of quarters. Same length, different pair of three-cycles, and it reaches the arrangements the quarter-turn version keeps missing.',
+		algs: [
+			{ moves: "2R 2U2 2R' 2U2" },
+			{
+				moves: '2R2 2U2 2R2 2U2',
+				label: 'both halves',
+				note: 'Every turn a half turn: the most symmetric of the family, and the easiest to perform without thinking.'
+			}
+		]
+	},
+	{
+		id: 'revenge-centre-wide-pair',
+		set: 'revenge-centres',
+		name: 'Two at a time',
+		shortName: 'Double slice',
+		group: 'Centres',
+		tier: 'advanced',
+		recognition:
+			'Two pieces on the same slice both need moving, and one quarter turn would only fetch one.',
+		notes:
+			'A double slice in the first half fetches a pair rather than a single, which is what makes the last face of centres quick rather than a grind.',
+		algs: [{ moves: "2R2 2U 2R2 2U'" }]
+	}
+];

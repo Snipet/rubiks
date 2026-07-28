@@ -29,16 +29,23 @@ import type { AlgCase, AlgSetId } from '../types';
 import { applyPerm, puzzle } from '$cube/puzzle';
 import { reorientToStandard, tokenise } from '$cube/puzzleState';
 import {
+	applyPocket,
+	solvedPocket,
 	enumeratePocketOrientations,
 	faceletsToPocket,
 	firstLayerSolved,
 	lastLayerOriented as lastLayerOrientedPocket,
+	playPocket,
 	pocketOrientationKey,
 	pocketPermutationKey
 } from '$cube/pocket';
 import { POCKET_OLL_CASES, POCKET_PBL_CASES, POCKET_PLL_CASES } from './pocket';
-import { REVENGE_PARITY_CASES } from './revenge';
+import { POCKET_CLL_CASES } from './pocketCll';
+import { REVENGE_CENTRE_CASES, REVENGE_PARITY_CASES } from './revenge';
+import { describeEffect, effectSummary } from '$cube/pieces';
 import { isReduced, readRevenge } from '$cube/revenge';
+
+const p4Solved = () => puzzle(4).solved();
 
 /** Run the check a set's `verify` field asks for. */
 function checkCase(c: AlgCase, alg: string): CaseCheck {
@@ -398,5 +405,178 @@ describe('the 4×4 parity set', () => {
 		const swapped = variants[0].replace(/2R/g, 'Rw');
 		const after = applyPerm(p4.solved(), p4.algPerm(tokenise(swapped)));
 		expect(isReduced(after)).toBe(false);
+	});
+});
+
+describe('the 4×4 centre set', () => {
+	it('every centre algorithm moves centres and nothing else', () => {
+		// The guarantee the set description makes, measured piece by piece rather
+		// than sticker by sticker: centre pieces of a face are interchangeable in
+		// colour, so only the piece model can tell whether a corner or a wing moved.
+		for (const c of REVENGE_CENTRE_CASES) {
+			for (const variant of c.algs) {
+				const effect = describeEffect(4, variant.moves);
+				expect(effect.identity, `${c.id}: ${variant.moves}`).toBe(false);
+				expect(effect.moved.corner, `${c.id}: ${variant.moves}`).toBe(0);
+				expect(effect.moved.edge, `${c.id}: ${variant.moves}`).toBe(0);
+				expect(effect.moved.centre, `${c.id}: ${variant.moves}`).toBeGreaterThan(0);
+			}
+		}
+	});
+
+	it('they are built from inner slices only', () => {
+		// Which is *why* the guarantee holds: a slice turn cannot reach a corner.
+		// If a face turn crept into one of these, the property above would become a
+		// coincidence rather than a consequence.
+		const p4 = puzzle(4);
+		for (const c of REVENGE_CENTRE_CASES) {
+			for (const variant of c.algs) {
+				for (const name of tokenise(variant.moves)) {
+					const turn = p4.parse(name);
+					expect(turn, `${c.id}: ${name}`).not.toBeNull();
+					expect(turn!.from, `${c.id}: ${name} reaches the outer layer`).toBeGreaterThan(0);
+				}
+			}
+		}
+	});
+
+	it('each one is a commutator, so undoing it is doing it backwards', () => {
+		for (const c of REVENGE_CENTRE_CASES) {
+			for (const variant of c.algs) {
+				const names = tokenise(variant.moves);
+				const inverse = [...names]
+					.reverse()
+					.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+				const round = applyPerm(p4Solved(), puzzle(4).algPerm([...names, ...inverse]));
+				expect(Array.from(round), `${c.id}: ${variant.moves}`).toEqual(Array.from(p4Solved()));
+			}
+		}
+	});
+
+	it('the set covers distinct effects', () => {
+		// Five entries that all did the same thing would be five ways of padding a
+		// page rather than five tools.
+		const seen = REVENGE_CENTRE_CASES.map((c) => effectSummary(describeEffect(4, c.algs[0].moves)));
+		expect(new Set(seen).size).toBe(REVENGE_CENTRE_CASES.length);
+	});
+});
+
+describe('2×2 CLL', () => {
+	const p2 = puzzle(2);
+	const AUF = [0, 1, 2, 3].map((k) => playPocket(solvedPocket(), new Array(k).fill('U')));
+
+	/** Every last-layer corner state with the first layer solved: 4! × 3³. */
+	function allLastLayerStates() {
+		const out: ReturnType<typeof solvedPocket>[] = [];
+		const perms: number[][] = [];
+		const build = (rest: number[], acc: number[]) => {
+			if (!rest.length) return void perms.push(acc);
+			rest.forEach((v, i) => build([...rest.slice(0, i), ...rest.slice(i + 1)], [...acc, v]));
+		};
+		build([0, 1, 2, 3], []);
+		for (const perm of perms) {
+			for (let a = 0; a < 3; a++) {
+				for (let b = 0; b < 3; b++) {
+					for (let c = 0; c < 3; c++) {
+						out.push({
+							cp: [...perm, 4, 5, 6, 7],
+							co: [a, b, c, (3 - ((a + b + c) % 3)) % 3, 0, 0, 0, 0]
+						});
+					}
+				}
+			}
+		}
+		return out;
+	}
+
+	/**
+	 * Two states are the same case when an adjusting turn before the algorithm and
+	 * another after it carries one to the other — a double coset of the turns of
+	 * the top. That is the definition the published case count follows from.
+	 */
+	function caseKey(state: ReturnType<typeof solvedPocket>) {
+		let best = '';
+		for (const pre of AUF) {
+			const left = applyPocket(pre, state);
+			for (const post of AUF) {
+				const at = applyPocket(left, post);
+				const reading = `${at.co.slice(0, 4).join('')}|${at.cp.slice(0, 4).join('')}`;
+				if (!best || reading < best) best = reading;
+			}
+		}
+		return best;
+	}
+
+	it('there are forty-three cases, and forty of them need twisting', () => {
+		// Derived here, not taken from a sheet. 648 states collapse to 43: one is
+		// solved, two need no twisting — those are the 2×2 PLL cases and live in
+		// their own set — and the remaining forty are CLL.
+		const states = allLastLayerStates();
+		expect(states.length).toBe(648);
+		const keys = new Set(states.map(caseKey));
+		expect(keys.size).toBe(43);
+		const untwisted = [...keys].filter((k) => k.startsWith('0000'));
+		expect(untwisted.length).toBe(3);
+		expect(keys.size - untwisted.length).toBe(POCKET_CLL_CASES.length);
+	});
+
+	it('the shape groups come out at the published sizes', () => {
+		// Six each except H, which has four because the H shape is unchanged by a
+		// half turn and two of its arrangements coincide. Getting this wrong is the
+		// classic way to end up with a sheet of 42 that is really 40 plus two.
+		const sizes: Record<string, number> = {};
+		for (const c of POCKET_CLL_CASES) sizes[c.group!] = (sizes[c.group!] ?? 0) + 1;
+		expect(sizes).toEqual({ Sune: 6, 'Anti-Sune': 6, T: 6, U: 6, L: 6, Pi: 6, H: 4 });
+	});
+
+	it('every algorithm solves its own case outright', () => {
+		for (const c of POCKET_CLL_CASES) {
+			for (const variant of c.algs) {
+				const names = tokenise(variant.moves);
+				for (const name of names) expect(p2.parse(name), `${c.id}: ${name}`).not.toBeNull();
+				const inverse = [...names]
+					.reverse()
+					.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+				const scrambled = applyPerm(p2.solved(), p2.algPerm(inverse));
+				const solved = applyPerm(scrambled, p2.algPerm(names));
+				expect(Array.from(solved), `${c.id}: ${variant.moves}`).toEqual(Array.from(p2.solved()));
+			}
+		}
+	});
+
+	it('the forty cases are forty different cases', () => {
+		// A generated set is exactly where a duplicate would hide.
+		const keys = POCKET_CLL_CASES.map((c) => {
+			const names = tokenise(c.algs[0].moves);
+			const inverse = [...names]
+				.reverse()
+				.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+			return caseKey(faceletsToPocket(applyPerm(p2.solved(), p2.algPerm(inverse))));
+		});
+		expect(new Set(keys).size).toBe(POCKET_CLL_CASES.length);
+		// And none of them is a case that needs no twisting.
+		for (const k of keys) expect(k.startsWith('0000')).toBe(false);
+	});
+
+	it('leaves the first layer alone', () => {
+		for (const c of POCKET_CLL_CASES) {
+			const names = tokenise(c.algs[0].moves);
+			const inverse = [...names]
+				.reverse()
+				.map((n) => (n.endsWith('2') ? n : n.endsWith("'") ? n.slice(0, -1) : `${n}'`));
+			const before = faceletsToPocket(applyPerm(p2.solved(), p2.algPerm(inverse)));
+			expect(firstLayerSolved(before), c.id).toBe(true);
+		}
+	});
+
+	it('no algorithm turns the same face twice running', () => {
+		for (const c of POCKET_CLL_CASES) {
+			for (const variant of c.algs) {
+				const names = tokenise(variant.moves);
+				for (let i = 1; i < names.length; i++) {
+					expect(names[i][0], `${c.id}: ${variant.moves}`).not.toBe(names[i - 1][0]);
+				}
+			}
+		}
 	});
 });

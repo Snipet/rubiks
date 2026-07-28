@@ -4,9 +4,14 @@
 	import Button from '$components/ui/Button.svelte';
 	import { pageTitle } from '$lib/brand';
 	import { lessonsOfTrack, TRACKS, trackMinutes } from '$data/lessons';
-	import { SKILL_LABELS } from '$data/types';
-	import { PUZZLE_LABELS, settings } from '$state/settings.svelte';
+	import { SKILL_LABELS, TRACK_LABELS } from '$data/types';
+	import { settings } from '$state/settings.svelte';
 	import { progress } from '$state/progress.svelte';
+
+	// Tracks belong to a puzzle; the four 3×3 ones carry no puzzle field because
+	// they predate modes, so an absent value means three.
+	const order = $derived(settings.current.puzzle);
+	const tracks = $derived(TRACKS.filter((t) => (t.puzzle ?? 3) === order));
 
 	const mine = $derived(settings.current.skill);
 </script>
@@ -31,19 +36,7 @@
 	</header>
 
 	<div class="tracks">
-		{#if settings.current.puzzle !== 3}
-			<p class="scope">
-				These lessons are written for the 3×3. The methods for a
-				{PUZZLE_LABELS[settings.current.puzzle]} are covered on its own pages instead — the
-				<a href={resolve('/solve/')}>solve</a>
-				page walks through the steps as you go, and the
-				<a href={resolve('/algorithms/')}>algorithms</a>
-				it needs are all there. A written track for it has not been finished, and pretending otherwise
-				would waste your time.
-			</p>
-		{/if}
-
-		{#each TRACKS as t (t.id)}
+		{#each tracks as t (t.id)}
 			{@const lessons = lessonsOfTrack(t.id)}
 			{@const done = lessons.filter((l) => progress.lessonDone(l.slug)).length}
 			<section class="track" class:track--mine={t.id === mine}>
@@ -51,7 +44,7 @@
 					<div>
 						<div class="track__chips">
 							<Chip tone={t.id === mine ? 'section' : 'neutral'} size="md">
-								{SKILL_LABELS[t.id]}
+								{TRACK_LABELS[t.id]}
 							</Chip>
 							{#if lessons.length > 0}
 								<Chip>{lessons.length} lessons</Chip>
@@ -109,23 +102,6 @@
 </div>
 
 <style>
-	.scope {
-		margin-block-end: var(--space-5);
-		padding: var(--space-4);
-		border: var(--border);
-		border-inline-start: 3px solid var(--caution);
-		border-radius: var(--radius-2);
-		background: var(--surface-1);
-		color: var(--text-muted);
-		line-height: var(--leading-normal);
-		max-width: var(--measure);
-	}
-
-	.scope a {
-		color: var(--section);
-		font-weight: 600;
-	}
-
 	.head {
 		max-width: var(--measure);
 		margin-block-end: var(--space-6);

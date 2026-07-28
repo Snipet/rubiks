@@ -6,17 +6,21 @@
  * not have to click through "this is a corner piece" to reach F2L.
  */
 
-import type { Lesson, SkillTier, Track } from '../types';
+import type { Lesson, Track, TrackId } from '../types';
 import { BEGINNER_LESSONS } from './beginner';
 import { INTERMEDIATE_LESSONS } from './intermediate';
 import { ADVANCED_LESSONS } from './advanced';
 import { EXPERT_LESSONS } from './expert';
+import { POCKET_LESSONS } from './pocket';
+import { REVENGE_LESSONS } from './revenge';
 
 export const LESSONS: readonly Lesson[] = [
 	...BEGINNER_LESSONS,
 	...INTERMEDIATE_LESSONS,
 	...ADVANCED_LESSONS,
-	...EXPERT_LESSONS
+	...EXPERT_LESSONS,
+	...POCKET_LESSONS,
+	...REVENGE_LESSONS
 ]
 	.slice()
 	.sort((a, b) => a.order - b.order);
@@ -53,6 +57,24 @@ export const TRACKS: readonly Track[] = [
 		description:
 			'Where the interesting choices are. COLL and Winter Variation for skipping steps, Roux and ZZ for a different shape of solve entirely, and commutators for the point at which you stop looking algorithms up and start working them out.',
 		lessons: EXPERT_LESSONS.map((l) => l.slug)
+	},
+	{
+		id: 'pocket',
+		title: 'The 2×2, end to end',
+		tagline: 'Eight corners, no centres, and every last-layer idea the 3×3 will ask of you later.',
+		description:
+			'A 2×2 is a 3×3 with the edges and centres taken away, which makes it the best place to learn last-layer thinking: the same sunes, the same recognition, a tenth of the pieces. This track takes you from a scrambled puzzle to sub-ten, through the layer-by-layer route, then Ortega, then as much of CLL as you want.',
+		puzzle: 2,
+		lessons: POCKET_LESSONS.map((l) => l.slug)
+	},
+	{
+		id: 'revenge',
+		title: 'The 4×4, by reduction',
+		tagline: 'Build the centres, pair the wings, and finish it as a 3×3 — parity and all.',
+		description:
+			'A 4×4 has no fixed centres and two of every edge piece, which sounds like a different puzzle and mostly is not. Reduce it — centres into blocks, wings into pairs — and what is left behaves exactly like a 3×3 with fat pieces. This track covers the two stages that are genuinely new, and the two positions a 3×3 could never show you.',
+		puzzle: 4,
+		lessons: REVENGE_LESSONS.map((l) => l.slug)
 	}
 ];
 
@@ -62,13 +84,13 @@ export function lessonBySlug(slug: string): Lesson | undefined {
 	return BY_SLUG.get(slug);
 }
 
-export function track(id: SkillTier): Track {
+export function track(id: TrackId): Track {
 	const found = TRACKS.find((t) => t.id === id);
 	if (!found) throw new Error(`Unknown track "${id}"`);
 	return found;
 }
 
-export function lessonsOfTrack(id: SkillTier): Lesson[] {
+export function lessonsOfTrack(id: TrackId): Lesson[] {
 	return track(id)
 		.lessons.map((slug) => BY_SLUG.get(slug))
 		.filter((l): l is Lesson => l !== undefined);
@@ -87,6 +109,6 @@ export function neighbours(slug: string): { previous?: Lesson; next?: Lesson } {
 }
 
 /** Total reading time of a track, in minutes. */
-export function trackMinutes(id: SkillTier): number {
+export function trackMinutes(id: TrackId): number {
 	return lessonsOfTrack(id).reduce((n, l) => n + l.minutes, 0);
 }
