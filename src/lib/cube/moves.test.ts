@@ -27,7 +27,7 @@ import {
 } from './facelets';
 import { cubieToFacelets, faceletsToCubie, permutationParity, solvedCubie } from './cubie';
 import { validateFacelets } from './validate';
-import { CENTER_FACELETS, N_FACELETS } from './types';
+import { CENTER_FACELETS, N_FACELETS, type Facelets } from './types';
 
 const permEquals = (a: Readonly<Uint8Array>, b: Readonly<Uint8Array>) =>
 	a.length === b.length && a.every((v, i) => v === b[i]);
@@ -379,6 +379,65 @@ describe('notation', () => {
 	it('mirroring twice is the identity', () => {
 		const alg = "Rw U R' U' Rw' F R F'";
 		expect(formatAlg(mirrorAlg(mirrorAlg(parseAlg(alg))))).toBe(alg);
+	});
+
+	it('mirroring an algorithm reflects what it does to the cube', () => {
+		// The real definition, rather than a rule of thumb about which letters swap:
+		// mirroring an algorithm must produce the same state as running the original
+		// and then reflecting the cube. This is what catches turns whose direction
+		// does *not* reverse — `x` and `M` sit on the reflected axis, so the axis
+		// flip and the angle flip cancel and they come through unchanged.
+		const reflect = (f: Facelets): Facelets => {
+			const swap = (face: number) => (face === 1 ? 4 : face === 4 ? 1 : face);
+			const out = new Uint8Array(N_FACELETS);
+			for (let face = 0; face < 6; face++) {
+				for (let row = 0; row < 3; row++) {
+					for (let col = 0; col < 3; col++) {
+						out[swap(face) * 9 + row * 3 + (2 - col)] = swap(f[face * 9 + row * 3 + col]);
+					}
+				}
+			}
+			return out;
+		};
+
+		for (const alg of [
+			"R U R' U'",
+			'R2 D2',
+			"F R U R' U' F'",
+			'M',
+			"M'",
+			'M2',
+			'x',
+			"x'",
+			'y',
+			"y'",
+			'z',
+			"z'",
+			'E',
+			'S',
+			'Rw',
+			'Lw',
+			'Uw',
+			'Fw',
+			"R U R' U R U2 R'",
+			'M2 U M2 U2 M2 U M2',
+			"x R2 D2 R' U' R D2 R' U R'",
+			"Rw U R' U' Rw' F R F'",
+			"R U R' U' R' F R2 U' R' U' R U R' F'"
+		]) {
+			expect(
+				faceletsToString(applyAlg(solvedFacelets(), mirrorAlg(parseAlg(alg)))),
+				`${alg} mirrors to ${formatAlg(mirrorAlg(parseAlg(alg)))}`
+			).toBe(faceletsToString(reflect(stateFromAlg(alg))));
+		}
+	});
+
+	it('leaves the turns on the reflected axis alone', () => {
+		// Hold a cube up to a mirror and tilt it towards you: the reflection tilts
+		// towards you too. Getting this wrong is invisible until you mirror an
+		// algorithm that happens to contain a rotation.
+		expect(formatAlg(mirrorAlg(parseAlg("x M' x2 M2")))).toBe("x M' x2 M2");
+		expect(formatAlg(mirrorAlg(parseAlg('y z E S')))).toBe("y' z' E' S'");
 	});
 
 	it('a mirrored algorithm has the same order and move count', () => {

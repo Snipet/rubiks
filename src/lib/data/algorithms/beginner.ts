@@ -12,11 +12,12 @@
  * colour" rather than naming colours, because which colour you start on is your
  * choice and the shapes are what you actually recognise.
  *
- * Several of these algorithms are meant to be run more than once. Where that is
- * the case the entry says so explicitly and gives the number of repetitions,
- * because "repeat until it goes in" is where most people lose their nerve — the
- * cube looks worse in the middle of the loop than it did at the start, and it is
- * supposed to.
+ * A few of these algorithms are meant to be run more than once, and a few more
+ * have a longer "one trigger" variant listed for readers who would rather learn a
+ * single sequence than three. Where an algorithm loops, the entry says how many
+ * repetitions it takes, because "repeat until it goes in" is where most people
+ * lose their nerve — the cube looks worse in the middle of the loop than it did at
+ * the start, and it is supposed to.
  */
 
 import type { AlgCase } from '../types';
@@ -62,9 +63,9 @@ export const BEGINNER_F2L_CASES: readonly AlgCase[] = [
 		tier: 'beginner',
 		algs: [{ moves: "F2 U' R' F R" }],
 		recognition:
-			'The edge is already sitting in its place at the bottom of the front face, but flipped: the cross colour faces you and the side colour is underneath. From above the cross looks finished, which is exactly why this one catches people.',
+			'The edge is already sitting in its place at the bottom of the front face, but flipped: the cross colour faces you and the side colour is underneath. The only clue from a normal viewing angle is one wrong sticker low down on the front face.',
 		notes:
-			'The opening F2 is the move worth understanding — it lifts the edge back out into the top layer, where it becomes the side-lying case above, and the remaining four moves are that case unchanged. Get into the habit of turning the cube over and looking at the finished cross before you start on the corners. A flipped cross edge is invisible from the top and quietly ruins everything built on it, and by the time you notice, the fix means taking a corner back out.',
+			'The opening F2 is the move worth understanding — it lifts the edge back out into the top layer, where it becomes the side-lying case above, and the remaining four moves are that case unchanged. Get into the habit of turning the cube over and looking at the finished cross before you start on the corners. The cross lives on the face you cannot see while you work, so a flipped edge sits there quietly ruining everything built on it, and by the time you notice, the fix means taking a corner back out.',
 		tags: ['cross', 'flipped', 'common-mistake']
 	},
 
@@ -75,15 +76,22 @@ export const BEGINNER_F2L_CASES: readonly AlgCase[] = [
 		id: 'beg-f2l-04',
 		set: 'beginner-f2l',
 		name: 'Corner above its slot, cross colour on the right',
-		shortName: 'Corner, one go',
+		shortName: 'Cross colour right',
 		group: 'Bottom corners',
 		tier: 'beginner',
 		probability: '1/3',
-		algs: [{ moves: "R U R' U'" }],
+		algs: [
+			{ moves: "R U R' U'" },
+			{
+				moves: "R U R'",
+				label: 'three-move',
+				note: 'The insertion on its own. The closing U turn of the main version is housekeeping rather than part of the job, so leave it off if you prefer.'
+			}
+		],
 		recognition:
 			'The corner you want is in the top layer directly above the hole it belongs in — the bottom front right — and its cross-colour sticker is on the right-hand face.',
 		notes:
-			"These four moves are the sexy move, and they are the only sequence this entire step needs. Watch the corner as you go: it swings out to the back on R, comes round to the front on U, and drops into the slot on R'. The final U' is not part of the insertion at all — it puts the top layer back so you can read the next corner without re-counting. When the corner is facing some other way the same four moves still work; you run them again, which is what the next two cases are.",
+			"These four moves are the sexy move, and this is the friendliest of the three orientations. Watch the corner as you go: it swings out to the back on R, comes round to the front on U, and drops into the slot on R'. The final U' is not part of the insertion at all — it puts the top layer back so you can read the next corner without re-counting. The other two orientations have their own short insertions on this page, and each of those also has a variant that repeats these same four moves instead, if you would rather learn one sequence than three.",
 		triggers: ['sexy move'],
 		tags: ['2-gen', 'corners', 'fast']
 	},
@@ -91,33 +99,56 @@ export const BEGINNER_F2L_CASES: readonly AlgCase[] = [
 		id: 'beg-f2l-05',
 		set: 'beginner-f2l',
 		name: 'Corner above its slot, cross colour on top',
-		shortName: 'Corner, three goes',
+		shortName: 'Cross colour up',
 		group: 'Bottom corners',
 		tier: 'beginner',
 		probability: '1/3',
-		algs: [{ moves: "(R U R' U')*3" }],
+		algs: [
+			{ moves: "R U2 R' U' R U R'" },
+			{
+				moves: "(R U R' U')*3",
+				label: 'one trigger',
+				note: 'Three goes of the sexy move. Twelve turns instead of seven, and nothing to learn beyond the case above.'
+			},
+			{
+				moves: "R2 U R2 U' R2",
+				label: 'shortest',
+				note: 'Five turns, all of them on the right-hand face and the top. It reads strangely and it churns the middle layer, which costs nothing while the middle layer is still empty.'
+			}
+		],
 		recognition:
-			'Same position as above — the corner is in the top layer directly over its slot — but the cross-colour sticker is facing straight up at you instead of out to the right.',
+			'Same position as the case above — the corner is in the top layer directly over its slot — but the cross-colour sticker is facing straight up at you instead of out to the right.',
 		notes:
-			'Three goes of the same four moves. Along the way the corner drops into the slot the wrong way round and then pops back out into the top layer; that is the loop working, not a mistake, and it is the point at which most people stop and start again. If you lose count, do not count — look. Stop the moment the cross colour is on the bottom of the cube. If the corner is sitting in the slot but showing its cross colour on a side face, you are halfway and need to keep going.',
-		triggers: ['sexy move', 'double sexy'],
-		tags: ['2-gen', 'corners', 'repeat']
+			"This is the orientation that costs the most, because the corner has to be turned twice rather than once. In the seven-move version it goes round the right-hand layer twice, picking up a third of a turn each time, and drops into the slot on the final R'. Nothing you have already built is at risk while that happens: the cross and any corners you have placed all come back. If you lose your place partway, do not count — look. Stop as soon as the cross colour is on the bottom of the cube.",
+		tags: ['2-gen', 'corners']
 	},
 	{
 		id: 'beg-f2l-06',
 		set: 'beginner-f2l',
 		name: 'Corner above its slot, cross colour facing you',
-		shortName: 'Corner, five goes',
+		shortName: 'Cross colour front',
 		group: 'Bottom corners',
 		tier: 'beginner',
 		probability: '1/3',
-		algs: [{ moves: "(R U R' U')*5" }],
+		algs: [
+			{ moves: "U R U' R'" },
+			{
+				moves: "F' U' F",
+				label: 'front face',
+				note: "The classic three-move answer, and the mirror of R U R' from the case two above. Worth having if you are happy turning the front face."
+			},
+			{
+				moves: "(R U R' U')*5",
+				label: 'one trigger',
+				note: 'Five goes of the sexy move — twenty turns for what the four moves at the top of this entry do. Listed because it is what you end up doing if the sexy move is the only sequence you know, and because watching it work is a decent lesson in patience.'
+			}
+		],
 		recognition:
 			'The corner is over its slot once more, and this time the cross-colour sticker is on the front face, pointing at you.',
 		notes:
-			'Five goes, twenty moves, and the longest wait in the beginner method. Nothing you have already built is at risk: the cross and any corners you have placed all come back every time the loop completes, so the only real way to go wrong is to stop early. Sit with it. When the twenty moves start to grate, that is the moment to look at intuitive F2L, which replaces all of this with a three-move insertion.',
-		triggers: ['sexy move', 'double sexy'],
-		tags: ['2-gen', 'corners', 'repeat', 'slow']
+			"These are the sexy move from the first case in this group, run backwards, and they read as a single thought: U carries the corner across to the front left and out of the way, R lifts whatever is sitting in the slot up after it, U' brings the corner back over the open slot, and R' carries it down. The corner never touches the right-hand face until that last move, which is why the cross colour ends up underneath.",
+		triggers: ['Aa insert'],
+		tags: ['2-gen', 'corners', 'fast']
 	},
 	{
 		id: 'beg-f2l-07',
@@ -141,13 +172,25 @@ export const BEGINNER_F2L_CASES: readonly AlgCase[] = [
 		shortName: 'Twisted in',
 		group: 'Bottom corners',
 		tier: 'beginner',
-		algs: [{ moves: "(R U R' U')*4" }],
+		algs: [
+			{ moves: "(U R U' R')*2" },
+			{
+				moves: "R U' R' F' U' F",
+				label: 'shorter',
+				note: "Six turns, and the same two halves in miniature: R U' R' lifts the corner into the top layer with the cross colour facing you, and F' U' F drops it back in the right way up."
+			},
+			{
+				moves: "(R U R' U')*4",
+				label: 'one trigger',
+				note: 'Four goes of the sexy move. Sixteen turns, and the answer if the sexy move is the only sequence you have learnt.'
+			}
+		],
 		recognition:
 			'The corner is in the right slot but twisted — its cross-colour sticker faces the front instead of pointing down — so the bottom face still has a hole in it even though the piece looks placed.',
 		notes:
-			'Four more turns of the same loop puts it right, which is what the sixteen moves above are. If that feels absurd, run the loop once instead: the corner lifts back into the top layer, you read which way it is facing, and you use whichever of the three cases above matches. That is the same thing with a pause for thought in the middle, and it is usually quicker. The identical trick evicts a corner that has ended up in the wrong slot altogether.',
-		triggers: ['sexy move', 'double sexy'],
-		tags: ['corners', 'repeat', 'stuck']
+			'Read it as two halves. The first four turns lift the corner out of the slot and leave it in the top layer with the cross colour facing you, which is the case two above; the second four are that case being solved. If you would rather stop and look in the middle, do — lift it out with four turns, see which way it is now facing, and use whichever insertion matches. The same trick evicts a corner that has ended up in the wrong slot altogether.',
+		triggers: ['Aa insert'],
+		tags: ['corners', 'stuck', '2-gen']
 	},
 
 	// -------------------------------------------------------------------------
@@ -195,23 +238,30 @@ export const BEGINNER_F2L_CASES: readonly AlgCase[] = [
 		recognition:
 			'The same picture with the top sticker matching the left-hand centre instead of the right. Front sticker matches the front centre, top sticker matches the left centre, so the edge belongs between the front and the left.',
 		notes:
-			'This is the right-hand insertion reflected in a mirror: every R becomes an L, every F stays an F, and every U turn reverses. Learn it as a reflection rather than as eight new moves, and check yourself by holding the two side by side. Most people find one hand markedly worse than the other here; the awkward one is worth drilling on its own, because half the middle layer needs it.',
+			'This is the right-hand insertion reflected in a mirror: every R becomes an L, the front face stays the front face, and every turn reverses direction. Learn it as a reflection rather than as eight new moves, and check yourself by holding the two side by side. Most people find one hand markedly worse than the other here; the awkward one is worth drilling on its own, because half the middle layer needs it.',
 		tags: ['middle-layer', 'left-hand', 'mirror']
 	},
 	{
 		id: 'beg-f2l-11',
 		set: 'beginner-f2l',
-		name: 'Wrong edge stuck in a middle slot',
-		shortName: 'Stuck edge',
+		name: 'Middle edge flipped in its own slot',
+		shortName: 'Flipped in slot',
 		group: 'Middle edges',
 		tier: 'beginner',
-		algs: [{ moves: "U R U' R' U' F' U F U R U' R' U' F' U F" }],
+		algs: [
+			{ moves: "U R U' R' U' F' U F U' R U' R' U' F' U F" },
+			{
+				moves: "R2 U2 F R2 F' U2 R' U R'",
+				label: 'one algorithm',
+				note: 'Nine turns rather than sixteen, at the cost of a sequence that does not resemble anything else you know yet. It is the F2L answer to this case, so it will come back to you later; there is no need to take it on now.'
+			}
+		],
 		recognition:
-			'The front-right slot is already full, but with the wrong edge — one of its stickers is the top colour, so it belongs in the last layer, not down here. Meanwhile the edge that does belong there is loose in the top layer.',
+			'The edge you need is already down in its slot, but flipped: the sticker that should face the front is on the right-hand face and the one that should face right is on the front. Nothing is loose in the top layer to work with, which is what makes the case feel like a dead end.',
 		notes:
-			'This is the situation that stops beginners dead, because there is no top-layer edge left to work with and the algorithms all seem to need one. The answer is to run the insertion anyway. The first eight moves lift the intruder out into the top layer and drop something harmless in its place; you then have an ordinary case again and insert the correct edge with a second run. In this particular arrangement the two runs follow straight on from each other, which is why the sixteen moves above finish the job on their own. More often you will need to turn the top layer between them to line the right edge up, so pause and look after the first run rather than charging through.',
+			"This is the situation that stops beginners dead, because every algorithm seems to need an edge waiting in the top layer and there is not one. The answer is to run the insertion anyway. The first eight turns are the right-hand insertion exactly as you know it, and they lift the flipped edge out into the top layer while dropping a harmless last-layer edge into the slot; the U' brings it round, and the last seven put it back the right way. The same trick frees an edge that has ended up in the wrong slot: insert something into that slot, and the piece you want pops out where you can reach it.",
 		triggers: ['Aa insert'],
-		tags: ['middle-layer', 'stuck', 'repeat', 'common-mistake']
+		tags: ['middle-layer', 'stuck', 'flipped', 'common-mistake']
 	}
 ];
 
@@ -232,7 +282,7 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 			{
 				moves: "R U R' U' R' F R F'",
 				label: 'two triggers',
-				note: 'A sexy move followed by a sledgehammer. Same result, and both halves are patterns your hands will meet again constantly.'
+				note: 'A sexy move followed by a sledgehammer. It finishes the cross equally well, and both halves are patterns your hands will meet again constantly.'
 			}
 		],
 		recognition:
@@ -259,7 +309,7 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 			}
 		],
 		recognition:
-			"Two flipped edges meeting at a right angle: the back edge and the left edge are the correct way up, forming an L that points into the back-left corner. Held like that, the elbow of the L is at nine and twelve o'clock.",
+			"Two flipped edges meeting at a right angle: the back edge and the left edge are the correct way up, forming an L that points into the back-left corner. Held like that, its two arms run to twelve and to nine o'clock.",
 		notes:
 			'The commonest of the three shapes — you will see it in half of all solves. Getting the L into the back-left corner is the only difficult part; the moves are the line algorithm with the middle two turns swapped round. If you would rather learn one sequence than two, run the line algorithm on the L instead: it will not finish the cross, but it does turn the L into a line, and a second run then finishes it.',
 		triggers: ['Aa insert'],
@@ -283,7 +333,7 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 			{
 				moves: "F U R U' R' F' U F R U R' U' F'",
 				label: 'other order',
-				note: 'L algorithm first, line algorithm second. Ends in the same place.'
+				note: 'L algorithm first, line algorithm second. It reaches the cross in the same thirteen moves, so use whichever order sticks.'
 			}
 		],
 		recognition:
@@ -312,12 +362,16 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 				label: 'left-hand',
 				note: 'The mirror image. The U at the front swings the finished corner round to the back left, which is where the left-hand version expects it.'
 			},
-			{ moves: "U' R' U2 R U R' U R", label: 'reverse grip' }
+			{
+				moves: "U' R' U2 R U R' U R",
+				label: 'reverse grip',
+				note: "The same shape played on the right face with the turns reversed, for anyone who would rather not learn an L-face algorithm at all. The U' brings the finished corner to the front right."
+			}
 		],
 		recognition:
 			'The cross on top is done and exactly one corner already shows the top colour on top — hold it at the front left. The other three show their top colour on the back face, on the right face and on the front face in turn.',
 		notes:
-			'The sune is the single most useful algorithm in the hobby and the first one worth getting properly fluent. It is also the whole of this step: whatever arrangement of corners you are faced with, hold an unfinished one so that the sune applies and run it, look again, run it again. Two goes cover every case there is. The top will look badly broken partway through — corners flying up, the cross apparently gone — and it comes back together every time.',
+			'The sune is the single most useful algorithm in the hobby and the first one worth getting properly fluent. Between it and the anti-sune below, no arrangement of corners needs more than two goes: run whichever of the two fits, look again, run the other or the same one. The top will look badly broken partway through — corners flying up, the cross apparently gone — and it comes back together every time.',
 		triggers: ['sune'],
 		tags: ['sune', '2-gen', 'corners', 'fast']
 	},
@@ -333,9 +387,14 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 		algs: [
 			{ moves: "R U2 R' U' R U' R'" },
 			{
+				moves: "U L' U' L U' L' U2 L",
+				label: 'left-hand',
+				note: 'The sune reflected is what solves this case, with a quarter turn in front of it to line the corners up. Learning the pair on opposite hands is a good way to stop confusing them.'
+			},
+			{
 				moves: "U2 (R U R' U R U2 R') U2 (R U R' U R U2 R')",
 				label: 'sune twice',
-				note: 'If you would rather know one algorithm than two: the sune, a half turn of the top, the sune again. Sixteen moves instead of seven, but nothing new to memorise.'
+				note: 'If you would rather know one algorithm than two: the sune, a half turn of the top, the sune again. The U2 at the front lines the case up for the first run.'
 			}
 		],
 		recognition:
@@ -387,7 +446,7 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 		recognition:
 			'No corner done, and this time the loose stickers are unevenly spread: two of them sit side by side on one face — the left as drawn — with a single sticker at the far end of the front and another at the far end of the back.',
 		notes:
-			'Two sunes again, with a quarter turn between them rather than nothing. Between H and Pi you have covered every case where no corner is finished; anything else has one or two corners already done, and the same rule applies — hold an unfinished corner where the sune wants it, run the sune, and look again. The nine-move algorithm above is worth learning eventually because it is almost all half turns of the right face, which is quick once your fingers know it.',
+			'Two sunes again, with a quarter turn between them rather than nothing. H and Pi are the only two cases in which no corner is finished at all; everything else has one corner done, which is the sune or the anti-sune, or two done, which is not drawn here. If two are done, hold an unfinished corner at the front left with its top-colour sticker pointing at you and run the sune: that always leaves you with a sune or an anti-sune. The nine-move algorithm above is worth learning eventually because it is almost all half turns of the right face, which is quick once your fingers know it.',
 		tags: ['sune', 'corners', 'rare']
 	},
 
@@ -414,7 +473,7 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 		recognition:
 			'The top face is one colour, so read the side stickers instead. Exactly one corner has both its side stickers matching the centres beside it — hold that corner at the front left. The two back corners then show the same colour as each other on the back face.',
 		notes:
-			'With the home corner at the front left, the other three travel round: the back-left corner goes to the back right, the back-right goes to the front right, and the front-right comes back to the back left. Work out which way the cycle runs before your hands start, because this and the case below are the same picture with the arrows reversed. If no corner at all is in the right place, run this algorithm from any angle; it will put one corner right, and then you have this case.',
+			'With the home corner at the front left, the other three travel round: the back-left corner goes to the back right, the back-right goes to the front right, and the front-right comes back to the back left. Work out which way the cycle runs before your hands start, because this and the case below are the same picture with the arrows reversed. The edges are still unsolved at this point, so you are free to turn the top layer to any angle you like while you look. If no angle gives you exactly one corner at home, turn the top until none of them is at home, and run either cycle: that always leaves exactly one corner home, which is this case or the one below, and a second run finishes the corners.',
 		tags: ['corners', '3-cycle', 'a-perm', 'mirror']
 	},
 	{
@@ -428,7 +487,11 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 		mirrorOf: 'beg-ll-08',
 		algs: [
 			{ moves: "R2 B2 R F R' B2 R F' R" },
-			{ moves: "x R2 D2 R U R' D2 R U' R x'", label: 'tilted' }
+			{
+				moves: "x R2 D2 R U R' D2 R U' R x'",
+				label: 'tilted',
+				note: 'The tilted grip again, and the algorithm above it read backwards. Learn the two tilted versions together or neither.'
+			}
 		],
 		recognition:
 			'Indistinguishable from the case above at a glance: one corner home, the rest wrong. Hold the home corner at the front left again and the two right-hand corners show the same colour as each other on the right face.',
@@ -447,7 +510,7 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 		recognition:
 			'The top cross is finished and all four edges are already in the right places, but the corners are a mess of orientations. One corner — the front right as drawn — is in the place it belongs; the other three are each in the wrong place and turned the wrong way.',
 		notes:
-			'This is the algorithm the printed beginner guides use, and it belongs to a different order of steps: place the corners first while their orientation is still random, then twist them into place afterwards. It cycles the back-left corner to the front left, the front left to the back right, and the back right to the back left, and it twists them as it goes. That last part matters. If you have already made the top face one colour by following the order on this page, use one of the two cycles above instead — running this one would undo the orientation work you have already done. It is here because a great many people learnt it first and go looking for it.',
+			'This is the algorithm the printed beginner guides use, and it belongs to a different order of steps: place the corners first while their orientation is still random, then twist them into place afterwards. It cycles the back-left corner to the front left, the front left to the back right, and the back right to the back left, and it twists them as it goes. That last part is why it is not part of the route this page teaches. If you have already made the top face one colour, use one of the two cycles above; running this one would undo the orientation work you have already done. It is here because a great many people learnt it first and come looking for it.',
 		tags: ['corners', '3-cycle', 'alternative-order']
 	},
 
@@ -470,12 +533,16 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 				label: 'M-slice',
 				note: 'Far shorter, and the version you will eventually keep. It needs a comfortable grip on the middle slice, which is why it is not the one to start with.'
 			},
-			{ moves: "R2 U R U R' U' R' U' R' U R'", label: '2-gen' }
+			{
+				moves: "R2 U R U R' U' R' U' R' U R'",
+				label: '2-gen',
+				note: 'Right face and top face only, so nothing has to leave the grip you already have. Eleven turns, but they come out quickly once learnt.'
+			}
 		],
 		recognition:
 			'Everything is solved except three edges. One edge is already home — hold it at the back — and the other three need to move round: the left edge belongs on the right, the right edge belongs at the front, and the front edge belongs on the left.',
 		notes:
-			'Think of it as the three edges shuffling clockwise round the top, hopping over the solved one at the back. Find the solved edge first and put it at the back before you decide anything else; from there the only question is which way the other three travel, and this case and the one below differ by exactly two moves. The algorithm is symmetrical to look at — a half turn of the front at each end and the L and R turns cancelling each other in the middle — which makes it stick in the memory better than its nine moves suggest.',
+			"Think of it as the three edges shuffling clockwise round the top, hopping over the solved one at the back. Find the solved edge first and put it at the back before you decide anything else; from there the only question is which way the other three travel, and this case and the one below differ by exactly two moves. The nine moves read as a palindrome — F2, U, an L R' pair, F2, that pair undone, U, F2 — which makes them stick better than the raw count suggests.",
 		tags: ['edges', '3-cycle', 'mirror']
 	},
 	{
@@ -489,8 +556,16 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 		mirrorOf: 'beg-ll-11',
 		algs: [
 			{ moves: "F2 U' L R' F2 L' R U' F2" },
-			{ moves: "M2 U M U2 M' U M2", label: 'M-slice' },
-			{ moves: "R U' R U R U R U' R' U' R2", label: '2-gen' }
+			{
+				moves: "M2 U M U2 M' U M2",
+				label: 'M-slice',
+				note: 'The slice version, with both U turns reversed.'
+			},
+			{
+				moves: "R U' R U R U R U' R' U' R2",
+				label: '2-gen',
+				note: 'The counterpart of the 2-gen algorithm above, and the one most people end up using for both directions.'
+			}
 		],
 		recognition:
 			'The same picture with the cycle reversed. Solved edge at the back again; now the left edge belongs at the front, the front edge belongs on the right, and the right edge belongs on the left.',
@@ -515,9 +590,9 @@ export const BEGINNER_LL_CASES: readonly AlgCase[] = [
 			}
 		],
 		recognition:
-			'Every edge is wrong, so there is no solved one to hold at the back. Here the front and left edges want to swap with each other and so do the back and right — two swaps rather than a cycle.',
+			'Every edge is wrong, so there is no solved one to hold at the back. In the arrangement drawn here the front and left edges want to swap with each other and so do the back and right — two swaps rather than a cycle.',
 		notes:
-			'Run the cycle from the case above starting anywhere. It cannot finish the layer in one go, but it will always leave you with exactly one edge home, which is an ordinary three-edge cycle you already know how to solve. That is what the long algorithm above is: the nine-move cycle, a quarter turn of the top, the same cycle again, and a quarter turn back. There is a second all-wrong case where the swaps are between opposite edges rather than neighbouring ones, and it is handled the same way — run the cycle once and look again.',
+			'Run the cycle from the case above starting anywhere. It cannot finish the layer in one go, but it always leaves exactly one edge home, which is an ordinary three-edge cycle you already know how to solve. That is what the long algorithm above is: the nine-move cycle, a quarter turn of the top, the same cycle again, and a quarter turn back. There is a second all-wrong arrangement in which the swaps are between opposite edges rather than neighbouring ones, and it is handled the same way — run the cycle once and look again.',
 		tags: ['edges', 'repeat', 'four-edges']
 	}
 ];

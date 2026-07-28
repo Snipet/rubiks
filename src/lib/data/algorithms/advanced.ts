@@ -14,9 +14,14 @@
  *
  * ## How the corner cases are described
  *
- * Every COLL and CMLL case is one of the seven corner-orientation shapes — Sune,
- * anti-sune, Pi, H, L, T, U — combined with one of six ways the corners can be out
- * of order. The recognition notes always name a way to hold the case first, chosen
+ * Every COLL and CMLL case pairs a corner-orientation shape with a way the corners
+ * are out of order. Seven shapes leave at least one corner twisted — Sune,
+ * anti-sune, Pi, H, L, T, U — and there are six ways four corners can sit relative
+ * to one another. Six of those shapes take all six orders; the H shape takes only
+ * four, because it looks the same after a half turn; and the two cases where the
+ * corners are already oriented bring the total to forty-two.
+ *
+ * The recognition notes always name a way to hold the case first, chosen
  * so that the shape sits in one fixed position, and then say which pair of corners
  * needs to swap. "Counting the finishing U turn" appears a lot: after a COLL or
  * CMLL algorithm you are free to turn the top face once more, so a case where three
@@ -62,7 +67,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'The whole top face is already one colour and the corners still need moving. Three corners cycle, or — counting the finishing U turn — two neighbouring corners swap.',
 		notes:
-			'This case and the diagonal one are the two COLL cases you get for free: any corner three-cycle or adjacent-corner permutation will do, so reach for the A or T permutation you use every day. The edges will be left scrambled but oriented, which is exactly what COLL promises.',
+			'This case and the diagonal one are the two COLL cases you get for free, because the corners are already oriented and any permutation that moves corners alone will finish them. Here that means the A permutation you use every day. The edges are left scrambled but still oriented, which is exactly what COLL promises.',
 		triggers: ['Aa insert'],
 		tags: ['pll', 'familiar', 'rare']
 	},
@@ -142,7 +147,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'Sune with the solved corner at the front-right; the two corners down the left-hand side are the ones out of place.',
 		notes:
-			'The first three moves are an anti-sune opening, which makes the case easy to start before you have finished reading it.',
+			'The first three moves open the two-generator Sune, so your hands can start the case before you have finished reading it.',
 		tags: ['awkward']
 	},
 	{
@@ -179,8 +184,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'Sune with the solved corner at the front-right; the two front corners swap.',
 		notes:
-			'Seven moves and no regrip. It is the Niklas commutator with its closing U turn dropped, which is exactly what turns a plain corner cycle into a cycle that also twists. One of the two cheapest algorithms in the set.',
-		tags: ['fast', 'niklas', 'one-handed']
+			'Seven moves and no regrip. It is the Niklas commutator with its closing U turn dropped, which is exactly what turns a plain corner cycle into a cycle that also twists. One of the two cheapest algorithms in the set, though the L turns mean both hands are working.',
+		tags: ['fast', 'niklas', 'two-handed']
 	},
 	{
 		id: 'coll-sune-6',
@@ -193,8 +198,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 			{ moves: "R U R' U L' U R U' L U2 R'" },
 			{
 				moves: "R' U2 L U' R U L' U R' U R",
-				label: 'inverse-ish',
-				note: 'Starts on the left instead.'
+				label: 'reversed mirror',
+				note: 'The front-back mirror image, run backwards. Try it if the opening R U R feels cramped.'
 			}
 		],
 		recognition:
@@ -238,7 +243,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'Anti-sune with the solved corner at the front-right; the two corners along the back swap.',
 		notes:
-			'Opens with an anti-sune played on F rather than R, which is worth practising slowly a few times before it feels natural.',
+			'Opens like an anti-sune played on F rather than R. Worth practising slowly a few times before it feels natural.',
 		tags: ['awkward']
 	},
 	{
@@ -254,7 +259,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition:
 			'Anti-sune with the solved corner at the front-right; the left-hand pair of corners swaps.',
-		notes: 'Ends with an anti-sune, so the last four moves are muscle memory already.',
+		notes:
+			'The last four moves are the tail of the two-generator anti-sune, so the finish is already in your hands.',
 		tags: ['two-handed']
 	},
 	{
@@ -268,8 +274,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'Anti-sune with the solved corner at the front-right; the front-right and back-right corners swap.',
 		notes:
-			'The anti-sune family answer to S5, and just as cheap: seven moves, no regrip, a Niklas shape with its closing turn dropped. If you learn only two cases outside the free ones, learn this and S5.',
-		tags: ['fast', 'niklas', 'one-handed']
+			'The anti-sune family answer to S5, and every bit as cheap: seven moves, no regrip, a Niklas shape with its closing turn dropped. If you learn only two cases outside the free ones, learn this and S5.',
+		tags: ['fast', 'niklas', 'two-handed']
 	},
 	{
 		id: 'coll-as-5',
@@ -301,7 +307,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		recognition:
 			'Anti-sune with the solved corner at the front-right; the pair that swaps is diagonal.',
 		notes:
-			'A Niklas shape followed by an anti-sune finish. Break it there and it is two things you know rather than eleven moves.',
+			'A Niklas-shaped opening and an Aa insert to finish. Break it there and it is two things you know rather than eleven moves.',
 		triggers: ['Aa insert'],
 		tags: ['long', 'niklas']
 	},
@@ -320,8 +326,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 			{ moves: "R U2 R2 U' R2 U' R2 U2 R" },
 			{
 				moves: "R' U2 R2 U R2 U R2 U2 R'",
-				label: '2-gen',
-				note: 'The same idea on the other side.'
+				label: 'reversed',
+				note: 'The same nine moves run backwards, which here is also the mirror image.'
 			}
 		],
 		recognition:
@@ -406,7 +412,9 @@ export const COLL_CASES: readonly AlgCase[] = [
 			{ moves: "R F' U' R2 U' F U F' R2 U F R'", label: 'alternative' }
 		],
 		recognition: 'Pi with the clockwise pair at the front; the corners that swap are diagonal.',
-		tags: ['long', 'awkward']
+		notes:
+			'The alternative is this one mirrored, with R and F changing places throughout. Whichever you pick, the F2 in the middle is the move to slow down for.',
+		tags: ['long', 'awkward', 'mirror']
 	},
 
 	// -------------------------------------------------------------------------
@@ -423,8 +431,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 			{ moves: "R U2 R' U' R U R' U' R U' R'" },
 			{
 				moves: "R U R' U R U' R' U R U2 R'",
-				label: '2-gen',
-				note: 'Reads as a sune with a sexy move inside it.'
+				label: 'reversed',
+				note: 'The same eleven moves run backwards. Pick whichever direction your fingers prefer.'
 			}
 		],
 		recognition:
@@ -480,8 +488,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'H shape with a diagonal pair of corners to swap.',
 		notes:
-			'Almost every turn is a half turn, so this one is faster in the hand than an eleven-move count suggests.',
-		tags: ['half-turns', 'long']
+			'Seven of the eleven turns are half turns, so it runs faster in the hand than the count suggests. The alternative is this one mirrored, with R and F changing places.',
+		tags: ['half-turns', 'long', 'mirror']
 	},
 
 	// -------------------------------------------------------------------------
@@ -538,7 +546,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'Bowtie in the same hold as L2; this time the left-hand pair of corners swaps.',
 		notes:
-			'The exact inverse pattern of L2 — same nine moves with every turn flipped. Learn them together.',
+			'The same nine turns as L2 with every one of them reversed, which is what makes it the mirror case. Learn the two together.',
 		mirrorOf: 'coll-l-2',
 		tags: ['d-move', 'mirror', 'fast']
 	},
@@ -554,6 +562,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 			{ moves: "L' R U R' U' L U R U' R'", label: 'no D moves' }
 		],
 		recognition: 'Bowtie in the L2 hold; the front-right and back-right corners swap.',
+		notes:
+			'The same shape as T3 and U4: a D turn does the swapping while R and U shuttle a corner through the front-right slot. Learn the three together and the D stops feeling like an intrusion.',
 		tags: ['d-move']
 	},
 	{
@@ -669,8 +679,8 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'T shape in the T2 hold; the two front corners swap.',
 		notes:
-			'Another of the repeating-block shapes: a three-move group, a half turn, the same group on the other face.',
-		tags: ['symmetric']
+			'The alternative is this algorithm mirrored, with R and F changing places throughout, so learning one leaves the other nearly free.',
+		tags: ['symmetric', 'mirror']
 	},
 	{
 		id: 'coll-t-6',
@@ -681,7 +691,11 @@ export const COLL_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [
 			{ moves: "R' U F' R' U2 R U2 F U' R' U R2" },
-			{ moves: "R2 U' R U F' U2 R' U2 R F U' R", label: 'alternative' }
+			{
+				moves: "R2 U' R U F' U2 R' U2 R F U' R",
+				label: 'reversed',
+				note: 'The same twelve moves run backwards, which starts on R2 rather than R prime.'
+			}
 		],
 		recognition: 'T shape in the T2 hold, with a diagonal swap left over.',
 		tags: ['long']
@@ -738,7 +752,7 @@ export const COLL_CASES: readonly AlgCase[] = [
 		],
 		recognition: 'U shape in the U1 hold; the two left-hand corners swap.',
 		notes:
-			'Sister algorithm to U4 — same nine moves with the D turns and the U turns going the other way.',
+			'Sister algorithm to U4: the same nine turns with every one of them reversed, which is exactly what makes it the mirror case.',
 		mirrorOf: 'coll-u-4',
 		tags: ['d-move', 'fast']
 	},
@@ -769,7 +783,9 @@ export const COLL_CASES: readonly AlgCase[] = [
 			{ moves: "F U2 F' R F R' U2 R F' R'", label: 'alternative' }
 		],
 		recognition: 'U shape in the U1 hold; the two front corners swap.',
-		tags: ['symmetric']
+		notes:
+			'The alternative is this one mirrored, with R and F changing places throughout. Both are ten moves, so choose on grip rather than count.',
+		tags: ['symmetric', 'mirror']
 	},
 	{
 		id: 'coll-u-6',
@@ -780,7 +796,11 @@ export const COLL_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [
 			{ moves: "R' U2 R F U' R' U' R U F'" },
-			{ moves: "F U' R' U R U F' R' U2 R", label: 'alternative' }
+			{
+				moves: "F U' R' U R U F' R' U2 R",
+				label: 'reversed',
+				note: 'The same ten moves run backwards.'
+			}
 		],
 		recognition: 'U shape in the U1 hold, with a diagonal pair left to swap.',
 		notes: 'Ten moves for a diagonal case is unusually cheap. The U family is kind that way.',
@@ -959,7 +979,7 @@ export const WINTER_VARIATION_CASES: readonly AlgCase[] = [
 		recognition:
 			'Inserting normally would leave a Pi, with the two corners twisted clockwise sitting along the front.',
 		notes:
-			'Two Niklas halves sharing a middle. Watch the R2 — under pressure it is easy to turn it only once.',
+			'Two Niklas halves sharing a middle. Watch the R2: under pressure it often comes out as a single turn.',
 		tags: ['niklas', 'two-handed']
 	},
 	{
@@ -986,7 +1006,7 @@ export const WINTER_VARIATION_CASES: readonly AlgCase[] = [
 			{
 				moves: "U F2 R U2 R' U2 R' F2 R",
 				label: 'half turns',
-				note: 'Some people find the F2 grip easier than F and F prime.'
+				note: 'Some people prefer the F2 grip to F and F prime.'
 			}
 		],
 		recognition:
@@ -1076,7 +1096,7 @@ export const WINTER_VARIATION_CASES: readonly AlgCase[] = [
 		recognition:
 			'The same bowtie positions as WV L1, but the twists run the other way: the front-left corner is twisted anticlockwise.',
 		notes:
-			'The pair of L cases with the solved corners in the same place are easy to confuse. Check the twist direction before you start.',
+			'The two L cases with the solved corners in the same place look alike at a glance. Check the twist direction before you start.',
 		triggers: ['Aa insert'],
 		tags: ['d-move', 'long']
 	},
@@ -1338,7 +1358,7 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [
 			{ moves: "R' U' R U' R' U F' U F R" },
-			{ moves: "R' F' U' F U' R U R' U R", label: 'alternative' }
+			{ moves: "R' F' U' F U' R U R' U R", label: 'reversed' }
 		],
 		recognition: 'Pi with the clockwise pair at the front and a diagonal swap left over.',
 		notes:
@@ -1355,7 +1375,11 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [
 			{ moves: "R U2 R' U' R U R' U' R U' R'" },
-			{ moves: "R U R' U R U' R' U R U2 R'", label: '2-gen' }
+			{
+				moves: "R U R' U R U' R' U R U2 R'",
+				label: 'reversed',
+				note: 'The same eleven moves run backwards.'
+			}
 		],
 		recognition:
 			'No corner oriented and the two clockwise-twisted ones sit diagonally. Any hold with a clockwise corner at the front-right works; the corners are already in order.',
@@ -1393,8 +1417,10 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		],
 		recognition:
 			'H shape with a clockwise corner at the front-right; the two right-hand corners swap.',
+		notes:
+			'Opens with a sledgehammer, and the alternative is the whole thing mirrored with R and F changing places.',
 		triggers: ['sledgehammer'],
-		tags: ['long', 'sledge']
+		tags: ['long', 'sledge', 'mirror']
 	},
 	{
 		id: 'cmll-h-4',
@@ -1408,7 +1434,8 @@ export const CMLL_CASES: readonly AlgCase[] = [
 			{ moves: "F R2 F2 U2 F R2 F' U2 F2 R2 F'", label: 'front-face' }
 		],
 		recognition: 'H shape with a diagonal pair still to swap.',
-		notes: 'Nothing but half turns after the first move. Put the cube down flat and turn.',
+		notes:
+			'Seven of the eleven turns are half turns and every quarter turn is a plain R, so it comes out quicker than it reads. Put the cube down flat and turn.',
 		tags: ['half-turns', 'long']
 	},
 
@@ -1712,10 +1739,11 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [
 			{ moves: "R2 U' R F R' U R2 F U' F'" },
-			{ moves: "F U F' R2 U' R F' R' U R2", label: 'alternative' }
+			{ moves: "F U F' R2 U' R F' R' U R2", label: 'reversed' }
 		],
 		recognition:
 			'Headlights held with the solved pair at the front and the back-right corner clockwise; the back pair swaps.',
+		notes: 'The alternative is this one run backwards, so only one of the two needs learning.',
 		tags: ['long']
 	},
 	{
@@ -1771,11 +1799,11 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [
 			{ moves: "F R U R' U' F'" },
-			{ moves: "F U R U' R' F'", label: 'alternative' },
+			{ moves: "F U R U' R' F'", label: 'reversed', note: 'The same six moves run backwards.' },
 			{
 				moves: "R' U' F' U F R",
-				label: 'inverse',
-				note: 'The same six moves inverted, if the grip suits you better.'
+				label: 'built on U and F',
+				note: 'The same idea on another pair of faces: a sexy move made from U and F, wrapped in R prime and R.'
 			}
 		],
 		recognition: 'Headlights in the U1 hold, with a diagonal swap left to make.',
@@ -1793,7 +1821,7 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [
 			{ moves: "R U R' U R U' R2 F R F2 U F" },
-			{ moves: "F' U' F2 R' F' R2 U R' U' R U' R'", label: 'alternative' }
+			{ moves: "F' U' F2 R' F' R2 U R' U' R U' R'", label: 'reversed' }
 		],
 		recognition:
 			'Two corners show the top colour and they sit diagonally — the bowtie. Hold them at the front-right and back-left with the front-left corner twisted clockwise; the corners are already in order.',
@@ -1869,11 +1897,11 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		tier: 'expert',
 		algs: [
 			{ moves: "R U2 R' F R' F' R2 U2 R'" },
-			{ moves: "R U2 R2 F R F' R U2 R'", label: 'alternative' }
+			{ moves: "R U2 R2 F R F' R U2 R'", label: 'reversed' }
 		],
 		recognition: 'Bowtie in the L1 hold, with a diagonal swap left over.',
 		notes:
-			'The two algorithms differ by one turn in the middle. Pick one and stay with it, or you will meet the other by accident.',
+			'The alternative is this one run backwards, and the two differ only in the three R turns in the middle. Pick one and stay with it, or you will meet the other by accident.',
 		tags: ['fast']
 	},
 
@@ -1909,18 +1937,21 @@ export const CMLL_CASES: readonly AlgCase[] = [
 		group: 'All corners oriented',
 		tier: 'expert',
 		algs: [
-			{ moves: "F R U' R' U' R U R' F' R U R' U' R' F R F'", note: 'The Y permutation.' },
 			{
 				moves: "R2 U2 F2 U' R2 U2 F2 U R2 U2 F2",
 				label: 'half turns',
-				note: 'Six moves shorter and nothing but half turns after the first.'
+				note: 'Nine of the eleven turns are half turns, so it runs faster than it reads.'
+			},
+			{
+				moves: "F R U' R' U' R U R' F' R U R' U' R' F R F'",
+				label: 'Y permutation',
+				note: 'Six moves longer, and one most people arrive at Roux already knowing.'
 			}
 		],
 		recognition: 'Top face solid, and the two corners that need to trade sit diagonally opposite.',
 		notes:
-			'The rarest case and the most expensive. Both algorithms are pure R, U and F, so the M slice survives either way.',
-		triggers: ['sexy move', 'sledgehammer', 'Aa insert'],
-		tags: ['pll', 'long', 'rare']
+			'The rarest case in the set. Both algorithms use nothing but R, U and F, so the M slice survives either way; the half-turn one is six moves cheaper and worth the swap even if the Y permutation is already in your hands.',
+		tags: ['pll', 'half-turns', 'rare']
 	}
 ];
 
@@ -1975,6 +2006,7 @@ export const COMMUTATOR_CASES: readonly AlgCase[] = [
 		recognition: 'The sexy move done six times over. The cube comes back solved.',
 		notes:
 			'Every sequence on the cube has an order — a number of repetitions that returns you to the start. The sexy move has order six, which is short enough to demonstrate and long enough to be surprising. Try it with a different pair, say R and U2, and count.',
+		triggers: ['sexy move'],
 		tags: ['theory', 'long']
 	},
 	{
