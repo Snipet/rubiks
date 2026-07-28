@@ -8,11 +8,14 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import Cube3D from '../cube/Cube3D.svelte';
+	import type { PuzzleSize } from '$cube/puzzle';
 	import Button from '../ui/Button.svelte';
 	import { cloneFacelets } from '$cube/facelets';
 	import type { Facelets } from '$cube/types';
 
 	interface Props {
+		/** Which puzzle. Defaults to the 3×3. */
+		order?: PuzzleSize;
 		initial: Facelets;
 		label?: string;
 		size?: number;
@@ -22,6 +25,7 @@
 
 	let {
 		initial,
+		order = 3,
 		label = 'A cube you can turn',
 		size = 220,
 		keys = ['U', "U'", 'R', "R'", 'F', "F'", 'L', "L'", 'D', "D'", 'B', "B'"]
@@ -48,7 +52,7 @@
 </script>
 
 <div class="wrap">
-	<Cube3D bind:this={cube} bind:facelets {size} {label} />
+	<Cube3D bind:this={cube} bind:facelets {order} {size} {label} />
 	<div class="keys">
 		{#each keys as move (move)}
 			<button type="button" class="key" onclick={() => turn(move)} disabled={busy}>{move}</button>

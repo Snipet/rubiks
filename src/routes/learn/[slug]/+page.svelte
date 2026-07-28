@@ -5,10 +5,14 @@
 	import Chip from '$components/ui/Chip.svelte';
 	import { pageTitle } from '$lib/brand';
 	import { ALG_SETS } from '$data/algorithms';
-	import { SKILL_LABELS } from '$data/types';
+	import { TRACK_LABELS } from '$data/types';
+	import { track } from '$data/lessons';
 	import { progress } from '$state/progress.svelte';
 
 	let { data } = $props();
+
+	/** A lesson is written in its track's puzzle, and rendered in it. */
+	const trackOrder = $derived(track(data.lesson.track).puzzle ?? 3);
 
 	const done = $derived(progress.lessonDone(data.lesson.slug));
 </script>
@@ -22,14 +26,14 @@
 	<nav class="crumbs" aria-label="Breadcrumb">
 		<a href={resolve('/learn/')}>Learn</a>
 		<span aria-hidden="true">/</span>
-		<span>{SKILL_LABELS[data.lesson.track]}</span>
+		<span>{TRACK_LABELS[data.lesson.track]}</span>
 	</nav>
 
 	<header class="head">
 		<div class="head__meta">
 			<Chip tone="section">Lesson {data.lesson.order}</Chip>
 			<Chip>{data.lesson.minutes} min</Chip>
-			<Chip>{SKILL_LABELS[data.lesson.track]}</Chip>
+			<Chip>{TRACK_LABELS[data.lesson.track]}</Chip>
 		</div>
 		<h1>{data.lesson.title}</h1>
 		<p class="lede">{data.lesson.summary}</p>
@@ -44,7 +48,7 @@
 		</section>
 	</header>
 
-	<LessonBody blocks={data.lesson.body} />
+	<LessonBody blocks={data.lesson.body} order={trackOrder} />
 
 	<footer class="foot">
 		<label class="done">
