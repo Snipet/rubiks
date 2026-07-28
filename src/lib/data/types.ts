@@ -49,6 +49,7 @@ export type AlgSetId =
 	| 'pocket-oll'
 	| 'pocket-pll'
 	| 'pocket-pbl'
+	| 'pocket-cll'
 	// 4×4
 	| 'revenge-parity'
 	| 'revenge-centres';
@@ -101,9 +102,11 @@ export interface AlgSetMeta {
 		| 'pocket-oll'
 		| 'pocket-pll'
 		| 'pocket-pbl'
+		| 'pocket-cll'
 		| 'edge-flip'
 		| 'edge-swap'
-		| 'centres-only';
+		| 'centres-only'
+		| 'pocket-cll';
 }
 
 /** One way of solving a case. */

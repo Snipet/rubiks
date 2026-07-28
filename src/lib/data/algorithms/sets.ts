@@ -246,6 +246,20 @@ export const ALG_SETS: readonly AlgSetMeta[] = [
 		expectedCount: 5
 	},
 	{
+		id: 'pocket-cll',
+		name: 'CLL — the 2×2 last layer in one algorithm',
+		shortName: 'CLL',
+		summary: 'Forty cases that finish the puzzle from a solved first layer.',
+		description:
+			'With the first layer done, CLL finishes the rest in a single algorithm — no separate orientation and permutation steps. The forty cases were derived rather than copied: there are 648 ways the top can sit, two of them are the same case when an adjusting turn before and after can carry one to the other, and counting those gives 43. One is already solved and two need no twisting, which leaves forty. That reproduces the published structure exactly, including the detail that trips people up — the H group has four cases rather than six, because the H shape looks the same after a half turn. One caution: these are shortest solutions found by search, not the ergonomically chosen sequences a speedsolver drills. They are efficient and every one is verified, but only a few are two-gen. This site tells you elsewhere not to learn an algorithm you cannot finger, and it means it here too — treat this as a complete map of the cases rather than a sheet to memorise.',
+		tier: 'advanced',
+		puzzle: 2,
+		view: 'last-layer',
+		verify: 'pocket-cll',
+		expectedCount: 40,
+		groups: ['Sune', 'Anti-Sune', 'T', 'U', 'L', 'Pi', 'H']
+	},
+	{
 		id: 'revenge-centres',
 		name: '4×4 centre commutators',
 		shortName: 'Centres',
