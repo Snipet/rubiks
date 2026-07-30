@@ -17,17 +17,18 @@
 		stateFromAlg,
 		UNSET
 	} from '$cube/facelets';
-	import { CENTER_FACELETS } from '$cube/types';
+	import { CENTER_FACELETS, type Facelets } from '$cube/types';
 	import { validateFacelets } from '$cube/validate';
 	import { randomScramble } from '$cube/scramble';
 	import { NotationError, parseAlg } from '$cube/moves';
 	import { planSolve, solveFully } from '$cube/solver/plan';
+	import CubeScanner from '$components/solve/CubeScanner.svelte';
 	import PocketSolve from '$components/solve/PocketSolve.svelte';
 	import RevengeSolve from '$components/solve/RevengeSolve.svelte';
 	import { PUZZLE_LABELS, settings } from '$state/settings.svelte';
 	import { SKILL_LABELS, SKILL_TIERS, type SkillTier } from '$data/types';
 
-	type Mode = 'paint' | 'scramble';
+	type Mode = 'paint' | 'scramble' | 'camera';
 	type View = 'cube' | 'net';
 
 	let facelets = $state(solvedFacelets());
@@ -189,7 +190,8 @@
 						onchange={(v) => (mode = v)}
 						options={[
 							{ value: 'scramble', label: 'From a scramble' },
-							{ value: 'paint', label: 'Paint the stickers' }
+							{ value: 'paint', label: 'Paint the stickers' },
+							{ value: 'camera', label: 'Use the camera' }
 						]}
 					/>
 					<Segmented
@@ -204,91 +206,101 @@
 					/>
 				</div>
 
-				<div class="stage">
-					{#if view === 'cube'}
-						<Cube3D
-							bind:this={cube}
-							bind:facelets
-							size={320}
-							onsticker={mode === 'paint' ? paint : undefined}
-							highlight={problemStickers}
-							label="Your cube"
-						/>
-					{:else}
-						<CubeNet
-							{facelets}
-							onpaint={mode === 'paint' ? paint : undefined}
-							highlight={problemStickers}
-							{cursor}
-							size={380}
-						/>
-					{/if}
-				</div>
-
-				{#if mode === 'paint'}
-					<div class="palette" role="radiogroup" aria-label="Sticker colour">
-						{#each PALETTE as swatch (swatch.value)}
-							<button
-								type="button"
-								role="radio"
-								aria-checked={brush === swatch.value}
-								class="swatch"
-								class:swatch--on={brush === swatch.value}
-								class:swatch--erase={swatch.value === UNSET}
-								style:background={swatch.value === UNSET ? 'transparent' : SWATCH[swatch.value]}
-								title={swatch.label}
-								onclick={() => (brush = swatch.value)}
-							>
-								<span class="visually-hidden">{swatch.label}</span>
-								{#if swatch.value === UNSET}
-									<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-										<path
-											d="M5 19 19 5M5 5l14 14"
-											stroke="currentColor"
-											stroke-width="2"
-											stroke-linecap="round"
-										/>
-									</svg>
-								{/if}
-							</button>
-						{/each}
-						<p class="palette__hint">
-							Pick a colour, then click stickers — or hold and sweep across several. The centres are
-							fixed, because they are what define the colour scheme.
-						</p>
-					</div>
+				{#if mode === 'camera'}
+					<CubeScanner
+						onscanned={(state: Facelets) => {
+							facelets = state;
+							mode = 'paint';
+						}}
+						oncancel={() => (mode = 'paint')}
+					/>
 				{:else}
-					<div class="scramble">
-						<label class="scramble__label" for="scramble-input">
-							Scramble applied to a solved cube
-						</label>
-						<div class="scramble__row">
-							<input
-								id="scramble-input"
-								class="scramble__input"
-								type="text"
-								spellcheck="false"
-								autocomplete="off"
-								placeholder="R U R' U' F2 L D2 …"
-								bind:value={scrambleText}
-								onkeydown={(e) => e.key === 'Enter' && applyScramble()}
+					<div class="stage">
+						{#if view === 'cube'}
+							<Cube3D
+								bind:this={cube}
+								bind:facelets
+								size={320}
+								onsticker={mode === 'paint' ? paint : undefined}
+								highlight={problemStickers}
+								label="Your cube"
 							/>
-							<Button variant="primary" onclick={applyScramble}>Apply</Button>
-						</div>
-						{#if scrambleError}
-							<p class="scramble__error">{scrambleError}</p>
+						{:else}
+							<CubeNet
+								{facelets}
+								onpaint={mode === 'paint' ? paint : undefined}
+								highlight={problemStickers}
+								{cursor}
+								size={380}
+							/>
 						{/if}
 					</div>
-				{/if}
 
-				<div class="tools">
-					<Button size="sm" onclick={randomise}>Random scramble</Button>
-					<Button size="sm" variant="ghost" onclick={() => reset('solved')}>Solved</Button>
-					<Button size="sm" variant="ghost" onclick={() => reset('blank')}>Clear stickers</Button>
-					<Button size="sm" variant="ghost" onclick={undo} disabled={history.length === 0}>
-						Undo
-					</Button>
-				</div>
+					{#if mode === 'paint'}
+						<div class="palette" role="radiogroup" aria-label="Sticker colour">
+							{#each PALETTE as swatch (swatch.value)}
+								<button
+									type="button"
+									role="radio"
+									aria-checked={brush === swatch.value}
+									class="swatch"
+									class:swatch--on={brush === swatch.value}
+									class:swatch--erase={swatch.value === UNSET}
+									style:background={swatch.value === UNSET ? 'transparent' : SWATCH[swatch.value]}
+									title={swatch.label}
+									onclick={() => (brush = swatch.value)}
+								>
+									<span class="visually-hidden">{swatch.label}</span>
+									{#if swatch.value === UNSET}
+										<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+											<path
+												d="M5 19 19 5M5 5l14 14"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+											/>
+										</svg>
+									{/if}
+								</button>
+							{/each}
+							<p class="palette__hint">
+								Pick a colour, then click stickers — or hold and sweep across several. The centres
+								are fixed, because they are what define the colour scheme.
+							</p>
+						</div>
+					{:else}
+						<div class="scramble">
+							<label class="scramble__label" for="scramble-input">
+								Scramble applied to a solved cube
+							</label>
+							<div class="scramble__row">
+								<input
+									id="scramble-input"
+									class="scramble__input"
+									type="text"
+									spellcheck="false"
+									autocomplete="off"
+									placeholder="R U R' U' F2 L D2 …"
+									bind:value={scrambleText}
+									onkeydown={(e) => e.key === 'Enter' && applyScramble()}
+								/>
+								<Button variant="primary" onclick={applyScramble}>Apply</Button>
+							</div>
+							{#if scrambleError}
+								<p class="scramble__error">{scrambleError}</p>
+							{/if}
+						</div>
+					{/if}
+
+					<div class="tools">
+						<Button size="sm" onclick={randomise}>Random scramble</Button>
+						<Button size="sm" variant="ghost" onclick={() => reset('solved')}>Solved</Button>
+						<Button size="sm" variant="ghost" onclick={() => reset('blank')}>Clear stickers</Button>
+						<Button size="sm" variant="ghost" onclick={undo} disabled={history.length === 0}>
+							Undo
+						</Button>
+					</div>
+				{/if}
 			</section>
 
 			<!-- ── advice ────────────────────────────────────────────────────── -->
